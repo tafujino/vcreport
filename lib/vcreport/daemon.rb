@@ -13,6 +13,8 @@ module VCReport
       # @param data_dir [String]
       # @param report_dir [String]
       def run(data_dir, report_dir)
+        data_dir = Pathname.new(data_dir)
+        report_dir = Pathname.new(report_dir)
         loop do
           reports = scan_samples(data_dir).map do |sample_dir|
             report = sample_report(sample_dir)
