@@ -1,7 +1,11 @@
 # frozen_string_literal: true
 
+require 'fileutils'
+
 module VCReport
   class VcfReport
+    BCFTOOLS_IMAGE_URI = 'docker://biocontainers/bcftools:v1.9-1-deb_cv1'
+
     # @return [String]
     attr_reader :chr_region
 
@@ -23,8 +27,32 @@ module VCReport
   end
 
   class << self
-    def load_bcftools_stats(path)
+    # @param vcf_path    [Pathname]
+    # @param metrics_dir [Pathname]
+    # @return            [VcfReport]
+    def run(vcf_path)
+      bcftools_stats_dir = metrics_dir / 'bcftoosl-stats'
+      FileUtils.mkpath bcftools_stats_dir unless bcftools_stats_dir.exist?
+      vcf_basename = vcf_path.basename
+      bcftools_stats_path = bcftools_stats_dir / "#{vcf_basename}.bcftools-stats"
+      container_data_dir = '/data'
+      ret = system <<~COMMAND.squish
+        singularity exec
+        --bind #{vcf_path.dirname}:#{container_data_dir}
+        #{BCFTOOLS_IMAGE_URI}
+        bcftools stats
+        #{container_data_dir}/#{vcf_basename}
+        > #{bcftools_stats_path}
+        2> #{bcftools_stats_path}.log
+      COMMAND
+      warn 'bcftools failed' unless ret
 
+      load_bcftools_stats(bcftools_stats_path)
+    end
+
+    private
+
+    def load_bcftools_stats(bcftools_stats_path)
     end
   end
 end

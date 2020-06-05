@@ -18,11 +18,10 @@ module VCReport
         loop do
           reports = scan_samples(data_dir).map do |sample_dir|
             report = sample_report(sample_dir)
-            # report.generate_html(report_dir)
+            report.render(report_dir)
             report
           end
-          pp reports
-          ProgressReport.new(reports).generate_html(report_dir)
+          ProgressReport.new(reports).render(report_dir)
           sleep INTERVAL
         end
       end
@@ -51,32 +50,9 @@ module VCReport
         CHR_REGIONS.each do |chr_region|
           # VCF is supposed to be gzipped
           vcf_path = "#{name}.#{chr_region}.g.vcf.gz"
-          report.vcf_report[chr_region] = vcf_report(vcf_path, metrics_dir)
+          report.vcf_report[chr_region] = VcfReport.run(vcf_path, metrics_dir)
         end
         report
-      end
-
-      # @param vcf_path    [Pathname]
-      # @param metrics_dir [Pathname]
-      # @return            [VcfReport]
-      def vcf_report(vcf_path)
-        bcftools_stats_dir = metrics_dir / 'bcftoosl-stats'
-        FileUitls.mkpath bcftools_stats_dir unless bcftools_stats_dir.exist?
-        vcf_basename = vcf_path.basename
-        bcftools_stats_path = bcftools_stats_dir / "#{vcf_basename}.bcftools-stats"
-        container_data_dir = '/data'
-        ret = system <<~COMMAND.squish
-          singularity exec
-          --bind #{vcf_path.dirname}:#{container_data_dir}
-          docker://biocontainers/bcftools:v1.9-1-deb_cv1
-          bcftools stats
-          #{container_data_dir}/#{vcf_basename}
-          > #{bcftools_stats_path}
-          2> #{bcftools_stats_path}.log
-        COMMAND
-        warn 'bcftools failed' unless ret
-
-        VcfReport.load_bcftools_stats(bcftools_stats_path)
       end
     end
   end
