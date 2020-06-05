@@ -18,7 +18,7 @@ module VCReport
         loop do
           reports = scan_samples(data_dir).map do |sample_dir|
             report = sample_report(sample_dir)
-            report.generate_html(report_dir)
+            # report.generate_html(report_dir)
             report
           end
           pp reports
