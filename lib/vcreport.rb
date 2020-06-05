@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'vcreport/version'
+require 'vcreport/daemon'
 require 'thor'
 
 module VCReport
@@ -12,6 +13,7 @@ module VCReport
 
       desc 'start [DATA_DIR] [REPORT_DIR]', 'Start reporting'
       def start(data_dir, report_dir)
+        Daemon.run(data_dir, report_dir)
       end
 
       desc 'stop [DATA_DIR]', 'Stop reporting'
