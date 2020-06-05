@@ -3,7 +3,7 @@
 require 'vcreport/settings'
 require 'vcreport/sample_report'
 require 'vcreport/chr_regions'
-require 'activesupport'
+require 'active_support'
 require 'active_support/core_ext/string/filters'
 require 'pathname'
 
