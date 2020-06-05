@@ -1,0 +1,5 @@
+#!/usr/bin/env ruby
+
+require 'vcreport'
+
+VCReport::CLI::Main.start
