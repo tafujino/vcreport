@@ -21,6 +21,7 @@ module VCReport
             report.generate_html(report_dir)
             report
           end
+          pp reports
           ProgressReport.new(reports).generate_html(report_dir)
           sleep INTERVAL
         end
