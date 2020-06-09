@@ -44,8 +44,8 @@ module VCReport
       # @param sample_dir [Pathname]
       def run(sample_dir)
         name = sample_dir.basename.to_s
-        warn "sample: #{name}"
-        warn "directory: #{sample_dir}"
+        warn "Sample: #{name}"
+        warn "Directory: #{sample_dir}"
         finish_path = (sample_dir / 'finish')
         return SampleReport.new(name) unless finish_path.exist?
 

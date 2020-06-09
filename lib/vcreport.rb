@@ -12,7 +12,7 @@ module VCReport
         true
       end
 
-      desc 'start [DATA_DIR] [REPORT_DIR]', 'Start reporting'
+      desc 'start [DATA_DIR] [REPORT_DIR]', 'Start a report daemon'
       def start(data_dir, report_dir)
         vcrepd_path = File.expand_path('vcrepd', File.dirname($PROGRAM_NAME))
         say 'Start a report daemon'
@@ -25,7 +25,28 @@ module VCReport
         end
       end
 
-      desc 'stop [DATA_DIR]', 'Stop reporting'
+      desc 'list', 'list running daemons'
+      def list
+        processes = `ps -e`.split("\n").map do |line|
+          fields = line.chomp.split(/\s+/)
+          pid = fields[0]
+          cmd = fields[3..-1]
+          next nil unless cmd[0] =~ %r{(^|/)ruby$} && cmd[1] =~ %r{(^|/)vcrepd$}
+
+          [pid, cmd[2], cmd[3]]
+        end.compact
+        if processes.empty?
+          warn '(empty)'
+          return
+        end
+
+        warn %w[PID DATA_DIR REPORT_DIR].join("\t")
+        processes.each do |pid, data_dir, report_dir|
+          warn [pid, data_dir, report_dir].join("\t")
+        end
+      end
+
+      desc 'stop [DATA_DIR]', 'Stop a report daemon'
       def stop(data_dir)
       end
 

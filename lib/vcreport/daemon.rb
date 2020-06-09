@@ -16,7 +16,7 @@ module VCReport
       def run(data_dir, report_dir, interval = DEFAULT_INTERVAL)
         loop do
           Generate.run(data_dir, report_dir)
-          warn "Sleep #{INTERVAL} seconds"
+          warn "Sleep #{interval} seconds"
           sleep interval
         end
       end
