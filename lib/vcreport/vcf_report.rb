@@ -39,7 +39,7 @@ module VCReport
         bcftools_stats_path = bcftools_stats_dir / "#{vcf_basename}.bcftools-stats"
         container_data_dir = '/data'
         vcf_path = vcf_path.readlink if vcf_path.symlink?
-        ret = sh <<~COMMAND.squish
+        sh <<~COMMAND.squish
           singularity exec
           --bind #{vcf_path.dirname}:#{container_data_dir}
           #{BCFTOOLS_IMAGE_URI}
@@ -48,11 +48,6 @@ module VCReport
           > #{bcftools_stats_path}
           2> #{bcftools_stats_path}.log
         COMMAND
-        unless ret
-          warn 'bcftools failed'
-          exit 1
-        end
-
         load_bcftools_stats(chr_region, bcftools_stats_path)
       end
 
