@@ -58,7 +58,7 @@ module VCReport
           > #{tmp_path}
           2> #{bcftools_stats_path}.log
         COMMAND
-        cp tmp_path, bcftools_stats_path
+        mv tmp_path, bcftools_stats_path
       end
 
       # @param chr_region          [String]
@@ -70,6 +70,7 @@ module VCReport
         end.map do |line|
           line.split("\t")
         end.group_by(&:first)
+        pp field
         sn = field['SN'].map.to_h { |_, _, k, v| [k, v.to_i] }
         num_snps = sn['number of SNPs:']
         num_indels = sn['number of indels:']
