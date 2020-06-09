@@ -27,10 +27,11 @@ module VCReport
 
       desc 'list', 'list running daemons'
       def list
-        processes = `ps -e`.split("\n").map do |line|
+        processes = `ps -ef`.split("\n").map do |line|
           fields = line.chomp.split(/\s+/)
-          pid = fields[0]
-          cmd = fields[3..-1]
+          pid = fields[1]
+          cmd = fields[8..-1]
+          pp cmd
           next nil unless cmd[0] =~ %r{(^|/)ruby$} && cmd[1] =~ %r{(^|/)vcrepd$}
 
           [pid, cmd[2], cmd[3]]
