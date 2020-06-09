@@ -16,9 +16,13 @@ module VCReport
       def start(data_dir, report_dir)
         vcrepd_path = File.expand_path('vcrepd', __dir__)
         say 'Start a report daemon'
-        say "data directory: #{data_dir}"
-        say "report directory: #{report_dir}"
-        system "#{vcrepd_path} #{data_dir} #{report_dir}"
+        say "Data directory: #{data_dir}"
+        say "Report directory: #{report_dir}"
+        ret = system "#{vcrepd_path} #{data_dir} #{report_dir}"
+        unless ret
+          'Report dameon failed'
+          exit 1
+        end
       end
 
       desc 'stop [DATA_DIR]', 'Stop reporting'

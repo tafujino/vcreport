@@ -1,0 +1,10 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'bundler/setup'
+require 'vcreport'
+
+data_dir = ARGV.shift
+report_dir = ARGV.shift
+
+VCReport::Daemon.run(data_dir, report_dir)
