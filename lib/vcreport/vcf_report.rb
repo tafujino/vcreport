@@ -36,8 +36,7 @@ module VCReport
       def run(vcf_path, chr_region, metrics_dir)
         bcftools_stats_dir = metrics_dir / 'bcftools-stats'
         FileUtils.mkpath bcftools_stats_dir unless bcftools_stats_dir.exist?
-        vcf_basename = vcf_path.basename
-        bcftools_stats_path = bcftools_stats_dir / "#{vcf_basename}.bcftools-stats"
+        bcftools_stats_path = bcftools_stats_dir / "#{vcf_path.basename}.bcftools-stats"
         run_bcftools_stats(vcf_path, bcftools_stats_path) unless bcftools_stats_path.exist?
         load_bcftools_stats(chr_region, bcftools_stats_path)
       end
@@ -55,7 +54,7 @@ module VCReport
           --bind #{vcf_path.dirname}:#{container_data_dir}
           #{BCFTOOLS_IMAGE_URI}
           bcftools stats
-          #{container_data_dir}/#{vcf_basename}
+          #{container_data_dir}/#{vcf_path.basename}
           > #{tmp_path}
           2> #{bcftools_stats_path}.log
         COMMAND
