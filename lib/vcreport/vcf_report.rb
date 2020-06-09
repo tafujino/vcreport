@@ -38,21 +38,28 @@ module VCReport
         FileUtils.mkpath bcftools_stats_dir unless bcftools_stats_dir.exist?
         vcf_basename = vcf_path.basename
         bcftools_stats_path = bcftools_stats_dir / "#{vcf_basename}.bcftools-stats"
-        container_data_dir = '/data'
-        vcf_path = vcf_path.readlink if vcf_path.symlink?
-        sh <<~COMMAND.squish
-          singularity exec
-          --bind #{vcf_path.dirname}:#{container_data_dir}
-          #{BCFTOOLS_IMAGE_URI}
-          bcftools stats
-          #{container_data_dir}/#{vcf_basename}
-          > #{bcftools_stats_path}
-          2> #{bcftools_stats_path}.log
-        COMMAND
+        run_bcftools_stats(vcf_path, bcftools_stats_path) unless bcftools_stats_path.exist?
         load_bcftools_stats(chr_region, bcftools_stats_path)
       end
 
       private
+
+      # @param vcf_path            [Pathname]
+      # @param bcftools_stats_path [Pathname]
+      def run_bcftools_stats(vcf_path, bcftools_stats_path)
+        container_data_dir = '/data'
+        vcf_path = vcf_path.readlink if vcf_path.symlink?
+          sh <<~COMMAND.squish
+            singularity exec
+            --bind #{vcf_path.dirname}:#{container_data_dir}
+            #{BCFTOOLS_IMAGE_URI}
+            bcftools stats
+            #{container_data_dir}/#{vcf_basename}
+            > #{bcftools_stats_path}
+            2> #{bcftools_stats_path}.log
+          COMMAND
+        end
+      end
 
       # @param chr_region          [String]
       # @param bcftools_stats_path [Pathname]
