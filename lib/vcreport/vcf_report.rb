@@ -49,16 +49,15 @@ module VCReport
       def run_bcftools_stats(vcf_path, bcftools_stats_path)
         container_data_dir = '/data'
         vcf_path = vcf_path.readlink if vcf_path.symlink?
-          sh <<~COMMAND.squish
-            singularity exec
-            --bind #{vcf_path.dirname}:#{container_data_dir}
-            #{BCFTOOLS_IMAGE_URI}
-            bcftools stats
-            #{container_data_dir}/#{vcf_basename}
-            > #{bcftools_stats_path}
-            2> #{bcftools_stats_path}.log
-          COMMAND
-        end
+        sh <<~COMMAND.squish
+          singularity exec
+          --bind #{vcf_path.dirname}:#{container_data_dir}
+          #{BCFTOOLS_IMAGE_URI}
+          bcftools stats
+          #{container_data_dir}/#{vcf_basename}
+          > #{bcftools_stats_path}
+          2> #{bcftools_stats_path}.log
+        COMMAND
       end
 
       # @param chr_region          [String]
