@@ -38,6 +38,7 @@ module VCReport
         vcf_basename = vcf_path.basename
         bcftools_stats_path = bcftools_stats_dir / "#{vcf_basename}.bcftools-stats"
         container_data_dir = '/data'
+        vcf_path = vcf_path.readlink if vcf_path.symlink?
         ret = sh <<~COMMAND.squish
           singularity exec
           --bind #{vcf_path.dirname}:#{container_data_dir}
