@@ -1,24 +1,24 @@
 # frozen_string_literal: true
 
-require 'vcreport/settings'
-require 'vcreport/generate'
-require 'vcreport/sample_report'
 require 'vcreport/progress_report'
-require 'active_support'
-require 'active_support/core_ext/string/filters'
+require 'vcreport/sample_report'
 require 'pathname'
 
 module VCReport
-  module Daemon
+  module Generate
     class << self
       # @param data_dir [String]
       # @param report_dir [String]
-      def run(data_dir, report_dir, interval = DEFAULT_INTERVAL)
-        loop do
-          Generate.run(data_dir, report_dir)
-          warn "Sleep #{INTERVAL} seconds"
-          sleep interval
+      def run(data_dir, report_dir)
+        data_dir = Pathname.new(data_dir)
+        report_dir = Pathname.new(report_dir)
+        sample_dirs = scan_sample_directories(data_dir)
+        reports = sample_dirs.map do |sample_dir|
+          SampleReport
+            .run(sample_dir)
+            .tap { |report| report.render(report_dir) }
         end
+        ProgressReport.new(data_dir, reports).render(report_dir)
       end
 
       private

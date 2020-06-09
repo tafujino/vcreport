@@ -1,0 +1,13 @@
+# <%= @name %>
+
+## VCF metrics
+
+### bcftools stats
+
+`<%= VCReport::VcfReport::BCFTOOLS_IMAGE_URI %>`
+
+| chr. region | # of snps | # of indels | ts/tv |
+|---|---|---|---|
+<% VCReport::CHR_REGIONS.each do |chr_region| -%>
+| <%= chr_region %> | | | |
+<% end -%>

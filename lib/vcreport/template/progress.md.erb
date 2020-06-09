@@ -1,0 +1,7 @@
+`<%= @data_dir.to_s -%>`
+
+| name | end time |
+|---|---|
+<% @sample_reports.each do |report| -%>
+| [<%= report.name %>](<%= report.name %>/report.html) | <%= report.end_time %> |
+<% end -%>

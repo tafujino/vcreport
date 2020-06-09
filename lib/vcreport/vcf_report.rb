@@ -29,7 +29,7 @@ module VCReport
   class << self
     # @param vcf_path    [Pathname]
     # @param metrics_dir [Pathname]
-    # @return            [VcfReport]
+    # @return            [VcfReport, nil]
     def run(vcf_path)
       bcftools_stats_dir = metrics_dir / 'bcftoosl-stats'
       FileUtils.mkpath bcftools_stats_dir unless bcftools_stats_dir.exist?
