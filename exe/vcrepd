@@ -7,8 +7,4 @@ require 'vcreport'
 data_dir = ARGV.shift
 report_dir = ARGV.shift
 
-pp Process.pid
-
-Process.daemon(true, true)
-
 VCReport::Daemon.run(data_dir, report_dir)
