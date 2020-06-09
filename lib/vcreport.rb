@@ -14,7 +14,7 @@ module VCReport
 
       desc 'start [DATA_DIR] [REPORT_DIR]', 'Start reporting'
       def start(data_dir, report_dir)
-        vcrepd_path = File.expand_path('vcrepd', $PROGRAM_NAME)
+        vcrepd_path = File.expand_path('vcrepd', File.dirname($PROGRAM_NAME))
         pp vcrepd_path
         say 'Start a report daemon'
         say "Data directory: #{data_dir}"
