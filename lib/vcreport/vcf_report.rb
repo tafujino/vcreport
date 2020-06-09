@@ -33,7 +33,7 @@ module VCReport
       # @param metrics_dir [Pathname]
       # @return            [VcfReport, nil]
       def run(vcf_path, metrics_dir)
-        bcftools_stats_dir = metrics_dir / 'bcftoosl-stats'
+        bcftools_stats_dir = metrics_dir / 'bcftools-stats'
         FileUtils.mkpath bcftools_stats_dir unless bcftools_stats_dir.exist?
         vcf_basename = vcf_path.basename
         bcftools_stats_path = bcftools_stats_dir / "#{vcf_basename}.bcftools-stats"
@@ -48,14 +48,30 @@ module VCReport
           > #{bcftools_stats_path}
           2> #{bcftools_stats_path}.log
         COMMAND
-        warn 'bcftools failed' unless ret
+        unless ret
+          warn 'bcftools failed'
+          exit 1
+        end
 
-        load_bcftools_stats(bcftools_stats_path)
+        load_bcftools_stats(chr_region, bcftools_stats_path)
       end
 
       private
 
-      def load_bcftools_stats(bcftools_stats_path)
+      # @param chr_region          [String]
+      # @param bcftools_stats_path [Pathname]
+      # @return                    [VcfReport]
+      def load_bcftools_stats(chr_region, bcftools_stats_path)
+        field = File.readlines(bcftools_stats_path, chomp: true).reject do |line|
+          line =~ /^#/
+        end.map do |line|
+          line.split("\t")
+        end.group_by(&:first)
+        sn = field['SN'].map.to_h { |_, _, k, v| [k, v.to_i] }
+        num_snps = sn['number of SNPs:']
+        num_indels = sn['number of indels:']
+        ts_tv_ratio = field['TSTV'][4].to_f
+        VcfReport.new(chr_region, num_snps, num_indels, ts_tv_ratio)
       end
     end
   end
