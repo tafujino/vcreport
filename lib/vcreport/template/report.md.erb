@@ -8,6 +8,6 @@
 
 | chr. region | # of snps | # of indels | ts/tv |
 |---|---|---|---|
-<% VCReport::CHR_REGIONS.each do |chr_region| -%>
-| <%= chr_region %> | | | |
+<% @vcf_reports.each do |report| -%>
+| <%= report.chr_region %> | <%= report.num_snps %> | <%= report.num_indels %> | <%= report.ts_tv_ratio %> |
 <% end -%>

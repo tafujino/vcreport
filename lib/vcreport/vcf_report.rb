@@ -71,11 +71,9 @@ module VCReport
           line.split("\t")
         end.group_by(&:first)
         sn = field['SN'].map.to_h { |_, _, k, v| [k, v.to_i] }
-        pp sn
         num_snps = sn['number of SNPs:']
         num_indels = sn['number of indels:']
         ts_tv_ratio = field['TSTV'].first[4].to_f
-        pp ts_tv_ratio
         VcfReport.new(chr_region, num_snps, num_indels, ts_tv_ratio)
       end
     end
