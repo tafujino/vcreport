@@ -30,9 +30,10 @@ module VCReport
 
     class << self
       # @param vcf_path    [Pathname]
+      # @param chr_region  [String]
       # @param metrics_dir [Pathname]
       # @return            [VcfReport, nil]
-      def run(vcf_path, metrics_dir)
+      def run(vcf_path, chr_region, metrics_dir)
         bcftools_stats_dir = metrics_dir / 'bcftools-stats'
         FileUtils.mkpath bcftools_stats_dir unless bcftools_stats_dir.exist?
         vcf_basename = vcf_path.basename

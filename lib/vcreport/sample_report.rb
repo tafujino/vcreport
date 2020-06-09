@@ -54,7 +54,7 @@ module VCReport
         vcf_reports = CHR_REGIONS.map do |chr_region|
           # VCF is supposed to be gzipped
           vcf_path = sample_dir / "#{name}.#{chr_region}.g.vcf.gz"
-          VcfReport.run(vcf_path, metrics_dir)
+          VcfReport.run(vcf_path, chr_region, metrics_dir)
         end.compact
         SampleReport.new(name, end_time, vcf_reports)
       end
