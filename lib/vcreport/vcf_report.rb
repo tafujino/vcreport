@@ -17,26 +17,25 @@ module VCReport
 
     # @return [Float]
     attr_reader :ts_tv_ratio
-  end
 
-  def initialize(chr_region, num_snps, num_indels, ts_tv_ratio)
-    @chr_region = chr_region
-    @num_snps = num_snps
-    @num_indels = num_indels
-    @ts_tv_ratio = ts_tv_ratio
-  end
+    def initialize(chr_region, num_snps, num_indels, ts_tv_ratio)
+      @chr_region = chr_region
+      @num_snps = num_snps
+      @num_indels = num_indels
+      @ts_tv_ratio = ts_tv_ratio
+    end
 
-  class << self
-    # @param vcf_path    [Pathname]
-    # @param metrics_dir [Pathname]
-    # @return            [VcfReport, nil]
-    def run(vcf_path)
-      bcftools_stats_dir = metrics_dir / 'bcftoosl-stats'
-      FileUtils.mkpath bcftools_stats_dir unless bcftools_stats_dir.exist?
-      vcf_basename = vcf_path.basename
-      bcftools_stats_path = bcftools_stats_dir / "#{vcf_basename}.bcftools-stats"
-      container_data_dir = '/data'
-      ret = system <<~COMMAND.squish
+    class << self
+      # @param vcf_path    [Pathname]
+      # @param metrics_dir [Pathname]
+      # @return            [VcfReport, nil]
+      def run(vcf_path)
+        bcftools_stats_dir = metrics_dir / 'bcftoosl-stats'
+        FileUtils.mkpath bcftools_stats_dir unless bcftools_stats_dir.exist?
+        vcf_basename = vcf_path.basename
+        bcftools_stats_path = bcftools_stats_dir / "#{vcf_basename}.bcftools-stats"
+        container_data_dir = '/data'
+        ret = system <<~COMMAND.squish
         singularity exec
         --bind #{vcf_path.dirname}:#{container_data_dir}
         #{BCFTOOLS_IMAGE_URI}
@@ -45,14 +44,15 @@ module VCReport
         > #{bcftools_stats_path}
         2> #{bcftools_stats_path}.log
       COMMAND
-      warn 'bcftools failed' unless ret
+        warn 'bcftools failed' unless ret
 
-      load_bcftools_stats(bcftools_stats_path)
-    end
+        load_bcftools_stats(bcftools_stats_path)
+      end
 
-    private
+      private
 
-    def load_bcftools_stats(bcftools_stats_path)
+      def load_bcftools_stats(bcftools_stats_path)
+      end
     end
   end
 end
