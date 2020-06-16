@@ -15,12 +15,8 @@ module VCReport
 
       desc 'start [DIRECTORY]', 'Start a daemon'
       def start(dir)
-        vcrepd_path = File.expand_path('vcrepd', File.dirname($PROGRAM_NAME))
         say 'Start a report daemon'
-        say "Data directory: #{data_dir}"
-        say "Report directory: #{report_dir}"
-        pid = spawn "#{vcrepd_path} #{data_dir} #{report_dir} 2>&1 > /dev/null"
-        Process.detach(pid)
+        say "Directory: #{dir}"
       end
 
       desc 'stop [DIRECTORY]', 'Stop a daemon'
@@ -33,7 +29,7 @@ module VCReport
       end
 
       desc 'metrics [DIRECTORY]', 'Calculate metrics'
-      def stats(dir)
+      def metrics(dir)
         Metrics.run(dir)
       end
     end
