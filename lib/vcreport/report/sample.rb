@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
+require 'vcreport/scan'
 require 'vcreport/report/vcf'
 require 'vcreport/report/render'
 require 'vcreport/metrics/vcf'
-require 'vcreport/chr_regions'
 require 'fileutils'
 require 'pathname'
 
@@ -53,9 +53,7 @@ module VCReport
 
           end_time = File::Stat.new(finish_path).mtime
           metrics_dir = sample_dir / 'metrics'
-          vcf_reports = CHR_REGIONS.map do |chr_region|
-            # VCF is supposed to be gzipped
-            vcf_path = sample_dir / "#{name}.#{chr_region}.g.vcf.gz"
+          vcf_reports = Scan.vcf_paths(sample_dir).map do |vcf_path|
             vcf_metrics = Metrics::Vcf.new(vcf_path, metrics_dir)
             Report::Vcf.run(vcf_metrics, chr_region)
           end.compact
