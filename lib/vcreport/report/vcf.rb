@@ -29,11 +29,13 @@ module VCReport
       end
 
       class << self
-        # @param vcf_stats   [Stats::Vcf]
+        # @param vcf_path    [Pathname]
         # @param chr_region  [String]
-        # @return            [VcfReport, nil]
-        def run(vcf_stats, chr_region)
-          bcftools_stats_path = vcf_stats.bcftools_stats_path
+        # @param metrics_dir [Pathname]
+        # @return            [Report::Vcf, nil]
+        def run(vcf_path, chr_region, metrics_dir)
+          bcftools_stats_path =
+            metrics_dir / 'bcftools_stats_path' / "#{vcf_path.basename}.bcftools-stats"
           if bcftools_stats_path.exist?
             load_bcftools_stats(chr_region, bcftools_stats_path)
           else
@@ -45,7 +47,7 @@ module VCReport
 
         # @param chr_region          [String]
         # @param bcftools_stats_path [Pathname]
-        # @return                    [VcfReport]
+        # @return                    [Report::Vcf]
         def load_bcftools_stats(chr_region, bcftools_stats_path)
           field = File.readlines(bcftools_stats_path, chomp: true).reject do |line|
             line =~ /^#/
@@ -56,7 +58,7 @@ module VCReport
           num_snps = sn['number of SNPs:']
           num_indels = sn['number of indels:']
           ts_tv_ratio = field['TSTV'].first[4].to_f
-          VcfReport.new(chr_region, num_snps, num_indels, ts_tv_ratio)
+          Report::Vcf.new(chr_region, num_snps, num_indels, ts_tv_ratio)
         end
       end
     end
