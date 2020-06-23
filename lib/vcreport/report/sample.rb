@@ -55,21 +55,12 @@ module VCReport
 
           end_time = File::Stat.new(finish_path).mtime
           metrics_dir = sample_dir / 'metrics'
-          vcf_reports = vcf_paths(sample_dir).map do |vcf_path|
+          vcf_reports = CHR_REGIONS.map do |chr_region|
+            # VCF is supposed to be gzipped
+            vcf_path = sample_dir / "#{name}.#{chr_region}.g.vcf.gz"
             Report::Vcf.run(vcf_path, chr_region, metrics_dir, metrics_manager)
           end.compact
           Report::Sample.new(name, end_time, vcf_reports)
-        end
-
-        private
-
-        # @param dir [Pathname]
-        def vcf_paths(sample_dir)
-          CHR_REGIONS.map do |chr_region|
-            sample_name = sample_dir.basename
-            # VCF is supposed to be gzipped
-            sample_dir / "#{sample_name}.#{chr_region}.g.vcf.gz"
-          end
         end
       end
     end
