@@ -1,15 +1,12 @@
 # frozen_string_literal: true
 
 require 'fileutils'
-require 'rake'
 require 'vcreport/metrics_manager'
 
 module VCReport
   module Report
     class Vcf
       BCFTOOLS_IMAGE_URI = 'docker://biocontainers/bcftools:v1.9-1-deb_cv1'
-
-      extend Rake::DSL
 
       # @return [String]
       attr_reader :chr_region
@@ -86,7 +83,7 @@ module VCReport
             > #{tmp_path}
             2> #{bcftools_stats_path}.log
           COMMAND
-          mv(tmp_path, bcftools_stats_path) if is_success
+          FileUtils.mv(tmp_path, bcftools_stats_path) if is_success
           is_success
         end
       end
