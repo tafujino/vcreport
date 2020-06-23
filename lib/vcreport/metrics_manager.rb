@@ -55,6 +55,7 @@ module VCReport
           say_status 'fail', result_path, :red
           :fail
         end
+      end
     end
 
     def wait
