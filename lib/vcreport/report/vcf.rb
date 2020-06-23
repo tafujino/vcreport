@@ -38,7 +38,7 @@ module VCReport
         # @return            [Report::Vcf, nil]
         def run(vcf_path, chr_region, metrics_dir, metrics_manager)
           bcftools_stats_path =
-            metrics_dir / 'bcftools_stats_path' / "#{vcf_path.basename}.bcftools-stats"
+            metrics_dir / 'bcftools-stats' / "#{vcf_path.basename}.bcftools-stats"
           if bcftools_stats_path.exist?
             load_bcftools_stats(chr_region, bcftools_stats_path)
           else
