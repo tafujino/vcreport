@@ -46,7 +46,7 @@ module VCReport
       # when staus is :fail or nil
       @job_status[result_path] = :unfinished
       @job_status[result_path] = @pool.post do
-        say_status 'start', result_path, :green
+        say_status 'start', result_path, :blue
         is_success = yield
         if is_success
           say_status 'create', result_path, :green
