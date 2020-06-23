@@ -3,6 +3,7 @@ PATH
   specs:
     vcreport (0.1.0)
       activesupport
+      concurrent-ruby
       redcarpet
       thor
 

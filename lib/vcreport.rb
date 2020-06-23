@@ -3,7 +3,6 @@
 require 'vcreport/version'
 require 'vcreport/settings'
 require 'vcreport/report'
-require 'vcreport/metrics'
 require 'thor'
 
 module VCReport
@@ -30,7 +29,7 @@ module VCReport
 
       desc 'metrics [DIRECTORY]', 'Calculate metrics'
       def metrics(dir)
-        Metrics.run(dir)
+#        Metrics.run(dir)
       end
     end
   end

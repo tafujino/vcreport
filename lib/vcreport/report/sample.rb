@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 
-require 'vcreport/scan'
 require 'vcreport/report/vcf'
 require 'vcreport/report/render'
-require 'vcreport/metrics/vcf'
+require 'vcreport/metrics_manager'
 require 'fileutils'
 require 'pathname'
 
@@ -43,8 +42,10 @@ module VCReport
       end
 
       class << self
-        # @param sample_dir [Pathname]
-        def run(sample_dir)
+        # @param sample_dir      [Pathname]
+        # @param metrics_manager [MetricsManager]
+        # @return                [Report::Sample]
+        def run(sample_dir, metrics_manager)
           name = sample_dir.basename.to_s
           warn "Sample: #{name}"
           warn "Directory: #{sample_dir}"
@@ -54,7 +55,7 @@ module VCReport
           end_time = File::Stat.new(finish_path).mtime
           metrics_dir = sample_dir / 'metrics'
           vcf_reports = vcf_paths(sample_dir).map do |vcf_path|
-            Report::Vcf.run(vcf_path, chr_region, metrics_dir)
+            Report::Vcf.run(vcf_path, chr_region, metrics_dir, metrics_manager)
           end.compact
           Report::Sample.new(name, end_time, vcf_reports)
         end
