@@ -54,7 +54,7 @@ module VCReport
         else
           say_status 'fail', result_path, :red
           :fail
-#        end
+        end
       end
     end
 
