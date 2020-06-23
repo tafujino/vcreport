@@ -68,6 +68,7 @@ module VCReport
           o.each { |s| puts s }
           e.each { |s| warn s }
           value = w.value
+          pp w
         end
         value.success?
       end
