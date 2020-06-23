@@ -45,7 +45,7 @@ module VCReport
       end
       # when staus is :fail or nil
       @job_status[result_path] = :unfinished
-      @job_status[result_path] = instance_eval do #@pool.post do
+      @job_status[result_path] = @pool.post do
         say_status 'start', result_path, :green
         is_success = yield
         if is_success
@@ -55,7 +55,11 @@ module VCReport
           say_status 'fail', result_path, :red
           :fail
         end
-      end
+    end
+
+    def wait
+      @pool.shutdown
+      @pool.wait_for_termination
     end
 
     class << self
@@ -68,7 +72,6 @@ module VCReport
           o.each { |s| puts s }
           e.each { |s| warn s }
           value = w.value
-          pp w
         end
         value.success?
       end

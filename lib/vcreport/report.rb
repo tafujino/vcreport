@@ -21,6 +21,7 @@ module VCReport
             .tap { |report| report.render(report_dir) }
         end
         Report::Progress.new(dir, reports).render(report_dir)
+        metrics_manager.wait
       end
 
       private
