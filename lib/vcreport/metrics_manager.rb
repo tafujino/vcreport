@@ -49,7 +49,7 @@ module VCReport
         say_status 'start', result_path, :green
         is_success = yield
         if is_success
-          say_status 'success', result_path, :green
+          say_status 'create', result_path, :green
           :success
         else
           say_status 'fail', result_path, :red

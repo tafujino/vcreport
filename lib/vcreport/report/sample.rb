@@ -48,8 +48,6 @@ module VCReport
         # @return                [Report::Sample]
         def run(sample_dir, metrics_manager)
           name = sample_dir.basename.to_s
-          warn "Sample: #{name}"
-          warn "Directory: #{sample_dir}"
           finish_path = (sample_dir / 'finish')
           return Report::Sample.new(name) unless finish_path.exist?
 
