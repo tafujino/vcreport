@@ -5,9 +5,12 @@ require 'active_support'
 require 'active_support/core_ext/string/filters'
 require 'pathname'
 require 'open3'
+require 'thor'
 
 module VCReport
   class MetricsManager
+    include Thor::Shell
+
     # @return [Integer]
     attr_reader :num_threads
 
@@ -25,15 +28,17 @@ module VCReport
       result_path = result_path.to_s
       case @job_status[result_path]
       when :success
-        return if File.exist?(result_path)
-
+        if File.exist?(result_path)
+          say_status result_path, 'skip', :yellow
+          return
+        end
         warn <<~MESSAGE.squish
           File does not exist but job status is 'success'.
           Something went wrong: #{result_path}
         MESSAGE
-        return
       when :unfinished
         # the job is already in queue
+        say_status result_path, 'queued', :yellow
         return
       when :fail
         warn "Restart metrics calculation: #{result_path}"
@@ -41,8 +46,15 @@ module VCReport
       # when staus is :fail or nil
       @job_status[result_path] = :unfinished
       @job_status[result_path] = @pool.post do
-        status = yield
-        status ? :success : :fail
+        say_status result_path, 'start', :yellow
+        is_success = yield
+        if is_success
+          say_status result_path, 'success', :green
+          :success
+        else
+          say_status result_path, 'fail', :green
+          :fail
+        end
       end
     end
 
