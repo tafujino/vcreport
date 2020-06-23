@@ -29,7 +29,7 @@ module VCReport
       case @job_status[result_path]
       when :success
         if File.exist?(result_path)
-          say_status result_path, 'skip', :yellow
+          say_status 'skip', result_path, :yellow
           return
         end
         warn <<~MESSAGE.squish
@@ -38,7 +38,7 @@ module VCReport
         MESSAGE
       when :unfinished
         # the job is already in queue
-        say_status result_path, 'queued', :yellow
+        say_status 'queued', result_path, :yellow
         return
       when :fail
         warn "Restart metrics calculation: #{result_path}"
@@ -46,13 +46,13 @@ module VCReport
       # when staus is :fail or nil
       @job_status[result_path] = :unfinished
       @job_status[result_path] = @pool.post do
-        say_status result_path, 'start', :yellow
+        say_status 'start', result_path, :green
         is_success = yield
         if is_success
-          say_status result_path, 'success', :green
+          say_status 'success', result_path, :green
           :success
         else
-          say_status result_path, 'fail', :green
+          say_status 'fail', result_path, :red
           :fail
         end
       end

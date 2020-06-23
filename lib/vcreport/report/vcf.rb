@@ -42,7 +42,7 @@ module VCReport
           if bcftools_stats_path.exist?
             load_bcftools_stats(chr_region, bcftools_stats_path)
           else
-            metrics_manager.post(vcf_path) do
+            metrics_manager.post(bcftools_stats_path) do
               run_bcftools_stats(vcf_path, bcftools_stats_path)
             end
             Report::Vcf.new(chr_region)
