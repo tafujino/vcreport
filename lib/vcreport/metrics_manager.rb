@@ -26,12 +26,12 @@ module VCReport
     # @param result_path [String, Pathname]
     def post(result_path)
       result_path = result_path.to_s
+      if File.exist?(result_path)
+        say_status 'skip', result_path, :yellow
+        return
+      end
       case @job_status[result_path]
       when :success
-        if File.exist?(result_path)
-          say_status 'skip', result_path, :yellow
-          return
-        end
         warn <<~MESSAGE.squish
           File does not exist but job status is 'success'.
           Something went wrong: #{result_path}

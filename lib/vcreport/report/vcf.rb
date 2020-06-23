@@ -85,7 +85,7 @@ module VCReport
             > #{tmp_path}
             2> #{bcftools_stats_path}.log
           COMMAND
-          mv tmp_path, bcftools_stats_path if is_success
+          mv(tmp_path, bcftools_stats_path) if is_success
           is_success
         end
       end
