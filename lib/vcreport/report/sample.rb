@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'vcreport/chr_regions'
 require 'vcreport/report/vcf'
 require 'vcreport/report/render'
 require 'vcreport/metrics_manager'
