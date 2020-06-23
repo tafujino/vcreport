@@ -73,6 +73,8 @@ module VCReport
         def run_bcftools_stats(vcf_path, bcftools_stats_path)
           container_data_dir = '/data'
           vcf_path = vcf_path.readlink if vcf_path.symlink?
+          out_dir = File.dirname(bcftools_stats_path)
+          FileUtils.mkpath out_dir unless File.exist?(out_dir)
           tmp_path = "#{bcftools_stats_path}.tmp"
           is_success = MetricsManager.shell <<~COMMAND.squish
             singularity exec
