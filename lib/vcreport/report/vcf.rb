@@ -45,7 +45,7 @@ module VCReport
             metrics_manager.post(vcf_path) do
               run_bcftools_stats(vcf_path, bcftools_stats_path)
             end
-            VCReport.new(chr_region)
+            Report::Vcf.new(chr_region)
           end
         end
 
