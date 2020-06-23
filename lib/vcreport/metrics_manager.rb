@@ -67,7 +67,6 @@ module VCReport
       # @param command [String]
       # @return        [Boolean] true iff the command succeeded
       def shell(command)
-        warn command
         value = nil
         Open3.popen3(command) do |_, o, e, w|
           o.each { |s| puts s }
