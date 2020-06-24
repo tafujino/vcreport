@@ -3,6 +3,7 @@
 require 'vcreport/version'
 require 'vcreport/settings'
 require 'vcreport/report'
+require 'vcreport/daemon'
 require 'thor'
 
 module VCReport
@@ -14,12 +15,36 @@ module VCReport
 
       desc 'start [DIRECTORY]', 'Start a daemon'
       def start(dir)
-        say 'Start a report daemon'
-        say "Directory: #{dir}"
+        say_status 'start', dir, :green
+        metrics_manager = MetricsManager.new(METRICS_NUM_THREADS)
+        Daemon.run(dir) do
+          Report.run(dir, metrics_manager)
+        end
       end
 
       desc 'stop [DIRECTORY]', 'Stop a daemon'
       def stop(dir)
+        case Daemon.stop(dir)
+        when :success
+          say_status 'stop', dir, :green
+        when :not_running
+          say_status 'not running', dir, :yellow
+        when :fail
+          say_status 'fail', dir, :red
+        else
+          warn 'Unexpected error'
+          exit 1
+        end
+      end
+
+      desc 'status [DIRECTORY]', 'Show daemon status'
+      def status(dir)
+        pid = Daemon.status(dir)
+        if pid
+          say_status 'running', "#{dir} (pid = #{pid})", :green
+        else
+          say_status 'not running', dir, :green
+        end
       end
 
       desc 'render [DIRECTORY]', 'Generate reports'
