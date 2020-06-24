@@ -24,7 +24,6 @@ module VCReport
       # Hash{ String => Symbol }
       # The value may be :success, :fail, :unfinished
       @job_status = {}
-      @should_terminate = false
     end
 
     # @param result_path [String, Pathname]
@@ -65,15 +64,6 @@ module VCReport
     def wait
       @pool.shutdown
       @pool.wait_for_termination
-    end
-
-    def kill
-      @pool.kill
-      @pool.wait_for_termination
-    end
-
-    def stop_signal
-      @should_terminate = true
     end
 
     class << self
