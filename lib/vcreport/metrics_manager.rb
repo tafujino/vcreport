@@ -79,13 +79,14 @@ module VCReport
       # @param command [String]
       # @return        [Boolean] true iff the command succeeded
       def shell(command)
-        value = nil
-        Open3.popen3(command) do |_, o, e, w|
-          o.each { |s| puts s }
-          e.each { |s| warn s }
-          value = w.value
-        end
-        value.success?
+        system(command)
+#        value = nil
+#        Open3.popen3(command) do |_, o, e, w|
+#          o.each { |s| puts s }
+#          e.each { |s| warn s }
+#          value = w.value
+#        end
+#        value.success?
       end
     end
   end
