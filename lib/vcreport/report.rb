@@ -12,15 +12,15 @@ module VCReport
     class << self
       # @param dir             [String]
       # @param metrics_manager [MetricsManager, nil]
-      def run(dir, metrics_manager = nil)
+      def run(dir, metrics_manager = nil, render: true)
         dir = Pathname.new(dir)
         report_dir = dir / REPORT_DIR
         reports = sample_dirs(dir).map do |sample_dir|
           Report::Sample
             .run(sample_dir, metrics_manager)
-            .tap { |report| report.render(report_dir) }
+            .tap { |report| report.render(report_dir) if render }
         end
-        Report::Progress.new(dir, reports).render(report_dir)
+        Report::Progress.new(dir, reports).render(report_dir) if render
       end
 
       private

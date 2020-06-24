@@ -30,7 +30,7 @@ module VCReport
       desc 'metrics [DIRECTORY]', 'Calculate metrics'
       def metrics(dir)
         metrics_manager = MetricsManager.new(METRICS_NUM_THREADS)
-        Report.run(dir, metrics_manager)
+        Report.run(dir, metrics_manager, render: false)
         metrics_manager.wait
       end
     end
