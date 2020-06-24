@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'vcreport/settings'
 require 'concurrent-ruby'
 require 'active_support'
 require 'active_support/core_ext/string/filters'
@@ -18,7 +19,7 @@ module VCReport
     attr_reader :should_terminate
 
     # @param num_threads [Integer]
-    def initialize(num_threads)
+    def initialize(num_threads = DEFAULT_METRICS_NUM_THREADS)
       @num_threads = num_threads
       @pool = Concurrent::FixedThreadPool.new(num_threads)
       # Hash{ String => Symbol }
@@ -46,7 +47,7 @@ module VCReport
       when :fail
         warn "Restart metrics calculation: #{result_path}"
       end
-      # when staus is :fail or nil
+      # when status is :fail or nil
       @job_status[result_path] = :unfinished
       @job_status[result_path] = @pool.post do
         say_status 'start', result_path, :blue

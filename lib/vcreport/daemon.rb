@@ -11,8 +11,7 @@ module VCReport
       # @param dir              [String]
       # @param metrics_manager  [MetricsManager]
       # @param metrics_interval [Integer] in second
-      def run(dir, metrics_manager, metrics_interval = nil)
-        metrics_interval ||= DEFAULT_METRICS_INTERVAL
+      def start(dir, metrics_manager, metrics_interval = DEFAULT_METRICS_INTERVAL)
         Process.daemon(true)
         store_pid(dir)
         loop do
@@ -22,7 +21,7 @@ module VCReport
       end
 
       # @param dir [String, Pathname]
-      # @return    [Hash { Symbol => Integer }]
+      # @return    [Hash { Symbol => Integer }, nil] { pid: ___, pgid: ___ }
       def status(dir)
         ps = load_pid(dir)
         return nil unless ps
@@ -41,6 +40,7 @@ module VCReport
         return :not_running unless ps
 
         begin
+          # stop the daemon itself and child processes for metrics calculation
           Process.kill '-TERM', ps[:pgid] if status(dir)
           FileUtils.remove_entry_secure(pid_path(dir))
           :success
@@ -59,7 +59,7 @@ module VCReport
       end
 
       # @param dir [String, Pathname]
-      # @return    [Hash{ Symbol => Integer }, nil]
+      # @return    [Hash{ Symbol => Integer }, nil] { pid: ___, pgid: ___ }
       def load_pid(dir)
         return nil unless File.exist?(pid_path(dir))
 
