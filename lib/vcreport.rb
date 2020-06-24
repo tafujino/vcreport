@@ -18,7 +18,7 @@ module VCReport
       option 'interval', aliases: 'i', type: :numeric, desc: 'monitoring interval (seconds)'
       def start(dir)
         say_status 'start', dir, :green
-        num_threads = options['num-threads'] || DEFAULT_METRICS_NUM_THREADS
+        num_threads = options['threads'] || DEFAULT_METRICS_NUM_THREADS
         metrics_interval = options['interval'] || Daemon::DEFAULT_METRICS_INTERVAL
         metrics_manager = MetricsManager.new(num_threads)
         Daemon.start(dir, metrics_manager, metrics_interval)
@@ -58,7 +58,7 @@ module VCReport
       desc 'metrics [DIRECTORY]', 'Calculate metrics'
       option 'threads', aliases: 't', type: :numeric, desc: 'number of threads for metrics calculation'
       def metrics(dir)
-        num_threads = options['num-threads'] || DEFAULT_METRICS_NUM_THREADS
+        num_threads = options['threads'] || DEFAULT_METRICS_NUM_THREADS
         metrics_manager = MetricsManager.new(num_threads)
         Report.run(dir, metrics_manager, render: false)
         metrics_manager.wait
