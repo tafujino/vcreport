@@ -10,18 +10,17 @@ require 'pathname'
 module VCReport
   module Report
     class << self
-      # @param dir [String]
-      def run(dir)
+      # @param dir             [String]
+      # @param metrics_manager [MetricsManager, nil]
+      def run(dir, metrics_manager = nil)
         dir = Pathname.new(dir)
         report_dir = dir / REPORT_DIR
-        metrics_manager = MetricsManager.new(METRICS_NUM_THREADS)
         reports = sample_dirs(dir).map do |sample_dir|
           Report::Sample
             .run(sample_dir, metrics_manager)
             .tap { |report| report.render(report_dir) }
         end
         Report::Progress.new(dir, reports).render(report_dir)
-        metrics_manager.wait
       end
 
       private

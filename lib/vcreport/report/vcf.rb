@@ -28,11 +28,11 @@ module VCReport
       end
 
       class << self
-        # @param vcf_path    [Pathname]
-        # @param chr_region  [String]
-        # @param metrics_dir [Pathname]
-        # @param metrics_dir [MetricsManager]
-        # @return            [Report::Vcf, nil]
+        # @param vcf_path        [Pathname]
+        # @param chr_region      [String]
+        # @param metrics_dir     [Pathname]
+        # @param metrics_manager [MetricsManager, nil]
+        # @return                [Report::Vcf, nil]
         def run(vcf_path, chr_region, metrics_dir, metrics_manager)
           bcftools_stats_path =
             metrics_dir / 'bcftools-stats' / "#{vcf_path.basename}.bcftools-stats"
@@ -41,7 +41,7 @@ module VCReport
                    else
                      Report::Vcf.new(chr_region)
                    end
-          metrics_manager.post(bcftools_stats_path) do
+          metrics_manager&.post(bcftools_stats_path) do
             run_bcftools_stats(vcf_path, bcftools_stats_path)
           end
           report

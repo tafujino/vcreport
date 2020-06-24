@@ -22,14 +22,16 @@ module VCReport
       def stop(dir)
       end
 
-      desc 'report [DIRECTORY]', 'Generate reports'
-      def report(dir)
+      desc 'render [DIRECTORY]', 'Generate reports'
+      def render(dir)
         Report.run(dir)
       end
 
       desc 'metrics [DIRECTORY]', 'Calculate metrics'
       def metrics(dir)
-#        Metrics.run(dir)
+        metrics_manager = MetricsManager.new(METRICS_NUM_THREADS)
+        Report.run(dir, metrics_manager)
+        metrics_manager.wait
       end
     end
   end

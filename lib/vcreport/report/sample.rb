@@ -44,7 +44,7 @@ module VCReport
 
       class << self
         # @param sample_dir      [Pathname]
-        # @param metrics_manager [MetricsManager]
+        # @param metrics_manager [MetricsManager, nil]
         # @return                [Report::Sample]
         def run(sample_dir, metrics_manager)
           name = sample_dir.basename.to_s
