@@ -11,7 +11,7 @@ module VCReport
       # @param interval [Integer] in second
       def run(dir, interval = nil)
         interval ||= DEFAULT_INTERVAL
-        Process.daemon(true)
+        Process.daemon(true, true)
         store_pid(dir)
         loop do
           yield
