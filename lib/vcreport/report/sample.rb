@@ -38,8 +38,8 @@ module VCReport
         report_dir = Pathname.new(report_dir)
         out_dir = report_dir / @name
         FileUtils.mkpath out_dir unless File.exist?(out_dir)
-        render_markdown(PREFIX, out_dir, should_overwrite)
-        render_html(PREFIX, out_dir, should_overwrite)
+        render_markdown(PREFIX, out_dir, should_overwrite: should_overwrite)
+        render_html(PREFIX, out_dir, should_overwrite: should_overwrite)
       end
 
       class << self

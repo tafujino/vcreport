@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'vcreport/settings'
 require 'vcreport/report/sample'
 require 'vcreport/report/render'
 require 'pathname'
@@ -29,8 +30,16 @@ module VCReport
       def render(report_dir)
         report_dir = Pathname.new(report_dir)
         FileUtils.mkpath report_dir unless File.exist?(report_dir)
-        render_markdown(PREFIX, report_dir)
-        render_html(PREFIX, report_dir)
+        num_samples_per_page = DEFAULT_NUM_SAMPLES_PER_PAGE
+        slices = @sample_reports.each_slice(num_samples_per_page).to_a
+        num_slices = slices.length
+        slices.each.with_index(1) do |slice_reports, page_num|
+          paging = Paging.new(page_num, num_slices)
+          # @slice_reports are passed to ERB
+          @slice_reports = slice_reports
+          render_markdown(PREFIX, report_dir, paging: paging)
+          render_html(PREFIX, report_dir, paging: paging)
+        end
       end
     end
   end

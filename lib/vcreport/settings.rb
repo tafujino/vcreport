@@ -8,4 +8,8 @@ module VCReport
   module Daemon
     DEFAULT_METRICS_INTERVAL = 3_600 # in seconds
   end
+
+  module Report
+    DEFAULT_NUM_SAMPLES_PER_PAGE = 50
+  end
 end
