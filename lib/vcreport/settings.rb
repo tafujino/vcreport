@@ -2,7 +2,7 @@
 
 module VCReport
   RESULTS_DIR = 'results'
-  REPORT_DIR = 'report'
+  REPORT_DIR = 'reports'
   METRICS_NUM_THREADS = 8
 
   module Daemon
