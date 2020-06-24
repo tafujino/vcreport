@@ -21,9 +21,7 @@ module VCReport
           metrics_manager.stop
           exit 143
         end
-        Daemon.run(dir) do
-          Report.run(dir, metrics_manager)
-        end
+        Daemon.run(dir, metrics_manager)
       end
 
       desc 'stop [DIRECTORY]', 'Stop a daemon'

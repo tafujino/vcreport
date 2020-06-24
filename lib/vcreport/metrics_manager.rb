@@ -14,6 +14,9 @@ module VCReport
     # @return [Integer]
     attr_reader :num_threads
 
+    # @return [Boolean]
+    attr_reader :should_terminate
+
     # @param num_threads [Integer]
     def initialize(num_threads)
       @num_threads = num_threads
@@ -21,6 +24,7 @@ module VCReport
       # Hash{ String => Symbol }
       # The value may be :success, :fail, :unfinished
       @job_status = {}
+      @should_terminate = false
     end
 
     # @param result_path [String, Pathname]
@@ -64,7 +68,7 @@ module VCReport
     end
 
     def stop
-      @pool.kill
+      @should_terminate = true
     end
 
     class << self

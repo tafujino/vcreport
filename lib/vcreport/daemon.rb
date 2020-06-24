@@ -7,15 +7,23 @@ require 'fileutils'
 module VCReport
   module Daemon
     class << self
-      # @param dir      [String]
-      # @param interval [Integer] in second
-      def run(dir, interval = nil)
-        interval ||= DEFAULT_INTERVAL
+      # @param dir              [String]
+      # @param metrics_manager  [MetricsManager]
+      # @param metrics_interval [Integer] in second
+      def run(dir, metrics_manager, metrics_interval = nil)
+        metrics_interval ||= DEFAULT_METRICS_INTERVAL
         Process.daemon(true, true)
         store_pid(dir)
+        last_time = nil
         loop do
-          yield
-          sleep(interval)
+          if metrics_manager.should_terminate
+            puts 'here'
+          end
+          if !last_time || Time.now - last_time > metrics_interval
+            Report.run(dir, metrics_manager)
+            last_time = Time.now
+          end
+          sleep(POLLING_INTERVAL)
         end
       end
 
