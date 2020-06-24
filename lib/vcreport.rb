@@ -24,11 +24,11 @@ module VCReport
       def stop(dir)
         case Daemon.stop(dir)
         when :success
-          say 'Trying to stop a dameon safely. This may take a while.'
+          say_status 'stop', dir, :green
         when :not_running
           say_status 'not running', dir, :yellow
         when :fail
-          say 'Failed to stop a dameon.'
+          say_status 'fail', dir, :red
         else
           warn 'Unexpected error.'
           exit 1
@@ -39,7 +39,8 @@ module VCReport
       def status(dir)
         ps = Daemon.status(dir)
         if ps
-          say_status 'running', "#{dir} (pid = #{ps[:pid]}, pgid = #{ps[:pgid]})", :green
+          pid_message = "(pid = #{ps[:pid]}, pgid = #{ps[:pgid]})"
+          say_status 'running', "#{dir} (#{pid_message})", :green
         else
           say_status 'not running', dir, :green
         end

@@ -13,7 +13,7 @@ module VCReport
       # @param metrics_interval [Integer] in second
       def run(dir, metrics_manager, metrics_interval = nil)
         metrics_interval ||= DEFAULT_METRICS_INTERVAL
-        Process.daemon(true, true)
+        Process.daemon(true)
         store_pid(dir)
         loop do
           Report.run(dir, metrics_manager)
