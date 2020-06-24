@@ -15,9 +15,13 @@ module VCReport
         Process.daemon(true, true)
         store_pid(dir)
         last_time = nil
+        Signal.trap(:TERM) do
+          metrics_manager.stop_signal
+        end
         loop do
           if metrics_manager.should_terminate
-            puts 'here'
+            metrics_manager.kill
+            exit 143
           end
           if !last_time || Time.now - last_time > metrics_interval
             Report.run(dir, metrics_manager)

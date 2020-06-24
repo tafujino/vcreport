@@ -17,10 +17,6 @@ module VCReport
       def start(dir)
         say_status 'start', dir, :green
         metrics_manager = MetricsManager.new(METRICS_NUM_THREADS)
-        Signal.trap(:TERM) do
-          metrics_manager.stop
-          exit 143
-        end
         Daemon.run(dir, metrics_manager)
       end
 
@@ -28,13 +24,13 @@ module VCReport
       def stop(dir)
         case Daemon.stop(dir)
         when :success
-          say_status 'stop', dir, :green
+          say 'Trying to stop a dameon safely. This may take a while.'
         when :not_running
           say_status 'not running', dir, :yellow
         when :fail
-          say_status 'fail', dir, :red
+          say 'Failed to stop a dameon.'
         else
-          warn 'Unexpected error'
+          warn 'Unexpected error.'
           exit 1
         end
       end

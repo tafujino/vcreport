@@ -67,7 +67,11 @@ module VCReport
       @pool.wait_for_termination
     end
 
-    def stop
+    def kill
+      @pool.kill
+    end
+
+    def stop_signal
       @should_terminate = true
     end
 
