@@ -17,6 +17,10 @@ module VCReport
       def start(dir)
         say_status 'start', dir, :green
         metrics_manager = MetricsManager.new(METRICS_NUM_THREADS)
+        Signal.trap(:TERM) do
+          metrics_manager.stop
+          exit 143
+        end
         Daemon.run(dir) do
           Report.run(dir, metrics_manager)
         end

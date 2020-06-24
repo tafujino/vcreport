@@ -63,6 +63,10 @@ module VCReport
       @pool.wait_for_termination
     end
 
+    def stop
+      @pool.kill
+    end
+
     class << self
       # @param command [String]
       # @return        [Boolean] true iff the command succeeded
