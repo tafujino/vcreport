@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'vcreport/settings'
 require 'pathname'
 require 'erb'
 require 'redcarpet'
@@ -23,10 +24,11 @@ module VCReport
 
         # @param current_page [Integer]
         # @param total_page   [Integer]
-        def initialize(current_page, total_page)
+        # @param num_digits   [Integer]
+        def initialize(current_page, total_page, num_digits = nil)
           @current_page = current_page
           @total_page = total_page
-          @num_digits = @total_page.digits.length
+          @num_digits = num_digits || @total_page.digits.length
           @digits = format("%0#{@num_digits}d", @current_page)
         end
 

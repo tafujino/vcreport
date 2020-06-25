@@ -4,6 +4,7 @@ module VCReport
   RESULTS_DIR = 'results'
   REPORT_DIR = 'reports'
   DEFAULT_METRICS_NUM_THREADS = 1
+  MAX_SAMPLES = 100_000
 
   module Daemon
     DEFAULT_METRICS_INTERVAL = 3_600 # in seconds

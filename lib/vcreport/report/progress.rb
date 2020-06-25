@@ -33,8 +33,10 @@ module VCReport
         num_samples_per_page = DEFAULT_NUM_SAMPLES_PER_PAGE
         slices = @sample_reports.each_slice(num_samples_per_page).to_a
         num_slices = slices.length
+        max_pages = (MAX_SAMPLES.to_f / DEFAULT_NUM_SAMPLES_PER_PAGE).ceil
+        num_digits = max_pages.digits.length
         slices.each.with_index(1) do |slice_reports, page_num|
-          paging = Paging.new(page_num, num_slices)
+          paging = Paging.new(page_num, num_slices, num_digits)
           # @slice_reports are passed to ERB
           @slice_reports = slice_reports
           render_markdown(PREFIX, report_dir, paging: paging)
