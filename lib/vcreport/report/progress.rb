@@ -3,6 +3,7 @@
 require 'vcreport/settings'
 require 'vcreport/report/sample'
 require 'vcreport/report/render'
+require 'vcreport/report/paging'
 require 'pathname'
 require 'fileutils'
 
