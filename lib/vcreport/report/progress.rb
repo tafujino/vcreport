@@ -24,21 +24,18 @@ module VCReport
       def initialize(results_dir, sample_reports)
         @results_dir = results_dir
         @sample_reports = sample_reports.sort_by(&:end_time).reverse
+        max_pages = (MAX_SAMPLES.to_f / DEFAULT_NUM_SAMPLES_PER_PAGE).ceil
+        @num_digits = max_pages.digits.length
       end
 
-      # @param report_dir [Pathname]
-      def render(report_dir)
-        report_dir = Pathname.new(report_dir)
+      # @param report_dir           [Pathname]
+      # @param num_samples_per_page [Integer]
+      def render(report_dir, num_samples_per_page = DEFAULT_NUM_SAMPLES_PER_PAGE)
         FileUtils.mkpath report_dir unless File.exist?(report_dir)
-        num_samples_per_page = DEFAULT_NUM_SAMPLES_PER_PAGE
         slices = @sample_reports.each_slice(num_samples_per_page).to_a
-        num_slices = slices.length
-        max_pages = (MAX_SAMPLES.to_f / DEFAULT_NUM_SAMPLES_PER_PAGE).ceil
-        num_digits = max_pages.digits.length
         slices.each.with_index(1) do |slice_reports, page_num|
-          paging = Paging.new(page_num, num_slices, num_digits)
-          # @slice_reports are passed to ERB
-          @slice_reports = slice_reports
+          paging = Paging.new(page_num, slices.length, @num_digits)
+          @slice_reports = slice_reports # passed to ERB
           render_markdown(PREFIX, report_dir, paging: paging)
           render_html(PREFIX, report_dir, paging: paging)
         end

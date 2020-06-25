@@ -14,14 +14,25 @@ module VCReport
       end
 
       desc 'start [DIRECTORY]', 'Start a daemon'
-      option 'threads',  aliases: 't', type: :numeric, desc: 'number of threads for metrics calculation'
-      option 'interval', aliases: 'i', type: :numeric, desc: 'monitoring interval (seconds)'
+      option 'threads',
+             aliases: 't',
+             type: :numeric,
+             desc: 'Number of threads for metrics calculation',
+             default: DEFAULT_METRICS_NUM_THREADS
+      option 'interval',
+             aliases: 'i',
+             type: :numeric,
+             desc: 'Monitoring interval (seconds)',
+             default: Daemon::DEFAULT_METRICS_INTERVAL
+      option 'samples-per-page',
+             aliases: 's',
+             type: :numeric,
+             desc: 'Number of samples per page',
+             default: Report::DEFAULT_NUM_SAMPLES_PER_PAGE
       def start(dir)
         say_status 'start', dir, :green
-        num_threads = options['threads'] || DEFAULT_METRICS_NUM_THREADS
-        metrics_interval = options['interval'] || Daemon::DEFAULT_METRICS_INTERVAL
-        metrics_manager = MetricsManager.new(num_threads)
-        Daemon.start(dir, metrics_manager, metrics_interval)
+        metrics_manager = MetricsManager.new(options['threads'])
+        Daemon.start(dir, metrics_manager, options['interval'])
       end
 
       desc 'stop [DIRECTORY]', 'Stop a daemon'
@@ -51,15 +62,23 @@ module VCReport
       end
 
       desc 'render [DIRECTORY]', 'Generate reports'
+      option 'samples-per-page',
+             aliases: 's',
+             type: :numeric,
+             desc: 'Number of samples per page',
+             default: Report::DEFAULT_NUM_SAMPLES_PER_PAGE
       def render(dir)
         Report.run(dir)
       end
 
       desc 'metrics [DIRECTORY]', 'Calculate metrics'
-      option 'threads', aliases: 't', type: :numeric, desc: 'number of threads for metrics calculation'
+      option 'threads',
+             aliases: 't',
+             type: :numeric,
+             desc: 'Number of threads for metrics calculation',
+             default: DEFAULT_METRICS_NUM_THREADS
       def metrics(dir)
-        num_threads = options['threads'] || DEFAULT_METRICS_NUM_THREADS
-        metrics_manager = MetricsManager.new(num_threads)
+        metrics_manager = MetricsManager.new(options['threads'])
         Report.run(dir, metrics_manager, render: false)
         metrics_manager.wait
       end

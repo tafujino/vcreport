@@ -10,25 +10,32 @@ require 'pathname'
 module VCReport
   module Report
     class << self
-      # @param dir             [String]
+      # @param project_dir     [String]
       # @param metrics_manager [MetricsManager, nil]
-      def run(dir, metrics_manager = nil, render: true)
-        dir = Pathname.new(dir)
-        report_dir = dir / REPORT_DIR
-        reports = sample_dirs(dir).map do |sample_dir|
+      def run(project_dir,
+              metrics_manager = nil,
+              num_samples_per_page: DEFAULT_NUM_SAMPLES_PER_PAGE,
+              render: true)
+        project_dir = Pathname.new(project_dir)
+        report_dir = project_dir / REPORT_DIR
+        reports = sample_dirs(project_dir).map do |sample_dir|
           Report::Sample
             .run(sample_dir, metrics_manager)
             .tap { |report| report.render(report_dir) if render }
         end
-        Report::Progress.new(dir, reports).render(report_dir) if render
+        return unless render
+
+        Report::Progress
+          .new(project_dir, reports)
+          .render(report_dir, num_samples_per_page)
       end
 
       private
 
-      # @param dir [Pathname]
-      # @return    [Array<Pathname>]
-      def sample_dirs(dir)
-        results_dir = dir / RESULTS_DIR
+      # @param project_dir [Pathname]
+      # @return            [Array<Pathname>]
+      def sample_dirs(project_dir)
+        results_dir = project_dir / RESULTS_DIR
         Dir[results_dir / '*']
           .map { |e| Pathname.new(e) }
           .select(&:directory?)
