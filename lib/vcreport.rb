@@ -56,7 +56,7 @@ module VCReport
       def status(dir)
         ps = Daemon.status(dir)
         if ps
-          pid_message = "(pid = #{ps.pid}, pgid = #{ps.pgid})"
+          pid_message = "pid = #{ps.pid}, pgid = #{ps.pgid}"
           say_status 'running', "#{dir} (#{pid_message})", :green
         else
           say_status 'not running', dir, :green
