@@ -10,7 +10,7 @@ module VCReport
     class << self
       # @param dir              [String]
       # @param metrics_manager  [MetricsManager]
-      # @param metrics_interval [Integer] in second
+      # @param metrics_interval [Integer] in seconds
       def start(dir, metrics_manager, metrics_interval = DEFAULT_METRICS_INTERVAL)
         Process.daemon(true)
         store_pid(dir)
@@ -35,12 +35,13 @@ module VCReport
       end
 
       # @param dir [String, Pathname]
+      # @return    [Symbol] :success, :fail or :not_running
       def stop(dir)
         ps = status(dir)
         return :not_running unless ps
 
         begin
-          # stop the daemon itself and child processes for metrics calculation
+          # stop the daemon and its child processes for metrics calculation
           Process.kill '-TERM', ps[:pgid] if status(dir)
           FileUtils.remove_entry_secure(pid_path(dir))
           :success
