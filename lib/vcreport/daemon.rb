@@ -15,7 +15,7 @@ module VCReport
       # @param metrics_manager  [MetricsManager]
       # @param metrics_interval [Integer] in seconds
       def start(dir, metrics_manager, metrics_interval = DEFAULT_METRICS_INTERVAL)
-        if status(dir)
+        if ProcessInfo.load(dir)
           say_status 'already running', dir, :yellow
           exit 1
         end
@@ -31,21 +31,13 @@ module VCReport
       # @param dir [String, Pathname]
       # @return    [ProcessInfo, nil]
       def status(dir)
-        ps = ProcessInfo.load(dir)
-        return nil unless ps
-
-        begin
-          Process.kill 0, ps.pid
-          ps
-        rescue Errno::ESRCH
-          nil
-        end
+        ProcessInfo.load(dir)
       end
 
       # @param dir [String, Pathname]
       # @return    [Symbol] :success, :fail or :not_running
       def stop(dir)
-        ps = status(dir)
+        ps = ProcessInfo.load(dir)
         return :not_running unless ps
 
         begin

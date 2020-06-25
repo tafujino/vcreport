@@ -25,7 +25,14 @@ module VCReport
         return nil unless File.exist?(pid_path(dir))
 
         h = YAML.load_file(pid_path(dir))
-        ProcessInfo.new(h[:pid], h[:pgid])
+        ps = ProcessInfo.new(h[:pid], h[:pgid])
+        begin
+          Process.kill 0, ps.pid
+          ps
+        rescue Errno::ESRCH
+          remove(dir)
+          nil
+        end
       end
 
       # @param dir [String, Pathname]
@@ -38,6 +45,8 @@ module VCReport
 
       # @param dir [String, Pathname]
       def remove(dir)
+        return unless File.exist?(pid_path(dir))
+
         FileUtils.remove_entry_secure(pid_path(dir))
       end
 
