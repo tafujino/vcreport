@@ -1,19 +1,27 @@
 # frozen_string_literal: true
 
 require 'vcreport/settings'
+require 'vcreport/process_info'
 require 'pathname'
 require 'fileutils'
-require 'yaml'
+require 'thor'
 
 module VCReport
   module Daemon
+    extend Thor::Shell
+
     class << self
       # @param dir              [String]
       # @param metrics_manager  [MetricsManager]
       # @param metrics_interval [Integer] in seconds
       def start(dir, metrics_manager, metrics_interval = DEFAULT_METRICS_INTERVAL)
+        if status(dir)
+          say_status 'already running', dir, :yellow
+          exit 1
+        end
+        say_status 'start', dir, :green
         Process.daemon(true)
-        store_pid(dir)
+        ProcessInfo.store(dir)
         loop do
           Report.run(dir, metrics_manager)
           sleep(metrics_interval)
@@ -21,13 +29,13 @@ module VCReport
       end
 
       # @param dir [String, Pathname]
-      # @return    [Hash { Symbol => Integer }, nil] { pid: ___, pgid: ___ }
+      # @return    [ProcessInfo, nil]
       def status(dir)
-        ps = load_pid(dir)
+        ps = ProcessInfo.load(dir)
         return nil unless ps
 
         begin
-          Process.kill 0, ps[:pid]
+          Process.kill 0, ps.pid
           ps
         rescue Errno::ESRCH
           nil
@@ -42,37 +50,13 @@ module VCReport
 
         begin
           # stop the daemon and its child processes for metrics calculation
-          Process.kill '-TERM', ps[:pgid] if status(dir)
-          FileUtils.remove_entry_secure(pid_path(dir))
+          Process.kill '-TERM', ps.pgid if status(dir)
+          ProcessInfo.remove(dir)
           :success
-        rescue e
+        rescue => e
           warn e.message
           :fail
         end
-      end
-
-      private
-
-      # @param dir [String, Pathname]
-      # @return    [Pathname]
-      def pid_path(dir)
-        Pathname.new(dir) / 'vcreport.process'
-      end
-
-      # @param dir [String, Pathname]
-      # @return    [Hash{ Symbol => Integer }, nil] { pid: ___, pgid: ___ }
-      def load_pid(dir)
-        return nil unless File.exist?(pid_path(dir))
-
-        YAML.load_file(pid_path(dir))
-      end
-
-      # @param dir [String, Pathname]
-      def store_pid(dir)
-        pid = Process.pid
-        pgid = Process.getpgid(pid)
-        ps = { pid: pid,  pgid: pgid }
-        File.write(pid_path(dir), YAML.dump(ps))
       end
     end
   end

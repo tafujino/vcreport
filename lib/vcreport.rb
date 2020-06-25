@@ -4,6 +4,7 @@ require 'vcreport/version'
 require 'vcreport/settings'
 require 'vcreport/report'
 require 'vcreport/daemon'
+require 'vcreport/process_info'
 require 'thor'
 
 module VCReport
@@ -30,7 +31,6 @@ module VCReport
              desc: 'Number of samples per page',
              default: Report::DEFAULT_NUM_SAMPLES_PER_PAGE
       def start(dir)
-        say_status 'start', dir, :green
         metrics_manager = MetricsManager.new(options['threads'])
         Daemon.start(dir, metrics_manager, options['interval'])
       end
@@ -42,8 +42,10 @@ module VCReport
           say_status 'stop', dir, :green
         when :not_running
           say_status 'not running', dir, :yellow
+          exit 1
         when :fail
           say_status 'fail', dir, :red
+          exit 1
         else
           warn 'Unexpected error.'
           exit 1
@@ -54,7 +56,7 @@ module VCReport
       def status(dir)
         ps = Daemon.status(dir)
         if ps
-          pid_message = "(pid = #{ps[:pid]}, pgid = #{ps[:pgid]})"
+          pid_message = "(pid = #{ps.pid}, pgid = #{ps.pgid})"
           say_status 'running', "#{dir} (#{pid_message})", :green
         else
           say_status 'not running', dir, :green
