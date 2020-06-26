@@ -38,12 +38,12 @@ module VCReport
       # @param dir [String, Pathname]
       # @return    [Symbol] :success, :fail or :not_running
       def stop(dir)
-        ps = ProcessInfo.load(dir)
-        return :not_running unless ps
+        psinfo = ProcessInfo.load(dir)
+        return :not_running unless psinfo
 
         begin
           # stop the daemon and its child processes for metrics calculation
-          Process.kill '-TERM', ps.pgid if status(dir)
+          Process.kill '-TERM', psinfo.pgid if status(dir)
           ProcessInfo.remove(dir)
           :success
         rescue => e

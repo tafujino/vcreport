@@ -54,9 +54,9 @@ module VCReport
 
       desc 'status [DIRECTORY]', 'Show daemon status'
       def status(dir)
-        ps = Daemon.status(dir)
-        if ps
-          pid_message = "pid = #{ps.pid}, pgid = #{ps.pgid}"
+        psinfo = Daemon.status(dir)
+        if psinfo
+          pid_message = "pid = #{psinfo.pid}, pgid = #{psinfo.pgid}"
           say_status 'running', "#{dir} (#{pid_message})", :green
         else
           say_status 'not running', dir, :green
