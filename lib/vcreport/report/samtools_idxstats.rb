@@ -46,7 +46,7 @@ module VCReport
         def run(cram_path, metrics_dir, metrics_manager)
           out_dir = metrics_dir / 'samtools-idxstats'
           samtools_idxstats_path = out_dir / "#{cram_path.basename}.idxstats"
-          if out_path.exist?
+          if samtools_idxstats_path.exist?
             load_samtools_idxstats(samtools_idxstats_path)
           else
             metrics_manager&.post(samtools_idxstats_path) do
