@@ -98,7 +98,7 @@ module VCReport
               { in_cram:
                   { class: 'File',
                     format: 'http://edamontology.org/format_3462',
-                    path: cram_path.expand_path } }
+                    path: cram_path.expand_path.to_s } }
             )
             sh <<~COMMAND.squish
             cwltool

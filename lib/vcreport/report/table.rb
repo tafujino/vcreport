@@ -14,8 +14,6 @@ module VCReport
         @header = header
         @rows = rows
         @type = type
-        @num_cols = header.length
-        @num_rows = rows.length
       end
 
       # @param row [Array]
