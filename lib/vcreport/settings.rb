@@ -5,6 +5,7 @@ module VCReport
   REPORT_DIR = 'reports'
   DEFAULT_METRICS_NUM_THREADS = 1
   MAX_SAMPLES = 100_000
+  HUMAN_RESEQ_DIR = 'lib/human-reseq'
 
   module Daemon
     DEFAULT_METRICS_INTERVAL = 3_600 # in seconds

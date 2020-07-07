@@ -1,0 +1,3 @@
+[submodule "lib/human-reseq"]
+	path = lib/human-reseq
+	url = https://github.com/tafujino/human-reseq.git

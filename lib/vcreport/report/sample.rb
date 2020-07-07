@@ -2,6 +2,7 @@
 
 require 'vcreport/chr_regions'
 require 'vcreport/report/vcf'
+require 'vcreport/report/samtools_idxstats'
 require 'vcreport/report/render'
 require 'vcreport/metrics_manager'
 require 'fileutils'
@@ -26,10 +27,17 @@ module VCReport
       # @param name        [String]
       # @param end_time    [Time, nil]
       # @param vcf_reports [Array<Report::Vcf>]
-      def initialize(name, end_time = nil, vcf_reports = [])
+      # @param vcf_reports [Report::SamtoolsIdxstats]
+      def initialize(
+            name,
+            end_time = nil,
+            vcf_reports = [],
+            samtools_idxstats_report = nil
+          )
         @name = name
         @end_time = end_time
         @vcf_reports = vcf_reports
+        @samtools_idxstats_report = samtools_idxstats_report
       end
 
       # @param report_dir       [String]
@@ -58,7 +66,10 @@ module VCReport
             vcf_path = sample_dir / "#{name}.#{chr_region}.g.vcf.gz"
             Report::Vcf.run(vcf_path, chr_region, metrics_dir, metrics_manager)
           end.compact
-          Report::Sample.new(name, end_time, vcf_reports)
+          cram_path = sample_dir / "#{name}.final.cram"
+          samtools_idxstats_report =
+            Report::SamtoolsIdxstats.run(cram_path, metrics_dir, metrics_manager)
+          Report::Sample.new(name, end_time, vcf_reports, samtools_idxstats_report)
         end
       end
     end

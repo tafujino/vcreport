@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'active_support'
+require 'active_support/core_ext/string/filters'
 require 'fileutils'
 require 'vcreport/metrics_manager'
 
@@ -32,19 +34,18 @@ module VCReport
         # @param chr_region      [String]
         # @param metrics_dir     [Pathname]
         # @param metrics_manager [MetricsManager, nil]
-        # @return                [Report::Vcf, nil]
+        # @return                [Report::Vcf]
         def run(vcf_path, chr_region, metrics_dir, metrics_manager)
           bcftools_stats_path =
             metrics_dir / 'bcftools-stats' / "#{vcf_path.basename}.bcftools-stats"
-          report = if bcftools_stats_path.exist?
-                     load_bcftools_stats(chr_region, bcftools_stats_path)
-                   else
-                     Report::Vcf.new(chr_region)
-                   end
-          metrics_manager&.post(bcftools_stats_path) do
-            run_bcftools_stats(vcf_path, bcftools_stats_path)
+          if bcftools_stats_path.exist?
+            load_bcftools_stats(chr_region, bcftools_stats_path)
+          else
+            metrics_manager&.post(bcftools_stats_path) do
+              run_bcftools_stats(vcf_path, bcftools_stats_path)
+            end
+            Report::Vcf.new(chr_region)
           end
-          report
         end
 
         private
