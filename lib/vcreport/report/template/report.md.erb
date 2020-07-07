@@ -21,3 +21,9 @@
 <% if @samtools_idxstats_report -%>
 <%= @samtools_idxstats_report.to_table.markdown_text %>
 <% end -%>
+
+### samtools flagstat
+
+<% if @samtools_flagstat_report -%>
+<%= @samtools_flagstat_report.to_table.markdown_text %>
+<% end -%>

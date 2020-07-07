@@ -7,7 +7,7 @@ require 'stringio'
 module VCReport
   module Report
     class Table
-      # @param header [Array]
+      # @param header [Array<String>]
       # @param rows   [Array<Array>>]
       # @param type   [Array<Symbol>] :string, :integer or :float
       def initialize(header, rows = [], type = [])

@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
-require 'active_support'
-require 'active_support/core_ext/hash/indifferent_access'
+require_relative 'table'
 
 module VCReport
   module Report
@@ -44,6 +43,17 @@ module VCReport
 
       def initialize; end
 
+      # @return [Table]
+      def to_table
+        header = ['description', '# of passed reads', '# of failed reads']
+        rows = FIELDS.map do |message, name|
+          num_alignments = send(message)
+          [name, num_alignments.passed, num_alignments.failed]
+        end
+        type = %i[string integer integer]
+        Table.new(header, rows, type)
+      end
+
       class << self
         def run(cram_path, metrics_dir, metrics_manager)
           out_dir = metrics_dir / 'samtools-flagstat'
@@ -54,7 +64,7 @@ module VCReport
             metrics_manager&.post(samtools_flagstat_path) do
               run_samtools_flagstat(cram_path, out_dir)
             end
-            SamtoolsFlagstat.new
+            nil
           end
         end
 

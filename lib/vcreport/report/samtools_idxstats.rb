@@ -10,6 +10,11 @@ module VCReport
   module Report
     class SamtoolsIdxstats
       TARGET_CHROMOSOMES = ((1..22).to_a + %w[X Y]).freeze
+      TABLE_COLUMNS = [
+        ['chr. region',         :name,         :string],
+	['# of mapped reads',   :num_mapped,   :integer],
+	['# of unmapped reads', :num_unmapped, :integer]
+      ].freeze
 
       class Chromosome
         # @return [String] "chr..." is supposed
@@ -42,12 +47,7 @@ module VCReport
 
       # @return [Table]
       def to_table
-        cols = [
-          ['chr. region',         :name,         :string],
-	  ['# of mapped reads',   :num_mapped,   :integer],
-	  ['# of unmapped reads', :num_unmapped, :integer]
-        ]
-        header, messages, type = cols.transpose
+        header, messages, type = TABLE_COLUMNS.transpose
         rows = @chromosomes.map do |chromosome|
           messages.map do |message|
             chromosome.send(message)
