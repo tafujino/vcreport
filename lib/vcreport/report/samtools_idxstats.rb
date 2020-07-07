@@ -50,7 +50,7 @@ module VCReport
             load_samtools_idxstats(samtools_idxstats_path)
           else
             metrics_manager&.post(samtools_idxstats_path) do
-              run_samtools_idxstarts(cram_path, out_dir)
+              run_samtools_idxstats(cram_path, out_dir)
             end
             nil
           end
