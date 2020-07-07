@@ -22,25 +22,20 @@ module VCReport
       attr_reader :end_time
 
       # @return [Array<Vcf>]
-      attr_reader :vcf_reports
+      attr_reader :vcfs
 
-      # @return [Cram]
-      attr_reader :cram_report
+      # @return [Cram, nil]
+      attr_reader :cram
 
-      # @param name        [String]
-      # @param end_time    [Time, nil]
-      # @param vcf_reports [Array<Vcf>]
-      # @param cram_report [Cram]
-      def initialize(
-            name,
-            end_time = nil,
-            vcf_reports = [],
-            cram_report
-          )
+      # @param name     [String]
+      # @param end_time [Time, nil]
+      # @param vcfs     [Array<Vcf>]
+      # @param cram     [Cram]
+      def initialize(name, end_time = nil, vcfs = [], cram = nil)
         @name = name
         @end_time = end_time
-        @vcf_reports = vcf_reports
-        @cram_report = cram_report
+        @vcfs = vcfs
+        @cram = cram
       end
 
       # @param report_dir       [String]
@@ -64,18 +59,18 @@ module VCReport
 
           end_time = File::Stat.new(finish_path).mtime
           metrics_dir = sample_dir / 'metrics'
-          vcf_reports = CHR_REGIONS.map do |chr_region|
+          vcfs = CHR_REGIONS.map do |chr_region|
             # VCF is supposed to be gzipped
             vcf_path = sample_dir / "#{name}.#{chr_region}.g.vcf.gz"
             Vcf.run(vcf_path, chr_region, metrics_dir, metrics_manager)
           end.compact
           cram_path = sample_dir / "#{name}.final.cram"
-          cram_report = Report::Cram.run(cram_path, metrics_dir, metrics_manager)
+          cram = Cram.run(cram_path, metrics_dir, metrics_manager)
           Sample.new(
             name,
             end_time,
-            vcf_reports,
-            cram_report
+            vcfs,
+            cram
           )
         end
       end

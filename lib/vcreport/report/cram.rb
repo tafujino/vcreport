@@ -7,19 +7,19 @@ module VCReport
   module Report
     class Cram
       # @return [SamtoolsIdxstats]
-      attr_reader :samtools_idxstats_report
+      attr_reader :samtools_idxstats
 
       # @return [SamtoolsFlagstat]
-      attr_reader :samtools_flagstat_report
+      attr_reader :samtools_flagstat
 
       # @param samtools_idxstats_report [SamtoolsIdxstats, nil]
       # @param samtools_flagstat_report [SamtoolsFlagstat, nil]
       def initialize(
-            samtools_idxstats_report,
-            samtools_flagstat_report
+            samtools_idxstats,
+            samtools_flagstat
           )
-        @samtools_idxstats_report = samtools_idxstats_report
-        @samtools_flagstat_report = samtools_flagstat_report
+        @samtools_idxstats = samtools_idxstats
+        @samtools_flagstat = samtools_flagstat
       end
 
       class << self
@@ -28,13 +28,13 @@ module VCReport
         # @param metrics_manager [MetricsManager, nil]
         # @return                [Cram]
         def run(cram_path, metrics_dir, metrics_manager)
-          samtools_idxstats_report =
+          samtools_idxstats =
             SamtoolsIdxstats.run(cram_path, metrics_dir, metrics_manager)
-          samtools_flagstat_report =
+          samtools_flagstat =
             SamtoolsFlagstat.run(cram_path, metrics_dir, metrics_manager)
           Cram.new(
-            samtools_idxstats_report,
-            samtools_flagstat_report
+            samtools_idxstats,
+            samtools_flagstat
           )
         end
       end

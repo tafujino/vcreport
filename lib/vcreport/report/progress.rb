@@ -17,14 +17,14 @@ module VCReport
       # @return [Pathname]
       attr_reader :results_dir
 
-      # @return [Array<Report::Sample>]
-      attr_reader :sample_reports
+      # @return [Array<Sample>]
+      attr_reader :samples
 
-      # @param results_dir    [Pathname]
-      # @param sample_reports [Array<Report::Sample>]
-      def initialize(results_dir, sample_reports)
+      # @param results_dir [Pathname]
+      # @param samples     [Array<Sample>]
+      def initialize(results_dir, samples)
         @results_dir = results_dir
-        @sample_reports = sample_reports.sort_by(&:end_time).reverse
+        @samples = samples.sort_by(&:end_time).reverse
         max_pages = (MAX_SAMPLES.to_f / DEFAULT_NUM_SAMPLES_PER_PAGE).ceil
         @num_digits = max_pages.digits.length
       end
@@ -33,7 +33,7 @@ module VCReport
       # @param num_samples_per_page [Integer]
       def render(report_dir, num_samples_per_page = DEFAULT_NUM_SAMPLES_PER_PAGE)
         FileUtils.mkpath report_dir unless File.exist?(report_dir)
-        slices = @sample_reports.each_slice(num_samples_per_page).to_a
+        slices = @samples.each_slice(num_samples_per_page).to_a
         slices.each.with_index(1) do |slice_reports, page_num|
           paging = Paging.new(page_num, slices.length, @num_digits)
           @slice_reports = slice_reports # passed to ERB

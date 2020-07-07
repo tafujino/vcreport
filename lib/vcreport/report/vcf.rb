@@ -34,7 +34,7 @@ module VCReport
         # @param chr_region      [String]
         # @param metrics_dir     [Pathname]
         # @param metrics_manager [MetricsManager, nil]
-        # @return                [Report::Vcf]
+        # @return                [Vcf]
         def run(vcf_path, chr_region, metrics_dir, metrics_manager)
           bcftools_stats_path =
             metrics_dir / 'bcftools-stats' / "#{vcf_path.basename}.bcftools-stats"
@@ -52,7 +52,7 @@ module VCReport
 
         # @param chr_region          [String]
         # @param bcftools_stats_path [Pathname]
-        # @return                    [Report::Vcf]
+        # @return                    [Vcf]
         def load_bcftools_stats(chr_region, bcftools_stats_path)
           field = File.readlines(bcftools_stats_path, chomp: true).reject do |line|
             line =~ /^#/
@@ -63,7 +63,7 @@ module VCReport
           num_snps = sn['number of SNPs:']
           num_indels = sn['number of indels:']
           ts_tv_ratio = field['TSTV'].first[4].to_f
-          Report::Vcf.new(chr_region, num_snps, num_indels, ts_tv_ratio)
+          Vcf.new(chr_region, num_snps, num_indels, ts_tv_ratio)
         end
 
         # @param vcf_path            [Pathname]
