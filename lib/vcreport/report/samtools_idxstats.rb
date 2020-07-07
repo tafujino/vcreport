@@ -35,7 +35,7 @@ module VCReport
 
       # @param chromosomes [Array<Chromosome>]
       def initialize(chromosomes)
-        @chromosomes = chromosomes.sort_by(&:name)
+        @chromosomes = chromosomes
       end
 
       class << self

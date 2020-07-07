@@ -6,8 +6,22 @@
 
 `<%= VCReport::Report::Vcf::BCFTOOLS_IMAGE_URI %>`
 
+<% unless @vcf_reports.empty? -%>
 | chr. region | # of snps | # of indels | ts/tv |
 |---|---|---|---|
 <% @vcf_reports.each do |report| -%>
 | <%= report.chr_region %> | <%= report.num_snps %> | <%= report.num_indels %> | <%= report.ts_tv_ratio %> |
+<% end -%>
+<% end -%>
+
+## CRAM metrics
+
+### samtools idxstats
+
+<% if @samtools_idxstats_report -%>
+| chr. region | # of mapped reads | # of unmapped reads |
+|---|---|---|---|
+<% @samtools_idxstats_report.chromosomes.each do |chr| -%>
+| <%= chr.name %> | <%= chr.num_mapped %> | <%= chr.num_unmapped %> |
+<% end -%>
 <% end -%>

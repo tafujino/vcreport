@@ -7,6 +7,10 @@ require 'vcreport/daemon'
 require 'vcreport/process_info'
 require 'thor'
 
+require 'active_support'
+require 'active_support/core_ext/numeric/conversions'
+
+
 module VCReport
   module CLI
     class Main < Thor
