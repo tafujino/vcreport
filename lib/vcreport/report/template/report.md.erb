@@ -19,9 +19,5 @@
 ### samtools idxstats
 
 <% if @samtools_idxstats_report -%>
-| chr. region | # of mapped reads | # of unmapped reads |
-|---|---|---|---|
-<% @samtools_idxstats_report.chromosomes.each do |chr| -%>
-| <%= chr.name %> | <%= chr.num_mapped %> | <%= chr.num_unmapped %> |
-<% end -%>
+<%= @samtools_idxstats_report.to_table.markdown_text %>
 <% end -%>

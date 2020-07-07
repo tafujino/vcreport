@@ -4,6 +4,8 @@ require 'active_support'
 require 'active_support/core_ext/hash/indifferent_access'
 require 'csv'
 
+require_relative 'table'
+
 module VCReport
   module Report
     class SamtoolsIdxstats
@@ -38,6 +40,22 @@ module VCReport
         @chromosomes = chromosomes
       end
 
+      # @return [Table]
+      def to_table
+        cols = [
+          ['chr. region',         :name,         :string],
+	  ['# of mapped reads',   :num_mapped,   :integer],
+	  ['# of unmapped reads', :num_unmapped, :integer]
+        ]
+        header, messages, type = cols.transpose
+        rows = @chromosomes.map do |chromosome|
+          messages.map do |message|
+            chromosome.send(message)
+          end
+        end
+        Table.new(header, rows, type)
+      end
+
       class << self
         # @param cram_path       [Pathname]
         # @param metrics_dir     [Pathname]
@@ -61,6 +79,7 @@ module VCReport
         def load_samtools_idxstats(samtools_idxstats_path)
           rows = CSV.read(samtools_idxstats_path, col_sep: "\t")
           all_chrs = rows.map.to_h do |name, *args|
+            args.map!(&:to_i)
             [name, Chromosome.new(name, *args)]
           end
           target_names = TARGET_CHROMOSOMES.map { |x| "chr#{x}" }

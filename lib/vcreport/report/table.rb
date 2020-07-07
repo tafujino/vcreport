@@ -4,16 +4,16 @@ require 'active_support'
 require 'active_support/core_ext/numeric/conversions'
 require 'stringio'
 
-class VCReport
+module VCReport
   module Report
     class Table
       # @param header [Array]
       # @param rows   [Array<Array>>]
       # @param type   [Array<Symbol>] :string, :integer or :float
-      def initialize(header, rows = [], align: [])
+      def initialize(header, rows = [], type = [])
         @header = header
         @rows = rows
-        @align = align
+        @type = type
         @num_cols = header.length
         @num_rows = rows.length
       end
@@ -26,10 +26,10 @@ class VCReport
       # @return [String]
       def markdown_text
         sio = StringIO.new
-        sio.puts row_text(@header)
+        sio.puts row_text(@header, is_header: true)
         sio.puts separator_text(@type)
         @rows.each do |row|
-          sio.puts row_text(row)
+          sio.puts row_text(row, type: @type)
         end
         sio.string
       end
@@ -52,11 +52,14 @@ class VCReport
         end.then { |fields| render_fields(fields) }
       end
 
-      # @param row  [Array]
-      # @param type [Array<Symbol>] :string, :integer or :float
-      # @return     [String]
-      def row_text(row, type = [])
+      # @param row       [Array]
+      # @param type      [Array<Symbol>] :string, :integer or :float
+      # @param is_header [Boolean]
+      # @return          [String]
+      def row_text(row, type: [], is_header: false)
         fields = row.zip(type).map do |e, t|
+          next e.to_s if is_header
+
           case t
           when :string, :float, nil
             e.to_s
