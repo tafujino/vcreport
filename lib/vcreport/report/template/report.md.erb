@@ -18,12 +18,8 @@
 
 ### samtools idxstats
 
-<% if @cram_report.samtools_idxstats_report -%>
-<%= @cram_report.samtools_idxstats_report.to_table.markdown_text %>
-<% end -%>
+<%= @cram_report.samtools_idxstats_report&.to_table&.markdown_text %>
 
 ### samtools flagstat
 
-<% if @cram_report.samtools_flagstat_report -%>
-<%= @cram_report.samtools_flagstat_report.to_table.markdown_text %>
-<% end -%>
+<%= @cram_report.samtools_flagstat_report&.to_table&.markdown_text %>
