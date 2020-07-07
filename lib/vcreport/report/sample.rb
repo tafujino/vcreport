@@ -3,6 +3,7 @@
 require 'vcreport/chr_regions'
 require 'vcreport/report/vcf'
 require 'vcreport/report/samtools_idxstats'
+require 'vcreport/report/samtools_flagstat'
 require 'vcreport/report/render'
 require 'vcreport/metrics_manager'
 require 'fileutils'
@@ -24,20 +25,29 @@ module VCReport
       # @return [Array<Report::Vcf>]
       attr_reader :vcf_reports
 
-      # @param name        [String]
-      # @param end_time    [Time, nil]
-      # @param vcf_reports [Array<Report::Vcf>]
-      # @param vcf_reports [Report::SamtoolsIdxstats]
+      # @return [Report::SamtoolsIdxstats]
+      attr_reader :samtools_idxstats_report
+
+      # @return [Report::SamtoolsFlagstat]
+      attr_reader :samtools_flagstat_report
+
+      # @param name                     [String]
+      # @param end_time                 [Time, nil]
+      # @param vcf_reports              [Array<Report::Vcf>]
+      # @param samtools_idxstats_report [Report::SamtoolsIdxstats]
+      # @param samtools_flagstat_report [Report::SamtoolsFlagstat]
       def initialize(
             name,
             end_time = nil,
             vcf_reports = [],
-            samtools_idxstats_report = nil
+            samtools_idxstats_report = nil,
+            samtools_flagstat_report = nil
           )
         @name = name
         @end_time = end_time
         @vcf_reports = vcf_reports
         @samtools_idxstats_report = samtools_idxstats_report
+        @samtools_flagstat_report = samtools_flagstat_report
       end
 
       # @param report_dir       [String]
@@ -69,7 +79,15 @@ module VCReport
           cram_path = sample_dir / "#{name}.final.cram"
           samtools_idxstats_report =
             Report::SamtoolsIdxstats.run(cram_path, metrics_dir, metrics_manager)
-          Report::Sample.new(name, end_time, vcf_reports, samtools_idxstats_report)
+          samtools_flagstat_report =
+            Report::SamtoolsFlagstat.run(cram_path, metrics_dir, metrics_manager)
+          Report::Sample.new(
+            name,
+            end_time,
+            vcf_reports,
+            samtools_idxstats_report,
+            samtools_flagstat_report
+          )
         end
       end
     end
