@@ -2,8 +2,7 @@
 
 require 'vcreport/chr_regions'
 require 'vcreport/report/vcf'
-require 'vcreport/report/samtools_idxstats'
-require 'vcreport/report/samtools_flagstat'
+require 'vcreport/report/cram'
 require 'vcreport/report/render'
 require 'vcreport/metrics_manager'
 require 'fileutils'
@@ -22,32 +21,26 @@ module VCReport
       # @return [Time, nil] workflow end time
       attr_reader :end_time
 
-      # @return [Array<Report::Vcf>]
+      # @return [Array<Vcf>]
       attr_reader :vcf_reports
 
-      # @return [Report::SamtoolsIdxstats]
-      attr_reader :samtools_idxstats_report
+      # @return [Cram]
+      attr_reader :cram_report
 
-      # @return [Report::SamtoolsFlagstat]
-      attr_reader :samtools_flagstat_report
-
-      # @param name                     [String]
-      # @param end_time                 [Time, nil]
-      # @param vcf_reports              [Array<Report::Vcf>]
-      # @param samtools_idxstats_report [Report::SamtoolsIdxstats]
-      # @param samtools_flagstat_report [Report::SamtoolsFlagstat]
+      # @param name        [String]
+      # @param end_time    [Time, nil]
+      # @param vcf_reports [Array<Vcf>]
+      # @param cram_report [Cram]
       def initialize(
             name,
             end_time = nil,
             vcf_reports = [],
-            samtools_idxstats_report = nil,
-            samtools_flagstat_report = nil
+            cram_report
           )
         @name = name
         @end_time = end_time
         @vcf_reports = vcf_reports
-        @samtools_idxstats_report = samtools_idxstats_report
-        @samtools_flagstat_report = samtools_flagstat_report
+        @cram_report = cram_report
       end
 
       # @param report_dir       [String]
@@ -63,30 +56,26 @@ module VCReport
       class << self
         # @param sample_dir      [Pathname]
         # @param metrics_manager [MetricsManager, nil]
-        # @return                [Report::Sample]
+        # @return                [Sample]
         def run(sample_dir, metrics_manager)
           name = sample_dir.basename.to_s
           finish_path = (sample_dir / 'finish')
-          return Report::Sample.new(name) unless finish_path.exist?
+          return Sample.new(name) unless finish_path.exist?
 
           end_time = File::Stat.new(finish_path).mtime
           metrics_dir = sample_dir / 'metrics'
           vcf_reports = CHR_REGIONS.map do |chr_region|
             # VCF is supposed to be gzipped
             vcf_path = sample_dir / "#{name}.#{chr_region}.g.vcf.gz"
-            Report::Vcf.run(vcf_path, chr_region, metrics_dir, metrics_manager)
+            Vcf.run(vcf_path, chr_region, metrics_dir, metrics_manager)
           end.compact
           cram_path = sample_dir / "#{name}.final.cram"
-          samtools_idxstats_report =
-            Report::SamtoolsIdxstats.run(cram_path, metrics_dir, metrics_manager)
-          samtools_flagstat_report =
-            Report::SamtoolsFlagstat.run(cram_path, metrics_dir, metrics_manager)
-          Report::Sample.new(
+          cram_report = Report::Cram.run(cram_path, metrics_dir, metrics_manager)
+          Sample.new(
             name,
             end_time,
             vcf_reports,
-            samtools_idxstats_report,
-            samtools_flagstat_report
+            cram_report
           )
         end
       end
