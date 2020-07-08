@@ -2,36 +2,8 @@ directory: `<%= @results_dir.to_s %>`
 
 page: <%= paging.current_page %> / <%= paging.total_page %>
 
-\<
-<% if prev_html_path -%>
-[prev](<%= prev_html_path -%>)
-<% else -%>
-prev
-<% end -%>
-\|
-<% if next_html_path -%>
-[next](<%= next_html_path -%>)
-<% else -%>
-next
-<% end -%>
-\>
+<%= navigation_markdown_text(PREFIX, paging) %>
 
-| name | end time |
-|---|---|
-<% @slice_reports.each do |report| -%>
-| [<%= report.name %>](<%= report.name %>/report.html) | <%= report.end_time %> |
-<% end -%>
+<%= table.markdown_text %>
 
-\<
-<% if prev_html_path -%>
-[prev](<%= prev_html_path -%>)
-<% else -%>
-prev
-<% end -%>
-\|
-<% if next_html_path -%>
-[next](<%= next_html_path -%>)
-<% else -%>
-next
-<% end -%>
-\>
+<%= navigation_markdown_text(PREFIX, paging) %>
