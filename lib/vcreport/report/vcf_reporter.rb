@@ -2,6 +2,7 @@
 
 require 'vcreport/metrics_manager'
 require 'vcreport/report/reporter'
+require 'vcreport/chr_region'
 require 'pathname'
 
 module VCReport
@@ -10,7 +11,7 @@ module VCReport
       BCFTOOLS_IMAGE_URI = 'docker://biocontainers/bcftools:v1.9-1-deb_cv1'
 
       # @param vcf_path        [Pathname]
-      # @param chr_region      [String]
+      # @param chr_region      [ChrRegion]
       # @param metrics_dir     [Pathname]
       # @param metrics_manager [MetricsManager, nil]
       # @return                [Vcf, nil]

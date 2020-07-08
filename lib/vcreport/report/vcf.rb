@@ -4,11 +4,12 @@ require 'active_support'
 require 'active_support/core_ext/string/filters'
 require 'fileutils'
 require 'vcreport/metrics_manager'
+require 'vcreport/chr_region'
 
 module VCReport
   module Report
     class Vcf
-      # @return [String]
+      # @return [ChrRegion]
       attr_reader :chr_region
 
       # @return [Integer]

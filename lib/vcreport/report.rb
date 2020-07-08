@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'vcreport/settings'
+require 'vcreport/config'
 require 'vcreport/report/progress'
 require 'vcreport/report/sample'
 require 'vcreport/report/sample_reporter'
@@ -18,9 +19,10 @@ module VCReport
               render: true)
         project_dir = Pathname.new(project_dir)
         report_dir = project_dir / REPORT_DIR
+        config = Config.load(project_dir)
         samples = sample_dirs(project_dir).map do |sample_dir|
           SampleReporter
-            .new(sample_dir, metrics_manager)
+            .new(sample_dir, config, metrics_manager)
             .run
             .tap { |report| report.render(report_dir) if render }
         end

@@ -52,7 +52,7 @@ module VCReport
         header = ['chr. region', '# of snps', '# of indels', 'ts/tv']
         type = %i[string integer integer float]
         rows = @vcfs.map do |vcf|
-          [vcf.chr_region, vcf.num_snps, vcf.num_indels, vcf.ts_tv_ratio]
+          [vcf.chr_region.desc, vcf.num_snps, vcf.num_indels, vcf.ts_tv_ratio]
         end
         Table.new(header, rows, type)
       end

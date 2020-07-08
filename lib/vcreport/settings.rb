@@ -3,6 +3,7 @@
 module VCReport
   RESULTS_DIR = 'results'
   REPORT_DIR = 'reports'
+  CONFIG_PATH = 'config.yaml'
   DEFAULT_METRICS_NUM_THREADS = 1
   MAX_SAMPLES = 100_000
   HUMAN_RESEQ_DIR = 'lib/human-reseq'

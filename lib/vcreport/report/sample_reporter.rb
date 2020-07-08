@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'vcreport/chr_regions'
+require 'vcreport/config'
 require 'vcreport/report/reporter'
 require 'vcreport/report/sample'
 require 'vcreport/report/vcf'
@@ -14,10 +14,12 @@ module VCReport
   module Report
     class SampleReporter < Reporter
       # @param sample_dir      [Pathname]
+      # @param config          [Config]
       # @param metrics_manager [MetricsManager, nil]
       # @return                [Sample]
-      def initialize(sample_dir, metrics_manager)
+      def initialize(sample_dir, config, metrics_manager)
         @sample_dir = sample_dir
+        @config = config
         super(metrics_manager)
       end
 
@@ -29,9 +31,9 @@ module VCReport
 
         end_time = File::Stat.new(finish_path).mtime
         metrics_dir = @sample_dir / 'metrics'
-        vcfs = CHR_REGIONS.map do |chr_region|
+        vcfs = @config.chr_regions.map do |chr_region|
           # VCF is supposed to be gzipped
-          vcf_path = @sample_dir / "#{name}.#{chr_region}.g.vcf.gz"
+          vcf_path = @sample_dir / "#{name}.#{chr_region.id}.g.vcf.gz"
           VcfReporter.new(
             vcf_path, chr_region, metrics_dir, @metrics_manager
           ).run
