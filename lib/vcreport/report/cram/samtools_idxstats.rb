@@ -1,12 +1,10 @@
 # frozen_string_literal: true
 
-require 'active_support'
-require 'active_support/core_ext/hash/indifferent_access'
 require 'csv'
 require 'pathname'
+require 'vcreport/report/runner'
 require 'vcreport/report/table'
 require 'vcreport/metrics_manager'
-
 
 module VCReport
   module Report
@@ -59,28 +57,20 @@ module VCReport
           Table.new(header, rows, type)
         end
 
-        class << self
+        class SamtoolsIdxstatsRunner < Runner
           # @param cram_path       [Pathname]
           # @param metrics_dir     [Pathname]
           # @param metrics_manager [MetricsManager, nil]
-          # @return                [SamtoolsIdxstats, nil]
-          def run(cram_path, metrics_dir, metrics_manager)
-            out_dir = metrics_dir / 'samtools-idxstats'
-            samtools_idxstats_path = out_dir / "#{cram_path.basename}.idxstats"
-            if samtools_idxstats_path.exist?
-              load_samtools_idxstats(samtools_idxstats_path)
-            else
-              metrics_manager&.post(samtools_idxstats_path) do
-                run_samtools_idxstats(cram_path, out_dir)
-              end
-              nil
-            end
+          def initialize(cram_path, metrics_dir, metrics_manager)
+            @cram_path = cram_path
+            @out_dir = metrics_dir / 'samtools-idxstats'
+            @samtools_idxstats_path = @out_dir / "#{@cram_path.basename}.idxstats"
+            super(metrics_manager, @samtools_idxstats_path)
           end
 
-          # @param samtools_idxstats_path [Pathname]
-          # @return                       [SamtoolsIdxstats]
-          def load_samtools_idxstats(samtools_idxstats_path)
-            rows = CSV.read(samtools_idxstats_path, col_sep: "\t")
+          # @return [SamtoolsIdxstats]
+          def load
+            rows = CSV.read(@samtools_idxstats_path, col_sep: "\t")
             all_chrs = rows.map.to_h do |name, *args|
               args.map!(&:to_i)
               [name, Chromosome.new(name, *args)]
@@ -90,27 +80,29 @@ module VCReport
             SamtoolsIdxstats.new(target_chrs)
           end
 
-          def run_samtools_idxstats(cram_path, out_dir)
-            FileUtils.mkpath out_dir
-            job_path = out_dir / 'job.yaml'
-            store_job_file(
-              job_path,
-              { in_cram:
-                  { class: 'File',
+          def metrics
+            FileUtils.mkpath @out_dir
+            job_definition =
+              {
+                in_cram:
+                  {
+                    class: 'File',
                     format: 'http://edamontology.org/format_3462',
-                    path: cram_path.expand_path.to_s } }
-            )
-            MetricsManager.shell <<~COMMAND.squish
-              cwltool
-              --singularity
-              --outdir #{out_dir}
-              #{HUMAN_RESEQ_DIR}/Tools/samtools-idxstats.cwl
-              #{job_path}
-            COMMAND
+                    path: @cram_path.expand_path.to_s
+                  }
+              }
+            script_path = "#{HUMAN_RESEQ_DIR}/Tools/samtools-idxstats.cwl"
+            run_cwl(script_path, job_definition, @out_dir)
           end
+        end
 
-          def store_job_file(job_path, hash)
-            File.write(job_path, YAML.dump(hash.deep_stringify_keys))
+        class << self
+          # @param cram_path       [Pathname]
+          # @param metrics_dir     [Pathname]
+          # @param metrics_manager [MetricsManager, nil]
+          # @return                [SamtoolsIdxstats, nil]
+          def run(cram_path, metrics_dir, metrics_manager)
+            SamtoolsIdxstatsRunner.new(cram_path, metrics_dir, metrics_manager).report
           end
         end
       end
