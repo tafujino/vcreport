@@ -21,20 +21,17 @@ module VCReport
 
       def run
         deps = [@metrics_path] + @metrics_secondary_paths
-        if deps.all? { |path| File.exist?(path) }
-          load
-        else
-          @metrics_manager&.post(@metrics_path) do
-            metrics
-          end
-          nil
+        ret = deps.all? { |path| File.exist?(path) } ? parse : nil
+        @metrics_manager&.post(@metrics_path) do
+          metrics
         end
+        ret
       end
 
       private
 
       # @abstract
-      def load; end
+      def parse; end
 
       # @abstract
       def metrics; end
@@ -43,6 +40,7 @@ module VCReport
         File.write(job_path, YAML.dump(job_definition.deep_stringify_keys))
       end
 
+      # @return [Boolean]
       def run_cwl(script_path, job_definition, out_dir)
         job_path = out_dir / 'job.yaml'
         store_job_file(job_path, job_definition)

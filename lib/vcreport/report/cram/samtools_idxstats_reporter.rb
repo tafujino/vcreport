@@ -24,7 +24,7 @@ module VCReport
         end
 
         # @return [SamtoolsIdxstats]
-        def load
+        def parse
           rows = CSV.read(@samtools_idxstats_path, col_sep: "\t")
           all_chrs = rows.map.to_h do |name, *args|
             args.map!(&:to_i)
@@ -35,6 +35,7 @@ module VCReport
           SamtoolsIdxstats.new(target_chrs)
         end
 
+        # @return [Boolean]
         def metrics
           FileUtils.mkpath @out_dir
           job_definition =

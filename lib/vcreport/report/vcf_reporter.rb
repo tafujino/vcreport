@@ -7,6 +7,8 @@ require 'pathname'
 module VCReport
   module Report
     class VcfReporter < Reporter
+      BCFTOOLS_IMAGE_URI = 'docker://biocontainers/bcftools:v1.9-1-deb_cv1'
+
       # @param vcf_path        [Pathname]
       # @param chr_region      [String]
       # @param metrics_dir     [Pathname]
@@ -22,7 +24,7 @@ module VCReport
       end
 
       # @return [Vcf]
-      def load
+      def parse
         lines = File.readlines(@bcftools_stats_path, chomp: true)
         field = lines.filter_map do |line|
           line.split("\t") unless line =~ /^#/
@@ -34,13 +36,14 @@ module VCReport
         Vcf.new(@chr_region, num_snps, num_indels, ts_tv_ratio)
       end
 
+      # @return [Boolean]
       def metrics
         container_data_dir = '/data'
-        vcf_path = @vcf_path.readlink if @vcf_path.symlink?
+        vcf_path = @vcf_path.symlink? ? @vcf_path.readlink : @vcf_path
         out_dir = File.dirname(@bcftools_stats_path)
         FileUtils.mkpath out_dir unless File.exist?(out_dir)
         tmp_path = "#{@bcftools_stats_path}.tmp"
-        is_success = MetricsManager.shell <<~COMMAND.squish
+        cmd = <<~COMMAND.squish
           singularity exec
           --bind #{vcf_path.dirname}:#{container_data_dir}
           #{BCFTOOLS_IMAGE_URI}
@@ -49,6 +52,7 @@ module VCReport
           > #{tmp_path}
           2> #{@bcftools_stats_path}.log
         COMMAND
+        is_success = MetricsManager.shell(cmd)
         FileUtils.mv(tmp_path, @bcftools_stats_path) if is_success
         is_success
       end

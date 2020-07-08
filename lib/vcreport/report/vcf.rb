@@ -8,8 +8,6 @@ require 'vcreport/metrics_manager'
 module VCReport
   module Report
     class Vcf
-      BCFTOOLS_IMAGE_URI = 'docker://biocontainers/bcftools:v1.9-1-deb_cv1'
-
       # @return [String]
       attr_reader :chr_region
 

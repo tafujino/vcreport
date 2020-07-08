@@ -72,7 +72,6 @@ module VCReport
       # @param command [String]
       # @return        [Boolean] true iff the command succeeded
       def shell(command)
-        pp command
         pid = POSIX::Spawn.spawn(command)
         Process.waitpid(pid)
         $CHILD_STATUS.success?
