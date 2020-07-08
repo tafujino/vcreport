@@ -3,6 +3,7 @@
 require 'vcreport/settings'
 require 'vcreport/report/progress'
 require 'vcreport/report/sample'
+require 'vcreport/report/sample_reporter'
 require 'vcreport/metrics_manager'
 require 'pathname'
 
@@ -18,8 +19,9 @@ module VCReport
         project_dir = Pathname.new(project_dir)
         report_dir = project_dir / REPORT_DIR
         samples = sample_dirs(project_dir).map do |sample_dir|
-          Sample
-            .run(sample_dir, metrics_manager)
+          SampleReporter
+            .new(sample_dir, metrics_manager)
+            .run
             .tap { |report| report.render(report_dir) if render }
         end
         return unless render
