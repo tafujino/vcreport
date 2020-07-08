@@ -64,7 +64,7 @@ module VCReport
             vcf_path = sample_dir / "#{name}.#{chr_region}.g.vcf.gz"
             Vcf.run(vcf_path, chr_region, metrics_dir, metrics_manager)
           end.compact
-          cram_path = sample_dir / "#{name}.final.cram"
+          cram_path = sample_dir / "#{name}.dedup.cram"
           cram = Cram.run(cram_path, metrics_dir, metrics_manager)
           Sample.new(
             name,
