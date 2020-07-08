@@ -32,7 +32,8 @@ module VCReport
         config = YAML.load_file(config_path)
         ref_path = config['reference']
         chr_regions = config['regions'].map do |id, val|
-          ChrRegion.new(id.to_sym, val['desc'], val['interval_list'])
+          desc = val['desc'] || id.to_s
+          ChrRegion.new(id.to_sym, desc, val['interval_list'])
         end
         Config.new(ref_path, chr_regions)
       end
