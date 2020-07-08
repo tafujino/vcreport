@@ -29,14 +29,14 @@ module VCReport
       def prev
         return nil unless @current_page > 1
 
-        Paging.new(@current_page - 1, @total_page)
+        Paging.new(@current_page - 1, @total_page, @num_digits)
       end
 
       # @return [Paging]
       def next
         return nil unless @current_page < @total_page
 
-        Paging.new(@current_page + 1, @total_page)
+        Paging.new(@current_page + 1, @total_page, @num_digits)
       end
     end
   end
