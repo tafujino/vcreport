@@ -64,8 +64,6 @@ module VCReport
           render_erb(template_path, html_path, binding)
         end
 
-        private
-
         # @param path      [String]
         # @param overwrite [Boolean]
         def skip?(path, overwrite)

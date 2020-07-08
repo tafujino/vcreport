@@ -38,12 +38,7 @@ module VCReport
         end.compact
         cram_path = @sample_dir / "#{name}.dedup.cram"
         cram = CramReporter.new(cram_path, metrics_dir, @metrics_manager).run
-        Sample.new(
-          name,
-          end_time,
-          vcfs,
-          cram
-        )
+        Sample.new(name, end_time, vcfs, cram)
       end
     end
   end
