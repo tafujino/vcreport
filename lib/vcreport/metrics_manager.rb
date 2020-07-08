@@ -5,8 +5,9 @@ require 'concurrent-ruby'
 require 'active_support'
 require 'active_support/core_ext/string/filters'
 require 'pathname'
-require 'open3'
+require 'posix/spawn'
 require 'thor'
+require 'English'
 
 module VCReport
   class MetricsManager
@@ -71,13 +72,9 @@ module VCReport
       # @param command [String]
       # @return        [Boolean] true iff the command succeeded
       def shell(command)
-        value = nil
-        Open3.popen3(command) do |_, o, e, w|
-          o.each { |s| puts s }
-          e.each { |s| warn s }
-          value = w.value
-        end
-        value.success?
+        pid = POSIX::Spawn.spawn(command)
+        Process.waitpid(pid)
+        $CHILD_STATUS.success?
       end
     end
   end
