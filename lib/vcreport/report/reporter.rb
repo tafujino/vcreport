@@ -8,7 +8,8 @@ require 'pathname'
 
 module VCReport
   module Report
-    class Runner
+    # @abstract
+    class Reporter
       # @param metrics_manager         [MetricsManager]
       # @param metrics_path            [Pathname]
       # @param metrics_secondary_paths [Array<Pathname>]
@@ -18,7 +19,7 @@ module VCReport
         @metrics_secondary_paths = metrics_secondary_paths
       end
 
-      def report
+      def run
         deps = [@metrics_path] + @metrics_secondary_paths
         if deps.all? { |path| File.exist?(path) }
           load
@@ -32,8 +33,10 @@ module VCReport
 
       private
 
+      # @abstract
       def load; end
 
+      # @abstract
       def metrics; end
 
       def store_job_file(job_path, job_definition)
@@ -49,6 +52,8 @@ module VCReport
           --outdir #{out_dir}
           #{script_path}
           #{job_path}
+          2>&1
+          > #{out_dir / 'cwl.log'}
         COMMAND
       end
     end

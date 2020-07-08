@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'vcreport/report/cram/samtools_idxstats'
+require 'vcreport/report/cram/samtools_idxstats_reporter'
 require 'vcreport/report/cram/samtools_flagstat'
 
 module VCReport
@@ -29,7 +30,7 @@ module VCReport
         # @return                [Cram]
         def run(cram_path, metrics_dir, metrics_manager)
           samtools_idxstats =
-            SamtoolsIdxstats.run(cram_path, metrics_dir, metrics_manager)
+            SamtoolsIdxstatsReporter.new(cram_path, metrics_dir, metrics_manager).run
           samtools_flagstat =
             SamtoolsFlagstat.run(cram_path, metrics_dir, metrics_manager)
           Cram.new(

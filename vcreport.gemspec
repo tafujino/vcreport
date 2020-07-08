@@ -31,6 +31,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "activesupport"
   spec.add_dependency "redcarpet"
   spec.add_dependency "concurrent-ruby"
+  spec.add_dependency "posix-spawn"
   spec.add_development_dependency "bundler"
   spec.add_development_dependency "solargraph"
   spec.add_development_dependency "rake"

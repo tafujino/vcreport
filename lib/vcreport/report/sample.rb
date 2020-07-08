@@ -2,6 +2,7 @@
 
 require 'vcreport/chr_regions'
 require 'vcreport/report/vcf'
+require 'vcreport/report/vcf_reporter'
 require 'vcreport/report/cram'
 require 'vcreport/report/render'
 require 'vcreport/report/table'
@@ -73,7 +74,9 @@ module VCReport
           vcfs = CHR_REGIONS.map do |chr_region|
             # VCF is supposed to be gzipped
             vcf_path = sample_dir / "#{name}.#{chr_region}.g.vcf.gz"
-            Vcf.run(vcf_path, chr_region, metrics_dir, metrics_manager)
+            VcfReporter.new(
+              vcf_path, chr_region, metrics_dir, metrics_manager
+            ).run
           end.compact
           cram_path = sample_dir / "#{name}.dedup.cram"
           cram = Cram.run(cram_path, metrics_dir, metrics_manager)
