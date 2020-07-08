@@ -6,20 +6,14 @@
 
 `<%= VCReport::Report::Vcf::BCFTOOLS_IMAGE_URI %>`
 
-<% unless @vcfs.empty? -%>
-| chr. region | # of snps | # of indels | ts/tv |
-|---|---|---|---|
-<% @vcfs.each do |report| -%>
-| <%= report.chr_region %> | <%= report.num_snps %> | <%= report.num_indels %> | <%= report.ts_tv_ratio %> |
-<% end -%>
-<% end -%>
+<%= bcftools_stats_table&.markdown_text -%>
 
 ## CRAM metrics
 
 ### samtools idxstats
 
-<%= @cram.samtools_idxstats&.to_table&.markdown_text %>
+<%= @cram.samtools_idxstats&.to_table&.markdown_text -%>
 
 ### samtools flagstat
 
-<%= @cram.samtools_flagstat&.to_table&.markdown_text %>
+<%= @cram.samtools_flagstat&.to_table&.markdown_text -%>

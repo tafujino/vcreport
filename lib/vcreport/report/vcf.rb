@@ -13,16 +13,16 @@ module VCReport
       # @return [String]
       attr_reader :chr_region
 
-      # @return [Integer, nil]
+      # @return [Integer]
       attr_reader :num_snps
 
-      # @return [Integer, nil]
+      # @return [Integer]
       attr_reader :num_indels
 
-      # @return [Float, nil]
+      # @return [Float]
       attr_reader :ts_tv_ratio
 
-      def initialize(chr_region, num_snps = nil, num_indels = nil, ts_tv_ratio = nil)
+      def initialize(chr_region, num_snps, num_indels, ts_tv_ratio)
         @chr_region = chr_region
         @num_snps = num_snps
         @num_indels = num_indels
@@ -34,7 +34,7 @@ module VCReport
         # @param chr_region      [String]
         # @param metrics_dir     [Pathname]
         # @param metrics_manager [MetricsManager, nil]
-        # @return                [Vcf]
+        # @return                [Vcf, nil]
         def run(vcf_path, chr_region, metrics_dir, metrics_manager)
           bcftools_stats_path =
             metrics_dir / 'bcftools-stats' / "#{vcf_path.basename}.bcftools-stats"
@@ -44,7 +44,7 @@ module VCReport
             metrics_manager&.post(bcftools_stats_path) do
               run_bcftools_stats(vcf_path, bcftools_stats_path)
             end
-            Report::Vcf.new(chr_region)
+            nil
           end
         end
 

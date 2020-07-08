@@ -12,8 +12,6 @@ module VCReport
     class Progress
       PREFIX = 'progress'
 
-      include Render
-
       # @return [Pathname]
       attr_reader :results_dir
 
@@ -37,8 +35,7 @@ module VCReport
         slices.each.with_index(1) do |slice_reports, page_num|
           paging = Paging.new(page_num, slices.length, @num_digits)
           @slice_reports = slice_reports # passed to ERB
-          render_markdown(PREFIX, report_dir, paging: paging)
-          render_html(PREFIX, report_dir, paging: paging)
+          Render.run(PREFIX, report_dir, binding, paging: paging)
         end
       end
     end
