@@ -21,7 +21,6 @@ module VCReport
         end
         say_status 'start', dir, :green
         Process.daemon(true)
-        Process.setpgid(0, 0)
         ProcessInfo.store(dir)
         loop do
           Report.run(dir, metrics_manager)
