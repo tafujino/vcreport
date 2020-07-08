@@ -14,12 +14,12 @@ module VCReport
       # @param project_dir     [String]
       # @param metrics_manager [MetricsManager, nil]
       def run(project_dir,
+              config,
               metrics_manager = nil,
               num_samples_per_page: DEFAULT_NUM_SAMPLES_PER_PAGE,
               render: true)
         project_dir = Pathname.new(project_dir)
         report_dir = project_dir / REPORT_DIR
-        config = Config.load(project_dir)
         samples = sample_dirs(project_dir).map do |sample_dir|
           SampleReporter
             .new(sample_dir, config, metrics_manager)

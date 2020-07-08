@@ -35,8 +35,9 @@ module VCReport
              desc: 'Number of samples per page',
              default: Report::DEFAULT_NUM_SAMPLES_PER_PAGE
       def start(dir)
+        config = Config.load(dir)
         metrics_manager = MetricsManager.new(options['threads'])
-        Daemon.start(dir, metrics_manager, options['interval'])
+        Daemon.start(dir, config, metrics_manager, options['interval'])
       end
 
       desc 'stop [DIRECTORY]', 'Stop a daemon'
@@ -74,7 +75,8 @@ module VCReport
              desc: 'Number of samples per page',
              default: Report::DEFAULT_NUM_SAMPLES_PER_PAGE
       def render(dir)
-        Report.run(dir)
+        config = Config.load(dir)
+        Report.run(dir, config)
       end
 
       desc 'metrics [DIRECTORY]', 'Calculate metrics'
@@ -84,8 +86,9 @@ module VCReport
              desc: 'Number of threads for metrics calculation',
              default: DEFAULT_METRICS_NUM_THREADS
       def metrics(dir)
+        config = Config.load(dir)
         metrics_manager = MetricsManager.new(options['threads'])
-        Report.run(dir, metrics_manager, render: false)
+        Report.run(dir, config, metrics_manager, render: false)
         metrics_manager.wait
       end
     end
