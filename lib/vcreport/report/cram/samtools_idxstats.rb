@@ -100,13 +100,13 @@ module VCReport
                     format: 'http://edamontology.org/format_3462',
                     path: cram_path.expand_path.to_s } }
             )
-            sh <<~COMMAND.squish
-            cwltool
-            --singularity
-            --outdir #{out_dir}
-            #{HUMAN_RESEQ_DIR}/Tools/samtools-idxstats.cwl
-            #{job_path}
-          COMMAND
+            MetricsManager.shell <<~COMMAND.squish
+              cwltool
+              --singularity
+              --outdir #{out_dir}
+              #{HUMAN_RESEQ_DIR}/Tools/samtools-idxstats.cwl
+              #{job_path}
+            COMMAND
           end
 
           def store_job_file(job_path, hash)

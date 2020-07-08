@@ -69,7 +69,7 @@ module VCReport
               load_samtools_flagstat(samtools_flagstat_path)
             else
               metrics_manager&.post(samtools_flagstat_path) do
-                run_samtools_flagstat(cram_path, out_dir)
+                # run_samtools_flagstat(cram_path, out_dir)
               end
               nil
             end
