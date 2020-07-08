@@ -50,8 +50,7 @@ module VCReport
           --outdir #{out_dir}
           #{script_path}
           #{job_path}
-          2>&1
-          > #{out_dir / 'cwl.log'}
+          >& #{out_dir / 'cwl.log'}
         COMMAND
       end
     end
