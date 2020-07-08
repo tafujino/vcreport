@@ -82,7 +82,7 @@ module VCReport
         # @param context       [Binding, nil]
         def render_erb(template_path, out_path, context = nil)
           template_path = File.expand_path(template_path, __dir__)
-          erb = ERB.new(File.open(template_path).read, nil, '-')
+          erb = ERB.new(File.open(template_path).read, trim_mode: '-')
           context ||= binding
           text = erb.result(context)
           File.write(out_path, text)
