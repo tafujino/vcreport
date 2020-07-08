@@ -10,9 +10,9 @@ module VCReport
   module Report
     # @abstract
     class Reporter
-      # @param metrics_manager         [MetricsManager]
-      # @param metrics_paths            [Pathname]
-      def initialize(metrics_manager, *metrics_paths)
+      # @param metrics_manager [MetricsManager, nil]
+      # @param metrics_paths   [Array<Pathname>]
+      def initialize(metrics_manager = nil, *metrics_paths)
         @metrics_manager = metrics_manager
         @metrics_paths = metrics_paths
       end
@@ -21,9 +21,7 @@ module VCReport
         ret = @metrics_paths.all? { |path| File.exist?(path) } ? parse : nil
         return ret if @metrics_paths.empty?
 
-        @metrics_manager&.post(@metrics_paths.first) do
-          metrics
-        end
+        @metrics_manager&.post(@metrics_paths.first) { metrics }
         ret
       end
 

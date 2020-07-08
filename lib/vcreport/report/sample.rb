@@ -4,6 +4,7 @@ require 'vcreport/chr_regions'
 require 'vcreport/report/vcf'
 require 'vcreport/report/vcf_reporter'
 require 'vcreport/report/cram'
+require 'vcreport/report/cram_reporter'
 require 'vcreport/report/render'
 require 'vcreport/report/table'
 require 'vcreport/metrics_manager'
@@ -79,7 +80,7 @@ module VCReport
             ).run
           end.compact
           cram_path = sample_dir / "#{name}.dedup.cram"
-          cram = Cram.run(cram_path, metrics_dir, metrics_manager)
+          cram = CramReporter.new(cram_path, metrics_dir, metrics_manager).run
           Sample.new(
             name,
             end_time,
