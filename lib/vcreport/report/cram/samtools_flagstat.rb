@@ -8,7 +8,7 @@ module VCReport
   module Report
     class Cram
       class SamtoolsFlagstat
-        class NumAlignments
+        class NumReads
           # @return [Integer]
           attr_reader :passed
 
@@ -41,7 +41,7 @@ module VCReport
             'with mate mapped to a different chr (mapQ>=5)'
         }.freeze
 
-        # @return [NumAlignment]
+        # @return [NumReads]
         attr_accessor(*FIELDS.keys)
 
         def initialize; end
@@ -49,70 +49,14 @@ module VCReport
         # @return [Table]
         def to_table
           header = ['description', '# of passed reads', '# of failed reads']
-          rows = FIELDS.map do |message, desc|
-            num_alignments = send(message)
-            [desc, num_alignments.passed, num_alignments.failed]
+          rows = FIELDS.map do |attr, desc|
+            num_reads = send(attr)
+            [desc, num_reads.passed, num_reads.failed]
           end
           type = %i[string integer integer]
           Table.new(header, rows, type)
-        end
-
-        class << self
-          # @param cram_path       [Pathname]
-          # @param metrics_dir     [Pathname]
-          # @param metrics_manager [MetricsManager, nil]
-          # @return                [SamtoolsFlagstat, nil]
-          def run(cram_path, metrics_dir, metrics_manager)
-            out_dir = metrics_dir / 'samtools-flagstat'
-            samtools_flagstat_path = out_dir / "#{cram_path.basename}.flagstat"
-            if samtools_flagstat_path.exist?
-              load_samtools_flagstat(samtools_flagstat_path)
-            else
-              metrics_manager&.post(samtools_flagstat_path) do
-                # run_samtools_flagstat(cram_path, out_dir)
-              end
-              nil
-            end
-          end
-
-          # @param samtools_flagstats_path [Pathname]
-          # @return                        [SamtoolsFlagstat]
-          def load_samtools_flagstat(samtools_flagstat_path)
-            flagstat = SamtoolsFlagstat.new
-            File.foreach(samtools_flagstat_path, chomp: true) do |line|
-              is_valid_line = false
-              FIELDS.each do |attr, trailing|
-                num_alignments = extract_pass_and_fail(line, trailing)
-                next unless num_alignments
-
-                flagstat.send("#{attr}=", num_alignments)
-                is_valid_line = true
-              end
-              unless is_valid_line
-                warn "Invalid line: #{line}"
-                exit 1
-              end
-            end
-            flagstat
-          end
-
-          # @param line     [String]
-          # @param trailing [String]
-          # @return         [NumAlignments, nil]
-          def extract_pass_and_fail(line, trailing)
-            return nil unless line =~ /^(\d+) \+ (\d+) #{Regexp.escape(trailing)}(\s|$)/
-
-            NumAlignments.new($1.to_i, $2.to_i)
-          end
         end
       end
     end
   end
 end
-
-#nthreads: 4
-#in_bam:
-#  class: File
-#  format: http://edamontology.org/format_3462
-#  path: <cram path>
-#

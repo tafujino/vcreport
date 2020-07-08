@@ -23,6 +23,8 @@ module VCReport
           super(metrics_manager, @samtools_idxstats_path)
         end
 
+        private
+
         # @return [SamtoolsIdxstats]
         def parse
           rows = CSV.read(@samtools_idxstats_path, col_sep: "\t")

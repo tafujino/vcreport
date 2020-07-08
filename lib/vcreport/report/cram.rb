@@ -3,6 +3,7 @@
 require 'vcreport/report/cram/samtools_idxstats'
 require 'vcreport/report/cram/samtools_idxstats_reporter'
 require 'vcreport/report/cram/samtools_flagstat'
+require 'vcreport/report/cram/samtools_flagstat_reporter'
 
 module VCReport
   module Report
@@ -32,7 +33,7 @@ module VCReport
           samtools_idxstats =
             SamtoolsIdxstatsReporter.new(cram_path, metrics_dir, metrics_manager).run
           samtools_flagstat =
-            SamtoolsFlagstat.run(cram_path, metrics_dir, metrics_manager)
+            SamtoolsFlagstatReporter.new(cram_path, metrics_dir, metrics_manager).run
           Cram.new(
             samtools_idxstats,
             samtools_flagstat
