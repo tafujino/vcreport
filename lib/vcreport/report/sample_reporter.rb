@@ -31,7 +31,8 @@ module VCReport
 
         end_time = File::Stat.new(finish_path).mtime
         metrics_dir = @sample_dir / 'metrics'
-        vcfs = @config.chr_regions.map do |chr_region|
+        chr_regions = @config.chr_regions
+        vcfs = chr_regions.map do |chr_region|
           # VCF is supposed to be gzipped
           vcf_path = @sample_dir / "#{name}.#{chr_region.id}.g.vcf.gz"
           VcfReporter.new(
@@ -39,7 +40,9 @@ module VCReport
           ).run
         end.compact
         cram_path = @sample_dir / "#{name}.dedup.cram"
-        cram = CramReporter.new(cram_path, metrics_dir, @metrics_manager).run
+        cram = CramReporter.new(
+          cram_path, chr_regions, metrics_dir, @metrics_manager
+        ).run
         Sample.new(name, end_time, vcfs, cram)
       end
     end

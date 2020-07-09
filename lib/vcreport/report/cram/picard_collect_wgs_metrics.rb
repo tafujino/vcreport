@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'pathname'
+require 'vcreport/chr_region'
 require 'vcreport/report/table'
 
 module VCReport
@@ -29,7 +30,7 @@ module VCReport
           attr_reader(*FIELDS)
 
           def initialize(**params)
-            FIELDS.each { |k| send("@#{k}=", params[k]) }
+            FIELDS.each { |k| instance_variable_set("@#{k}", params[k]) }
           end
         end
 
@@ -45,6 +46,9 @@ module VCReport
             @q = q
           end
         end
+
+        # @return [ChrRegion]
+        attr_reader :chr_region
 
         # @return [String]
         attr_reader :command_log
@@ -64,13 +68,15 @@ module VCReport
         # @return [Hash{Integer => Integer] coverage -> count
         attr_reader :histograma
 
-        def initialize(command_log,
+        def initialize(chr_region,
+                       command_log,
                        territory,
                        coverage_stats,
                        percent_excluded,
                        percent_coverage,
                        het_snp,
                        histogram)
+          @chr_region = chr_region
           @command_log = command_log
           @territory = territory
           @coverage_stats = coverage_stats
