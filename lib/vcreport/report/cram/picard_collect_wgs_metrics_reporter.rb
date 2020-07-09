@@ -56,7 +56,7 @@ module VCReport
           histogram = parse_histogram_section(histogram_section)
           PicardCollectWgsMetrics.new(
             *[@chr_region, command_log, metrics_section_values, histogram].flatten
-          ).tap { |e| pp e }
+          )
         end
 
         # @return [Boolean]
@@ -67,7 +67,7 @@ module VCReport
         # @param sym   [Symbol]
         # @return      [Array<Section>]
         def split_by_section(lines, sym = '##')
-          regexp = /^#{Regexp.escape(sym)}\s*(?:(.+)\t)(.+)\s*$/
+          regexp = /^#{Regexp.escape(sym)}\s*(?:(.+)\t)?(.+)\s*$/
           lines.slice_before(regexp).map do |chunk|
             chunk.reject! { |line| line =~ /^\s*$/ }
             chunk.shift =~ regexp
@@ -116,7 +116,7 @@ module VCReport
             PicardCollectWgsMetrics::PercentExcluded::FIELDS.map.to_h do |k|
             [k, row[:"pct_exc_#{k}"]]
           end
-          PicardCollectWgsMetrics::PercentExcluded.new(params)
+          PicardCollectWgsMetrics::PercentExcluded.new(**params)
         end
 
         # @param section [Seciton]
