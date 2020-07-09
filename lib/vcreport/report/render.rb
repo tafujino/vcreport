@@ -15,14 +15,32 @@ module VCReport
       TEMPLATE_DIR = 'template'
 
       class << self
-        # @param prefix    [String]
-        # @param out_dir   [Pathname]
-        # @param context   [Binding, nil]
-        # @param paging    [Paging, nil]
-        # @param overwrite [Boolean]
-        def run(prefix, out_dir, context = nil, paging: nil, overwrite: true)
+        # @param prefix            [String]
+        # @param out_dir           [Pathname]
+        # @param context           [Binding, nil]
+        # @param paging            [Paging, nil]
+        # @param overwrite         [Boolean]
+        # @param render_toc        [Boolean]
+        # @param toc_nesting_level [Integer, nil]
+        def run(
+              prefix,
+              out_dir,
+              context = nil,
+              paging: nil,
+              overwrite: true,
+              render_toc: false,
+              toc_nesting_level: nil
+            )
           render_markdown(prefix, out_dir, context, paging: paging, overwrite: overwrite)
-          render_html(prefix, out_dir, paging: paging, overwrite: overwrite)
+          render_html(
+            prefix,
+            out_dir,
+            context,
+            paging: paging,
+            overwrite: overwrite,
+            render_toc: render_toc,
+            toc_nesting_level: toc_nesting_level
+          )
         end
 
         private
@@ -47,21 +65,41 @@ module VCReport
           render_erb(template_path, markdown_path, context)
         end
 
-        # @param prefix    [String]
-        # @param out_dir   [Pathname]
-        # @param paging    [Paging, nil]
-        # @param overwrite [Boolean]
-        def render_html(prefix, out_dir, paging: nil, overwrite: true)
+        # @param prefix            [String]
+        # @param out_dir           [Pathname]
+        # @param context           [Binding, nil]
+        # @param paging            [Paging, nil]
+        # @param overwrite         [Boolean]
+        # @param render_toc        [Boolean]
+        # @param toc_nesting_level [Integer, nil]
+        def render_html(
+              prefix,
+              out_dir,
+              context = nil,
+              paging: nil,
+              overwrite: true,
+              render_toc: false,
+              toc_nesting_level: nil
+            )
           filename = "#{prefix}#{paging&.digits}"
           markdown_path = out_dir / "#{filename}.md"
           html_path = out_dir / "#{filename}.html"
           return if skip?(html_path, overwrite)
 
-          markdown = Redcarpet::Markdown.new(Redcarpet::Render::HTML, tables: true)
+          context ||= binding
+          markdown = Redcarpet::Markdown.new(
+            Redcarpet::Render::HTML.new(with_toc_data: true), tables: true
+          )
           markdown_text = File.read(markdown_path)
-          html_body = markdown.render(markdown_text)
           template_path = "#{TEMPLATE_DIR}/#{prefix}.html.erb"
-          render_erb(template_path, html_path, binding)
+          context.local_variable_set(:content_body, markdown.render(markdown_text))
+          if render_toc
+            toc = Redcarpet::Markdown.new(
+              Redcarpet::Render::HTML_TOC.new(nesting_level: toc_nesting_level)
+            )
+            context.local_variable_set(:toc_body, toc.render(markdown_text))
+          end
+          render_erb(template_path, html_path, context)
         end
 
         # @param path      [String]

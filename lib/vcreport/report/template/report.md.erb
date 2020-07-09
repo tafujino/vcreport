@@ -1,5 +1,3 @@
-# <%= @name %>
-
 ## VCF metrics
 
 ### bcftools stats
@@ -17,3 +15,12 @@
 ### samtools flagstat
 
 <%= @cram.samtools_flagstat&.table&.markdown_text -%>
+
+### picard CollectWgsMetrics
+
+<% @cram.picard_collect_wgs_metrics.each do |e| -%>
+#### <%= e.chr_region.desc %>
+
+<%= e.coverage_stats_table.markdown_text %>
+
+<% end -%>

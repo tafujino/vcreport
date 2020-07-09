@@ -85,6 +85,16 @@ module VCReport
           @het_snp = het_snp
           @histogram = histogram
         end
+
+        # @return [Table]
+        def coverage_stats_table
+          desc = %w[mean median SD MAD]
+          coverage = desc.map { |k| @coverage_stats.send(k.downcase) }
+          header = %w[statistic coverage]
+          rows = [desc, coverage].transpose
+          type = Array.new(4, :float)
+          Table.new(header, rows, type)
+        end
       end
     end
   end
