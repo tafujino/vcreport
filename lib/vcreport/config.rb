@@ -24,7 +24,7 @@ module VCReport
       # @param dir [String, Pathname]
       # @return    [Config]
       def load(dir)
-        config_path = Pathname.new(dir) / CONFIG_PATH
+        config_path = Pathname.new(dir) / CONFIG_FILENAME
         unless File.exist?(config_path)
           warn "config file not found: #{config_path}"
           exit 1

@@ -11,8 +11,10 @@ require 'pathname'
 module VCReport
   module Report
     class << self
-      # @param project_dir     [String]
-      # @param metrics_manager [MetricsManager, nil]
+      # @param project_dir          [String]
+      # @param metrics_manager      [MetricsManager, nil]
+      # @param num_samples_per_page [Integer]
+      # @param render               [Boolean]
       def run(project_dir,
               config,
               metrics_manager = nil,
