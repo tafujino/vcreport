@@ -12,8 +12,8 @@
 
 ### samtools idxstats
 
-<%= @cram.samtools_idxstats&.to_table&.markdown_text -%>
+<%= @cram.samtools_idxstats&.table&.markdown_text -%>
 
 ### samtools flagstat
 
-<%= @cram.samtools_flagstat&.to_table&.markdown_text -%>
+<%= @cram.samtools_flagstat&.table&.markdown_text -%>

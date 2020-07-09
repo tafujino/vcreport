@@ -43,7 +43,7 @@ module VCReport
         end
 
         # @return [Table]
-        def to_table
+        def table
           header, messages, type = TABLE_COLUMNS.transpose
           rows = @chromosomes.map do |chromosome|
             messages.map do |message|

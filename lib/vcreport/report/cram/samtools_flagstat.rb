@@ -47,7 +47,7 @@ module VCReport
         def initialize; end
 
         # @return [Table]
-        def to_table
+        def table
           header = ['description', '# of passed reads', '# of failed reads']
           rows = FIELDS.map do |attr, desc|
             num_reads = send(attr)
