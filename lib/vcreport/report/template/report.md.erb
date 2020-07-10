@@ -35,7 +35,7 @@ log:
 <%= Render.wrap_text e.command_log %>
 ```
 
-genome territory = <%= e.territory.to_s(:delimited) %> bp
+<%= e.territory_table.markdown_text %>
 
 <%= e.coverage_stats_table.markdown_text %>
 

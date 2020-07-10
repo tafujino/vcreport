@@ -87,6 +87,14 @@ module VCReport
         end
 
         # @return [Table]
+        def territory_table
+          header = ['genome territory (bp)']
+          type = [:integer]
+          rows = [[@territory]]
+          Table.new(header, rows, type)
+        end
+
+        # @return [Table]
         def coverage_stats_table
           desc = %w[mean median SD MAD]
           coverage = desc.map { |k| @coverage_stats.send(k.downcase) }
