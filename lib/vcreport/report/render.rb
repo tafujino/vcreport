@@ -88,7 +88,10 @@ module VCReport
 
           context ||= binding
           markdown = Redcarpet::Markdown.new(
-            Redcarpet::Render::HTML.new(with_toc_data: true), tables: true
+            Redcarpet::Render::HTML.new(with_toc_data: true),
+            tables: true,
+            fenced_code_blocks: true,
+            disable_indented_code_blocks: false
           )
           markdown_text = File.read(markdown_path)
           template_path = "#{TEMPLATE_DIR}/#{prefix}.html.erb"

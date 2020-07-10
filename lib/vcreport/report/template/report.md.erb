@@ -18,9 +18,19 @@
 
 ### picard CollectWgsMetrics
 
+[Metrics Definitions](https://broadinstitute.github.io/picard/picard-metric-definitions.html#CollectWgsMetrics.WgsMetrics)
+
 <% @cram.picard_collect_wgs_metrics.each do |e| -%>
 #### <%= e.chr_region.desc %>
 
+```
+<%= e.command_log %>
+```
+
+genome territory = <%= e.territory.to_s(:delimited) %>
+
 <%= e.coverage_stats_table.markdown_text %>
+
+<%= e.percent_excluded_table.markdown_text %>
 
 <% end -%>

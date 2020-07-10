@@ -92,7 +92,21 @@ module VCReport
           coverage = desc.map { |k| @coverage_stats.send(k.downcase) }
           header = %w[statistic coverage]
           rows = [desc, coverage].transpose
-          type = Array.new(4, :float)
+          type = %i[string float]
+          Table.new(header, rows, type)
+        end
+
+        # @return [Table]
+        def percent_excluded_table
+          desc = %w[mapQ dupe unpaired baseQ overlap capped total]
+          excluded = desc.map do |k|
+            percent = @percent_excluded.send(k.downcase) * 100
+            percent = format('%.4<percent>f', percent: percent)
+            "#{percent} %"
+          end
+          header = ['filter type', 'fraction excluded']
+          rows = [desc, excluded].transpose
+          type = %i[string float]
           Table.new(header, rows, type)
         end
       end
