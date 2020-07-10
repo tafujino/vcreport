@@ -9,7 +9,7 @@ module VCReport
     class Table
       # @param header [Array<String>]
       # @param rows   [Array<Array>>]
-      # @param type   [Array<Symbol>] :string, :integer or :float
+      # @param type   [Array<Symbol>] :string, :integer, :float or :numeric
       def initialize(header, rows = [], type = [])
         @header = header
         @rows = rows
@@ -34,14 +34,14 @@ module VCReport
 
       private
 
-      # @param type [Array<Symbol>] :string, :integer or :float
+      # @param type [Array<Symbol>] :string, :integer, :float or :numeric
       # @return     [String]
       def separator_text(type)
         type.map do |t|
           case t
           when :string, nil
             '---'
-          when :integer, :float
+          when :integer, :float, :numeric
             '---:'
           else
             warn "Unknown type: #{t}"
@@ -51,7 +51,7 @@ module VCReport
       end
 
       # @param row       [Array]
-      # @param type      [Array<Symbol>] :string, :integer or :float
+      # @param type      [Array<Symbol>] :string, :integer, :float or :numeric
       # @param is_header [Boolean]
       # @return          [String]
       def row_text(row, type: [], is_header: false)
@@ -59,7 +59,7 @@ module VCReport
           next e.to_s if is_header
 
           case t
-          when :string, :float, nil
+          when :string, :float, :numeric, nil
             e.to_s
           when :integer
             e.to_s(:delimited)

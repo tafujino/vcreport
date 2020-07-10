@@ -108,6 +108,25 @@ module VCReport
           type = %i[string float]
           Table.new(header, rows, type)
         end
+
+        # @return [Table]
+        def percent_coverage_table
+          header = ['coverage', 'fraction (%)']
+          rows = @percent_coverage.map do |coverage, percent|
+            percent = format('%.4<percent>f', percent: percent * 100)
+            [coverage, percent]
+          end
+          type = %i[string float]
+          Table.new(header, rows, type)
+        end
+
+        # @return [Table]
+        def het_snp_table
+          header = ['HET SNP sensitivity', 'HET SNP sensitivity Q']
+          type = %i[float integer]
+          rows = [[@het_snp.sensitivity, @het_snp.q]]
+          Table.new(header, rows, type)
+        end
       end
     end
   end
