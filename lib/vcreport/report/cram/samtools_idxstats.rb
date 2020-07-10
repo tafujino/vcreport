@@ -34,16 +34,25 @@ module VCReport
           end
         end
 
+        # @return [Pathname]
+        attr_reader :path
+
         # @return [Chromosome]
         attr_reader :chromosomes
 
         # @param chromosomes [Array<Chromosome>]
-        def initialize(chromosomes)
+        def initialize(path, chromosomes)
+          @path = path
           @chromosomes = chromosomes
         end
 
         # @return [Table]
-        def table
+        def path_table
+          Table.single_file_table(@path)
+        end
+
+        # @return [Table]
+        def num_reads_table
           header, messages, type = TABLE_COLUMNS.transpose
           rows = @chromosomes.map do |chromosome|
             messages.map do |message|

@@ -34,6 +34,17 @@ module VCReport
         sio.string
       end
 
+      class << self
+        # @param  [String, Pathname]
+        # @return [Table]
+        def single_file_table(path)
+          header = %w[file]
+          type = %i[verbatim]
+          rows = [[File.expand_path(path)]]
+          Table.new(header, rows, type)
+        end
+      end
+
       private
 
       # @param type [Array<Symbol>]

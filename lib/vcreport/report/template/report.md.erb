@@ -18,7 +18,9 @@ program: `<%= VCReport::Report::VcfReporter::BCFTOOLS_IMAGE_URI %>`
 
 ### samtools idxstats
 
-<%= @cram.samtools_idxstats&.table&.markdown_text -%>
+<%= @cram.samtools_idxstats&.path_table&.markdown_text -%>
+
+<%= @cram.samtools_idxstats&.num_reads_table&.markdown_text -%>
 
 ### samtools flagstat
 

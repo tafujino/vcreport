@@ -34,7 +34,7 @@ module VCReport
           end
           target_names = TARGET_CHROMOSOMES.map { |x| "chr#{x}" }
           target_chrs = all_chrs.values_at(*target_names)
-          SamtoolsIdxstats.new(target_chrs)
+          SamtoolsIdxstats.new(@samtools_idxstats_path, target_chrs)
         end
 
         # @return [Boolean]

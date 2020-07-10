@@ -35,10 +35,7 @@ module VCReport
 
       # @return [Table]
       def path_table
-        header = %w[file]
-        type = %i[verbatim]
-        rows = [[@cram_path.expand_path]]
-        Table.new(header, rows, type)
+        Table.single_file_table(@cram_path)
       end
     end
   end
