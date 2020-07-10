@@ -8,6 +8,7 @@ module VCReport
   MAX_SAMPLES = 100_000
   HUMAN_RESEQ_DIR = 'lib/human-reseq'
   TOC_NESTING_LEVEL = 3
+  IGNORE_DEPS_INEXISTENCE = true # debug
 
   module Daemon
     DEFAULT_METRICS_INTERVAL = 3_600 # in seconds

@@ -24,7 +24,7 @@ module VCReport
         exist_targets, exist_deps = [@target_paths, @dep_paths].map do |paths|
           paths.all? { |path| File.exist?(path) }
         end
-        return nil unless exist_deps
+        return nil unless IGNORE_DEPS_INEXISTENCE || exist_deps
 
         ret = exist_targets ? parse : nil
         unless @target_paths.empty?
