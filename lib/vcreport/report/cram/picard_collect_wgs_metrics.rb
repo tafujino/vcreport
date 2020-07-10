@@ -101,10 +101,9 @@ module VCReport
           desc = %w[mapQ dupe unpaired baseQ overlap capped total]
           excluded = desc.map do |k|
             percent = @percent_excluded.send(k.downcase) * 100
-            percent = format('%.4<percent>f', percent: percent)
-            "#{percent} %"
+            format('%.4<percent>f', percent: percent)
           end
-          header = ['filter type', 'fraction excluded']
+          header = ['filter type', 'excluded (%)']
           rows = [desc, excluded].transpose
           type = %i[string float]
           Table.new(header, rows, type)
