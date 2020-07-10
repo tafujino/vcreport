@@ -43,6 +43,41 @@ module VCReport
           )
         end
 
+        # @param str    [String]
+        # @param length [Integer]
+        # @return       [String]
+        def wrap_text(str, wrap_length = WRAP_LENGTH)
+          str.each_line(chomp: true).map do |line|
+            wrap_line(line, wrap_length)
+          end.join("\n")
+        end
+
+        # @param line        [String]
+        # @param wrap_length [Integer]
+        # @return            [String]
+        def wrap_line(line, wrap_length = WRAP_LENGTH)
+          words = line.scan(/(?:[^\-\s])+(?:[\s\-]+|$)/)
+          wrapped_words = [[]]
+          line_length = 0
+          words.each do |word|
+            if wrapped_words.last.empty?
+              wrapped_words.last << word
+              if word.length > wrap_length
+                wrapped_words << []
+                line_length = 0
+              end
+            else
+              if line_length + word.length > wrap_length
+                wrapped_words << []
+                line_length = 0
+              end
+              wrapped_words.last << word
+              line_length += word.length
+            end
+          end
+          wrapped_words.map(&:join).join("\n")
+        end
+
         private
 
         # @param prefix    [String]

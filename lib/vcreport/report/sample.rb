@@ -51,7 +51,7 @@ module VCReport
       def bcftools_stats_table
         return nil if @vcfs.empty?
 
-        header = ['chr. region', '# of snps', '# of indels', 'ts/tv']
+        header = ['chr. region', '# of SNPs', '# of indels', 'ts/tv']
         type = %i[string integer integer float]
         rows = @vcfs.map do |vcf|
           [vcf.chr_region.desc, vcf.num_snps, vcf.num_indels, vcf.ts_tv_ratio]

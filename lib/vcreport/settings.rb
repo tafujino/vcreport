@@ -16,5 +16,6 @@ module VCReport
 
   module Report
     DEFAULT_NUM_SAMPLES_PER_PAGE = 50
+    WRAP_LENGTH = 100
   end
 end
