@@ -15,7 +15,7 @@ module VCReport
       # @param dir              [String]
       # @param metrics_manager  [MetricsManager]
       # @param metrics_interval [Integer] in seconds
-      def start(dir, config, metrics_manager, metrics_interval = DEFAULT_METRICS_INTERVAL)
+      def start(dir, config, metrics_manager, interval = DEFAULT_INTERVAL)
         if ProcessInfo.load(dir)
           say_status 'already running', dir, :yellow
           exit 1
@@ -25,7 +25,7 @@ module VCReport
         ProcessInfo.store(dir)
         loop do
           Report.run(dir, config, metrics_manager)
-          sleep(metrics_interval)
+          sleep(interval)
         end
       end
 

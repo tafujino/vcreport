@@ -11,7 +11,7 @@ module VCReport
   IGNORE_DEPS_INEXISTENCE = true # debug
 
   module Daemon
-    DEFAULT_METRICS_INTERVAL = 3_600 # in seconds
+    DEFAULT_INTERVAL = 3_600 # in seconds
   end
 
   module Report

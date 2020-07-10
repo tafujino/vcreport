@@ -28,7 +28,7 @@ module VCReport
              aliases: 'i',
              type: :numeric,
              desc: 'Monitoring interval (seconds)',
-             default: Daemon::DEFAULT_METRICS_INTERVAL
+             default: Daemon::DEFAULT_INTERVAL
       option 'samples-per-page',
              aliases: 's',
              type: :numeric,
