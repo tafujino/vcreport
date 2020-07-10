@@ -124,7 +124,7 @@ module VCReport
             percent = format('%.4<percent>f', percent: percent * 100)
             [coverage, percent]
           end
-          type = %i[string float]
+          type = %i[integer float]
           Table.new(header, rows, type)
         end
 
