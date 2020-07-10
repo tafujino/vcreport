@@ -52,6 +52,8 @@ module VCReport
           end.join("\n")
         end
 
+        private
+
         # @param line        [String]
         # @param wrap_length [Integer]
         # @return            [String]
@@ -77,8 +79,6 @@ module VCReport
           end
           wrapped_words.map(&:join).join("\n")
         end
-
-        private
 
         # @param prefix    [String]
         # @param out_dir   [Pathname]
@@ -122,22 +122,35 @@ module VCReport
           return if skip?(html_path, overwrite)
 
           context ||= binding
+          markdown_text = File.read(markdown_path)
+          template_path = "#{TEMPLATE_DIR}/#{prefix}.html.erb"
+          context.local_variable_set(:content_body, content_html(markdown_text))
+          if render_toc
+            toc_body = toc_html(markdown_text, toc_nesting_level: toc_nesting_level)
+            context.local_variable_set(:toc_body, toc_body)
+          end
+          render_erb(template_path, html_path, context)
+        end
+
+        # @param markdown_text [String]
+        # @return              [String]
+        def content_html(markdown_text)
           markdown = Redcarpet::Markdown.new(
             Redcarpet::Render::HTML.new(with_toc_data: true),
             tables: true,
             fenced_code_blocks: true,
             disable_indented_code_blocks: false
           )
-          markdown_text = File.read(markdown_path)
-          template_path = "#{TEMPLATE_DIR}/#{prefix}.html.erb"
-          context.local_variable_set(:content_body, markdown.render(markdown_text))
-          if render_toc
-            toc = Redcarpet::Markdown.new(
-              Redcarpet::Render::HTML_TOC.new(nesting_level: toc_nesting_level)
-            )
-            context.local_variable_set(:toc_body, toc.render(markdown_text))
-          end
-          render_erb(template_path, html_path, context)
+          markdown.render(markdown_text)
+        end
+
+        # @param markdown_text [String]
+        # @return              [String]
+        def toc_html(markdown_text, toc_nesting_level:)
+          toc = Redcarpet::Markdown.new(
+            Redcarpet::Render::HTML_TOC.new(nesting_level: toc_nesting_level)
+          )
+          toc.render(markdown_text)
         end
 
         # @param path      [String]
