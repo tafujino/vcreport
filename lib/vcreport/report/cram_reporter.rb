@@ -40,6 +40,7 @@ module VCReport
           ).try_parse
         end.compact
         Cram.new(
+          @cram_path,
           samtools_idxstats,
           samtools_flagstat,
           picard_collect_wgs_metrics

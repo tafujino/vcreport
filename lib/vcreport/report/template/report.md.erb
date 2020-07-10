@@ -14,6 +14,8 @@ program: `<%= VCReport::Report::VcfReporter::BCFTOOLS_IMAGE_URI %>`
 
 ## CRAM metrics
 
+<%= @cram.path_table.markdown_text %>
+
 ### samtools idxstats
 
 <%= @cram.samtools_idxstats&.table&.markdown_text -%>

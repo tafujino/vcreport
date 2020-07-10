@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'vcreport/report/table'
 require 'vcreport/report/cram/samtools_idxstats'
 require 'vcreport/report/cram/samtools_flagstat'
 require 'vcreport/report/cram/picard_collect_wgs_metrics'
@@ -16,18 +17,28 @@ module VCReport
       # @return [Array<PicardCollectWgsMetrics>]
       attr_reader :picard_collect_wgs_metrics
 
-
+      # @param cram_path                  [Pathname]
       # @param samtools_idxstats_report   [SamtoolsIdxstats, nil]
       # @param samtools_flagstat_report   [SamtoolsFlagstat, nil]
       # @param picard_collect_wgs_metrics [Array<PicardCollectWgsMetrics>]
       def initialize(
+            cram_path,
             samtools_idxstats,
             samtools_flagstat,
             picard_collect_wgs_metrics
           )
+        @cram_path = cram_path
         @samtools_idxstats = samtools_idxstats
         @samtools_flagstat = samtools_flagstat
         @picard_collect_wgs_metrics = picard_collect_wgs_metrics
+      end
+
+      # @return [Table]
+      def path_table
+        header = %w[file]
+        type = %i[verbatim]
+        rows = [[@cram_path.expand_path]]
+        Table.new(header, rows, type)
       end
     end
   end
