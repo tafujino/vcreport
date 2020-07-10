@@ -5,6 +5,7 @@ require 'vcreport/report/reporter'
 require 'vcreport/report/sample'
 require 'vcreport/report/vcf'
 require 'vcreport/report/vcf_reporter'
+require 'vcreport/report/vcf_collection'
 require 'vcreport/report/cram'
 require 'vcreport/report/cram_reporter'
 require 'vcreport/metrics_manager'
@@ -41,7 +42,7 @@ module VCReport
         cram = CramReporter.new(
           cram_path, chr_regions, metrics_dir, @metrics_manager
         ).try_parse
-        Sample.new(@name, end_time, vcfs, cram)
+        Sample.new(@name, end_time, VcfCollection.new(vcfs), cram)
       end
     end
   end

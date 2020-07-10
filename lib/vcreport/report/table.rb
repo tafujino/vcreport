@@ -7,9 +7,11 @@ require 'stringio'
 module VCReport
   module Report
     class Table
+      # type is either :string, :varbatim, :integer, :float or :numeric
+
       # @param header [Array<String>]
       # @param rows   [Array<Array>>]
-      # @param type   [Array<Symbol>] :string, :integer, :float or :numeric
+      # @param type   [Array<Symbol>]
       def initialize(header, rows = [], type = [])
         @header = header
         @rows = rows
@@ -34,13 +36,13 @@ module VCReport
 
       private
 
-      # @param type [Array<Symbol>] :string, :integer, :float or :numeric
+      # @param type [Array<Symbol>]
       # @return     [String]
       def separator_text(type)
         type.map do |t|
           case t
-          when :string, nil
-            '---'
+          when :string, :verbatim, nil
+            ':---'
           when :integer, :float, :numeric
             '---:'
           else
@@ -51,7 +53,7 @@ module VCReport
       end
 
       # @param row       [Array]
-      # @param type      [Array<Symbol>] :string, :integer, :float or :numeric
+      # @param type      [Array<Symbol>]
       # @param is_header [Boolean]
       # @return          [String]
       def row_text(row, type: [], is_header: false)
@@ -61,6 +63,9 @@ module VCReport
           case t
           when :string, :float, :numeric, nil
             e.to_s
+          when :verbatim
+            # this does not work perfectly when the string contains backtick
+            "`#{e}`"
           when :integer
             e.to_s(:delimited)
           else

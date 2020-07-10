@@ -1,14 +1,17 @@
 # frozen_string_literal: true
 
-require 'active_support'
-require 'active_support/core_ext/string/filters'
 require 'fileutils'
-require 'vcreport/metrics_manager'
 require 'vcreport/chr_region'
 
 module VCReport
   module Report
     class Vcf
+      # @return [Pathname]
+      attr_reader :vcf_path
+
+      # @return [Pathname]
+      attr_reader :bcftools_stats_path
+
       # @return [ChrRegion]
       attr_reader :chr_region
 
@@ -21,7 +24,16 @@ module VCReport
       # @return [Float]
       attr_reader :ts_tv_ratio
 
-      def initialize(chr_region, num_snps, num_indels, ts_tv_ratio)
+      def initialize(
+            vcf_path,
+            bcftools_stats_path,
+            chr_region,
+            num_snps,
+            num_indels,
+            ts_tv_ratio
+          )
+        @vcf_path = vcf_path
+        @bcftools_stats_path = bcftools_stats_path
         @chr_region = chr_region
         @num_snps = num_snps
         @num_indels = num_indels

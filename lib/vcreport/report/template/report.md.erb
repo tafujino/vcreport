@@ -1,12 +1,16 @@
-<%= require 'vcreport/report/render' -%>
+<% require 'vcreport/report/render' -%>
 
 ## VCF metrics
 
+<%= @vcf_collection.vcf_path_table.markdown_text %>
+
 ### bcftools stats
 
-`<%= VCReport::Report::VcfReporter::BCFTOOLS_IMAGE_URI %>`
+program: `<%= VCReport::Report::VcfReporter::BCFTOOLS_IMAGE_URI %>`
 
-<%= bcftools_stats_table&.markdown_text -%>
+<%= @vcf_collection.bcftools_stats_path_table.markdown_text %>
+
+<%= @vcf_collection.bcftools_stats_table.markdown_text -%>
 
 ## CRAM metrics
 
@@ -20,16 +24,18 @@
 
 ### picard CollectWgsMetrics
 
-[Metrics Definitions](https://broadinstitute.github.io/picard/picard-metric-definitions.html#CollectWgsMetrics.WgsMetrics)
+[Metrics Definitions (Broad Institute)](https://broadinstitute.github.io/picard/picard-metric-definitions.html#CollectWgsMetrics.WgsMetrics)
 
 <% @cram.picard_collect_wgs_metrics.each do |e| -%>
 #### <%= e.chr_region.desc %>
+
+log:
 
 ```
 <%= Render.wrap_text e.command_log %>
 ```
 
-genome territory = <%= e.territory.to_s(:delimited) %>
+genome territory = <%= e.territory.to_s(:delimited) %> bp
 
 <%= e.coverage_stats_table.markdown_text %>
 

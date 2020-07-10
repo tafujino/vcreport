@@ -34,7 +34,14 @@ module VCReport
         num_snps = sn['number of SNPs:']
         num_indels = sn['number of indels:']
         ts_tv_ratio = field['TSTV'].first[4].to_f
-        Vcf.new(@chr_region, num_snps, num_indels, ts_tv_ratio)
+        Vcf.new(
+          @vcf_path,
+          @bcftools_stats_path,
+          @chr_region,
+          num_snps,
+          num_indels,
+          ts_tv_ratio
+        )
       end
 
       # @return [Boolean]
