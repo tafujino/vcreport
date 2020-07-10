@@ -41,13 +41,26 @@ module VCReport
             'with mate mapped to a different chr (mapQ>=5)'
         }.freeze
 
-        # @return [NumReads]
-        attr_accessor(*FIELDS.keys)
+        # @return [Pathname]
+        attr_reader :path
 
-        def initialize; end
+        # @return [NumReads]
+        attr_reader(*FIELDS.keys)
+
+        # @param path   [Pathname]
+        # @param params [Hash{ Symbol => Object }]
+        def initialize(path, **params)
+          @path = path
+          params.each { |k, v| instance_variable_set("@#{k}", v) }
+        end
 
         # @return [Table]
-        def table
+        def path_table
+          Table.single_file_table(@path)
+        end
+
+        # @return [Table]
+        def num_reads_table
           header = ['description', '# of passed reads', '# of failed reads']
           rows = FIELDS.map do |attr, desc|
             num_reads = send(attr)

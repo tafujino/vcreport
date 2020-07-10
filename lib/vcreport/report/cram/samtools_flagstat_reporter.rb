@@ -26,14 +26,14 @@ module VCReport
 
         # @return [SamtoolsFlagstat]
         def parse
-          flagstat = SamtoolsFlagstat.new
+          params = {}
           File.foreach(@samtools_flagstat_path, chomp: true) do |line|
             is_valid_line = false
             SamtoolsFlagstat::FIELDS.each do |attr, trailing|
               num_alignments = extract_pass_and_fail(line, trailing)
               next unless num_alignments
 
-              flagstat.send("#{attr}=", num_alignments)
+              params[attr] = num_alignments
               is_valid_line = true
             end
             unless is_valid_line
@@ -41,7 +41,7 @@ module VCReport
               exit 1
             end
           end
-          flagstat
+          SamtoolsFlagstat.new(@samtools_flagstat_path, **params)
         end
 
         # @return [Boolean]

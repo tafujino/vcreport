@@ -24,7 +24,9 @@ program: `<%= VCReport::Report::VcfReporter::BCFTOOLS_IMAGE_URI %>`
 
 ### samtools flagstat
 
-<%= @cram.samtools_flagstat&.table&.markdown_text -%>
+<%= @cram.samtools_flagstat&.path_table&.markdown_text -%>
+
+<%= @cram.samtools_flagstat&.num_reads_table&.markdown_text -%>
 
 ### picard CollectWgsMetrics
 
