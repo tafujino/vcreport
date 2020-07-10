@@ -16,34 +16,32 @@ module VCReport
       # @param sample_dir      [Pathname]
       # @param config          [Config]
       # @param metrics_manager [MetricsManager, nil]
-      # @return                [Sample]
       def initialize(sample_dir, config, metrics_manager)
         @sample_dir = sample_dir
         @config = config
-        super(metrics_manager)
+        @finish_path = @sample_dir / 'finish'
+        @name = @sample_dir.basename.to_s
+        @metrics_manager = metrics_manager
+        super(@metrics_manager, targets: [], deps: @finish_path)
       end
 
       # @return [Sample]
       def parse
-        name = @sample_dir.basename.to_s
-        finish_path = (@sample_dir / 'finish')
-        return Sample.new(name) unless finish_path.exist?
-
-        end_time = File::Stat.new(finish_path).mtime
+        end_time = File::Stat.new(@finish_path).mtime
         metrics_dir = @sample_dir / 'metrics'
         chr_regions = @config.chr_regions
-        vcfs = chr_regions.map do |chr_region|
+        vcfs = chr_regions.filter_map do |chr_region|
           # VCF is supposed to be gzipped
-          vcf_path = @sample_dir / "#{name}.#{chr_region.id}.g.vcf.gz"
+          vcf_path = @sample_dir / "#{@name}.#{chr_region.id}.g.vcf.gz"
           VcfReporter.new(
             vcf_path, chr_region, metrics_dir, @metrics_manager
-          ).run
-        end.compact
-        cram_path = @sample_dir / "#{name}.dedup.cram"
+          ).try_parse
+        end
+        cram_path = @sample_dir / "#{@name}.dedup.cram"
         cram = CramReporter.new(
           cram_path, chr_regions, metrics_dir, @metrics_manager
-        ).run
-        Sample.new(name, end_time, vcfs, cram)
+        ).try_parse
+        Sample.new(@name, end_time, vcfs, cram)
       end
     end
   end

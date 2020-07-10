@@ -20,7 +20,7 @@ module VCReport
           @cram_path = cram_path
           @out_dir = metrics_dir / 'samtools-idxstats'
           @samtools_idxstats_path = @out_dir / "#{@cram_path.basename}.idxstats"
-          super(metrics_manager, @samtools_idxstats_path)
+          super(metrics_manager, targets: @samtools_idxstats_path, deps: @cram_path)
         end
 
         private
@@ -38,7 +38,7 @@ module VCReport
         end
 
         # @return [Boolean]
-        def metrics
+        def run_metrics
           FileUtils.mkpath @out_dir
           job_definition =
             {

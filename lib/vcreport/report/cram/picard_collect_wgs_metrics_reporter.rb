@@ -20,7 +20,7 @@ module VCReport
           @out_dir = metrics_dir / 'picard-collectWgsMetrics'
           @picard_collect_wgs_metrics_path =
             @out_dir / "#{@cram_path.basename}.#{chr_region.id}.wgs_metrics"
-          super(metrics_manager, @picard_collect_wgs_metrics_path)
+          super(metrics_manager, targets: @picard_collect_wgs_metrics_path, deps: @cram_path)
         end
 
         private
@@ -60,7 +60,7 @@ module VCReport
         end
 
         # @return [Boolean]
-        def metrics
+        def run_metrics
         end
 
         # @param lines [Array<String>] lines from picard-CollectWgsMetrics output

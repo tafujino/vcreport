@@ -22,10 +22,10 @@ module VCReport
               render: true)
         project_dir = Pathname.new(project_dir)
         report_dir = project_dir / REPORT_DIR
-        samples = sample_dirs(project_dir).map do |sample_dir|
+        samples = sample_dirs(project_dir).filter_map do |sample_dir|
           SampleReporter
             .new(sample_dir, config, metrics_manager)
-            .run
+            .try_parse
             .tap { |report| report.render(report_dir) if render }
         end
         return unless render

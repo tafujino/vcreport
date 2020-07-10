@@ -11,17 +11,25 @@ module VCReport
     # @abstract
     class Reporter
       # @param metrics_manager [MetricsManager, nil]
-      # @param metrics_paths   [Array<Pathname>]
-      def initialize(metrics_manager = nil, *metrics_paths)
+      # @param targets         [Array<Pathname>]
+      # @param deps            [Array<Pathname>]
+      def initialize(metrics_manager, targets: [], deps: [])
         @metrics_manager = metrics_manager
-        @metrics_paths = metrics_paths
+        @target_paths, @dep_paths = [targets, deps].map do |e|
+          e.is_a?(Array) ? e : [e]
+        end
       end
 
-      def run
-        ret = @metrics_paths.all? { |path| File.exist?(path) } ? parse : nil
-        return ret if @metrics_paths.empty?
+      def try_parse
+        exist_targets, exist_deps = [@target_paths, @dep_paths].map do |paths|
+          paths.all? { |path| File.exist?(path) }
+        end
+        return nil unless exist_deps
 
-        @metrics_manager&.post(@metrics_paths.first) { metrics }
+        ret = exist_targets ? parse : nil
+        unless @target_paths.empty?
+          @metrics_manager&.post(@target_paths.first) { run_metrics }
+        end
         ret
       end
 
@@ -31,7 +39,7 @@ module VCReport
       def parse; end
 
       # @abstract
-      def metrics; end
+      def run_metrics; end
 
       def store_job_file(job_path, job_definition)
         File.write(job_path, YAML.dump(job_definition.deep_stringify_keys))

@@ -22,21 +22,22 @@ module VCReport
         @cram_path = cram_path
         @chr_regions = chr_regions
         @metrics_dir = metrics_dir
-        super(metrics_manager)
+        @metrics_manager = metrics_manager
+        super(@metrics_manager)
       end
 
       # @return [Cram]
       def parse
         samtools_idxstats = Cram::SamtoolsIdxstatsReporter.new(
           @cram_path, @metrics_dir, @metrics_manager
-        ).run
+        ).try_parse
         samtools_flagstat = Cram::SamtoolsFlagstatReporter.new(
           @cram_path, @metrics_dir, @metrics_manager
-        ).run
+        ).try_parse
         picard_collect_wgs_metrics = @chr_regions.map do |chr_region|
           Cram::PicardCollectWgsMetricsReporter.new(
             @cram_path, chr_region, @metrics_dir, @metrics_manager
-          ).run
+          ).try_parse
         end.compact
         Cram.new(
           samtools_idxstats,

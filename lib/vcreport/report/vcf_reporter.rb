@@ -21,7 +21,7 @@ module VCReport
         @metrics_dir = metrics_dir
         @bcftools_stats_path =
           @metrics_dir / 'bcftools-stats' / "#{@vcf_path.basename}.bcftools-stats"
-        super(metrics_manager, @bcftools_stats_path)
+        super(metrics_manager, targets: @bcftools_stats_path, deps: @vcf_path)
       end
 
       # @return [Vcf]
@@ -38,7 +38,7 @@ module VCReport
       end
 
       # @return [Boolean]
-      def metrics
+      def run_metrics
         container_data_dir = '/data'
         vcf_path = @vcf_path.symlink? ? @vcf_path.readlink : @vcf_path
         out_dir = File.dirname(@bcftools_stats_path)
