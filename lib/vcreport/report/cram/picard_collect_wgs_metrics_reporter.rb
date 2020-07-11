@@ -10,13 +10,15 @@ module VCReport
       class PicardCollectWgsMetricsReporter < Reporter
         DEFAULT_MIN_BASE_QUALITY = 20
 
-        # @param cram_path       [Pathname]
-        # @param chr_region      [ChrRegion]
-        # @param metrics_dir     [Pathname]
+        # @param cram_path   [Pathname]
+        # @param chr_region  [ChrRegion]
+        # @param ref_path    [Pathname]
+        # @param metrics_dir [Pathname]
         # @param job_manager [JobManager, nil]
-        def initialize(cram_path, chr_region, metrics_dir, job_manager)
+        def initialize(cram_path, chr_region, ref_path, metrics_dir, job_manager)
           @cram_path = cram_path
           @chr_region = chr_region
+          @ref_path = ref_path
           @out_dir = metrics_dir / 'picard-collectWgsMetrics'
           @picard_collect_wgs_metrics_path =
             @out_dir / "#{@cram_path.basename}.#{chr_region.id}.wgs_metrics"
@@ -66,6 +68,30 @@ module VCReport
 
         # @return [Boolean]
         def run_metrics
+          FileUtils.mkpath @out_dir
+          job_definition =
+            {
+              in_bam:
+                {
+                  class: 'File',
+                  format: 'http://edamontology.org/format_2572',
+                  path: @cram_path.expand_path.to_s
+                },
+              reference:
+                {
+                  class: 'File',
+                  format: 'http://edamontology.org/format_1929',
+                  path: @ref_path.expand_path.to_s
+                },
+              reference_interval_name: @chr_region.interval_list_path.id.to_s,
+              reference_interval_list:
+                {
+                  class: 'File',
+                  path: @chr_region.interval_list_path.expand_path.to_s
+                }
+            }
+          script_path = "#{HUMAN_RESEQ_DIR}/Tools/samtools-idxstats.cwl"
+          run_cwl(script_path, job_definition, @out_dir)
         end
 
         # @param lines [Array<String>] lines from picard-CollectWgsMetrics output

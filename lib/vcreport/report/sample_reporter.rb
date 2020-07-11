@@ -16,7 +16,7 @@ module VCReport
     class SampleReporter < Reporter
       # @param sample_dir      [Pathname]
       # @param config          [Config]
-      # @param job_manager [JobManager, nil]
+      # @param job_manager     [JobManager, nil]
       def initialize(sample_dir, config, job_manager)
         @sample_dir = sample_dir
         @config = config
@@ -40,7 +40,7 @@ module VCReport
         end
         cram_path = @sample_dir / "#{@name}.dedup.cram"
         cram = CramReporter.new(
-          cram_path, chr_regions, metrics_dir, @job_manager
+          cram_path, chr_regions, @config.ref_path, metrics_dir, @job_manager
         ).try_parse
         Sample.new(@name, end_time, VcfCollection.new(vcfs), cram)
       end

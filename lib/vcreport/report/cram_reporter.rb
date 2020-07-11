@@ -13,14 +13,16 @@ require 'vcreport/report/cram/picard_collect_wgs_metrics_reporter'
 module VCReport
   module Report
     class CramReporter < Reporter
-      # @param cram_path       [Pathname]
-      # @param chr_regions     [Array<ChrRegion>]
-      # @param metrics_dir     [Pathname]
+      # @param cram_path   [Pathname]
+      # @param chr_regions [Array<ChrRegion>]
+      # @param ref_path    [Pathname]
+      # @param metrics_dir [Pathname]
       # @param job_manager [JobManager, nil]
-      # @return                [Cram]
-      def initialize(cram_path, chr_regions, metrics_dir, job_manager)
+      # @return            [Cram]
+      def initialize(cram_path, chr_regions, ref_path, metrics_dir, job_manager)
         @cram_path = cram_path
         @chr_regions = chr_regions
+        @ref_path = ref_path
         @metrics_dir = metrics_dir
         @job_manager = job_manager
         super(@job_manager)
@@ -36,7 +38,7 @@ module VCReport
         ).try_parse
         picard_collect_wgs_metrics = @chr_regions.map do |chr_region|
           Cram::PicardCollectWgsMetricsReporter.new(
-            @cram_path, chr_region, @metrics_dir, @job_manager
+            @cram_path, chr_region, @ref_path, @metrics_dir, @job_manager
           ).try_parse
         end.compact
         Cram.new(
