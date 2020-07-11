@@ -47,6 +47,9 @@ module VCReport
           end
         end
 
+        # @return [Pathname]
+        attr_reader :path
+
         # @return [ChrRegion]
         attr_reader :chr_region
 
@@ -68,7 +71,8 @@ module VCReport
         # @return [Hash{Integer => Integer] coverage -> count
         attr_reader :histograma
 
-        def initialize(chr_region,
+        def initialize(path,
+                       chr_region,
                        command_log,
                        territory,
                        coverage_stats,
@@ -76,6 +80,7 @@ module VCReport
                        percent_coverage,
                        het_snp,
                        histogram)
+          @path = path
           @chr_region = chr_region
           @command_log = command_log
           @territory = territory
@@ -84,6 +89,11 @@ module VCReport
           @percent_coverage = percent_coverage
           @het_snp = het_snp
           @histogram = histogram
+        end
+
+        # @return [Table]
+        def path_table
+          Table.single_file_table(@path)
         end
 
         # @return [Table]

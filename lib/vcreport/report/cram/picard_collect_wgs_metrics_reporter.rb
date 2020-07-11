@@ -54,9 +54,14 @@ module VCReport
           end
           metrics_section_values = parse_metrics_section(metrics_section)
           histogram = parse_histogram_section(histogram_section)
-          PicardCollectWgsMetrics.new(
-            *[@chr_region, command_log, metrics_section_values, histogram].flatten
-          )
+          args = [
+            @picard_collect_wgs_metrics_path,
+            @chr_region,
+            command_log,
+            metrics_section_values,
+            histogram
+          ].flatten
+          PicardCollectWgsMetrics.new(*args)
         end
 
         # @return [Boolean]

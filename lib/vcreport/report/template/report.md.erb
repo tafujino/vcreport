@@ -35,10 +35,10 @@ program: `<%= VCReport::Report::VcfReporter::BCFTOOLS_IMAGE_URI %>`
 <% @cram.picard_collect_wgs_metrics.each do |e| -%>
 #### <%= e.chr_region.desc %>
 
-log:
+<%= e.path_table.markdown_text %>
 
 ```
-<%= Render.wrap_text e.command_log %>
+<%= Render.wrap_text(e.command_log) %>
 ```
 
 <%= e.territory_table.markdown_text %>
