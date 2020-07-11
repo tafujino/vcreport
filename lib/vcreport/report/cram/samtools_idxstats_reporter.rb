@@ -4,7 +4,7 @@ require 'pathname'
 require 'csv'
 require 'vcreport/report/reporter'
 require 'vcreport/report/cram/samtools_idxstats'
-require 'vcreport/metrics_manager'
+require 'vcreport/job_manager'
 require 'vcreport/settings'
 
 module VCReport
@@ -15,12 +15,12 @@ module VCReport
 
         # @param cram_path       [Pathname]
         # @param metrics_dir     [Pathname]
-        # @param metrics_manager [MetricsManager, nil]
-        def initialize(cram_path, metrics_dir, metrics_manager)
+        # @param job_manager [JobManager, nil]
+        def initialize(cram_path, metrics_dir, job_manager)
           @cram_path = cram_path
           @out_dir = metrics_dir / 'samtools-idxstats'
           @samtools_idxstats_path = @out_dir / "#{@cram_path.basename}.idxstats"
-          super(metrics_manager, targets: @samtools_idxstats_path, deps: @cram_path)
+          super(job_manager, targets: @samtools_idxstats_path, deps: @cram_path)
         end
 
         private

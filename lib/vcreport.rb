@@ -5,11 +5,11 @@ require 'vcreport/settings'
 require 'vcreport/report'
 require 'vcreport/daemon'
 require 'vcreport/process_info'
+require 'vcreport/job_manager'
 require 'thor'
 
 require 'active_support'
 require 'active_support/core_ext/numeric/conversions'
-
 
 module VCReport
   module CLI
@@ -23,21 +23,16 @@ module VCReport
              aliases: 't',
              type: :numeric,
              desc: 'Number of threads for metrics calculation',
-             default: DEFAULT_METRICS_NUM_THREADS
+             default: JOB_DEAULT_NUM_THREADS
       option 'interval',
              aliases: 'i',
              type: :numeric,
              desc: 'Monitoring interval (seconds)',
              default: Daemon::DEFAULT_INTERVAL
-      option 'samples-per-page',
-             aliases: 's',
-             type: :numeric,
-             desc: 'Number of samples per page',
-             default: Report::DEFAULT_NUM_SAMPLES_PER_PAGE
       def start(dir)
         config = Config.load(dir)
-        metrics_manager = MetricsManager.new(options['threads'])
-        Daemon.start(dir, config, metrics_manager, options['interval'])
+        job_manager = JobManager.new(options['threads'])
+        Daemon.start(dir, config, job_manager, options['interval'])
       end
 
       desc 'stop [DIRECTORY]', 'Stop a daemon'
@@ -69,11 +64,6 @@ module VCReport
       end
 
       desc 'render [DIRECTORY]', 'Generate reports'
-      option 'samples-per-page',
-             aliases: 's',
-             type: :numeric,
-             desc: 'Number of samples per page',
-             default: Report::DEFAULT_NUM_SAMPLES_PER_PAGE
       def render(dir)
         config = Config.load(dir)
         Report.run(dir, config)
@@ -84,12 +74,12 @@ module VCReport
              aliases: 't',
              type: :numeric,
              desc: 'Number of threads for metrics calculation',
-             default: DEFAULT_METRICS_NUM_THREADS
+             default: JOB_DEAULT_NUM_THREADS
       def metrics(dir)
         config = Config.load(dir)
-        metrics_manager = MetricsManager.new(options['threads'])
-        Report.run(dir, config, metrics_manager, render: false)
-        metrics_manager.wait
+        job_manager = JobManager.new(options['threads'])
+        Report.run(dir, config, job_manager, render: false)
+        job_manager.wait
       end
     end
   end

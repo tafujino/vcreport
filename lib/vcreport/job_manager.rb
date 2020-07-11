@@ -10,7 +10,7 @@ require 'thor'
 require 'English'
 
 module VCReport
-  class MetricsManager
+  class JobManager
     include Thor::Shell
 
     # @return [Integer]
@@ -20,7 +20,7 @@ module VCReport
     attr_reader :should_terminate
 
     # @param num_threads [Integer]
-    def initialize(num_threads = DEFAULT_METRICS_NUM_THREADS)
+    def initialize(num_threads)
       @num_threads = num_threads
       @pool = Concurrent::FixedThreadPool.new(num_threads)
       # Hash{ String => Symbol }
@@ -41,17 +41,18 @@ module VCReport
           File does not exist but job status is 'success'.
           Something went wrong: #{result_path}
         MESSAGE
+        say_status 'start', result_path, :blue
       when :unfinished
         # the job is already in queue
         say_status 'queued', result_path, :yellow
         return
       when :fail
-        warn "Restart metrics calculation: #{result_path}"
+        say_status 'restart', result_path, :blue
+      else
+        say_status 'start', result_path, :blue
       end
-      # when status is :fail or nil
       @job_status[result_path] = :unfinished
       @job_status[result_path] = @pool.post do
-        say_status 'start', result_path, :blue
         is_success = yield
         if is_success
           say_status 'create', result_path, :green

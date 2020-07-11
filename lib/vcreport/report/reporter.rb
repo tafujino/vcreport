@@ -2,7 +2,7 @@
 
 require 'active_support'
 require 'active_support/core_ext/hash/indifferent_access'
-require 'vcreport/metrics_manager'
+require 'vcreport/job_manager'
 require 'yaml'
 require 'pathname'
 
@@ -10,11 +10,11 @@ module VCReport
   module Report
     # @abstract
     class Reporter
-      # @param metrics_manager [MetricsManager, nil]
+      # @param job_manager [JobManager, nil]
       # @param targets         [Array<Pathname>]
       # @param deps            [Array<Pathname>]
-      def initialize(metrics_manager, targets: [], deps: [])
-        @metrics_manager = metrics_manager
+      def initialize(job_manager, targets: [], deps: [])
+        @job_manager = job_manager
         @target_paths, @dep_paths = [targets, deps].map do |e|
           e.is_a?(Array) ? e : [e]
         end
@@ -28,7 +28,7 @@ module VCReport
 
         ret = exist_targets ? parse : nil
         unless @target_paths.empty?
-          @metrics_manager&.post(@target_paths.first) { run_metrics }
+          @job_manager&.post(@target_paths.first) { run_metrics }
         end
         ret
       end
@@ -49,7 +49,7 @@ module VCReport
       def run_cwl(script_path, job_definition, out_dir)
         job_path = out_dir / 'job.yaml'
         store_job_file(job_path, job_definition)
-        MetricsManager.shell <<~COMMAND.squish
+        JobManager.shell <<~COMMAND.squish
           cwltool
           --singularity
           --outdir #{out_dir}

@@ -13,14 +13,14 @@ module VCReport
         # @param cram_path       [Pathname]
         # @param chr_region      [ChrRegion]
         # @param metrics_dir     [Pathname]
-        # @param metrics_manager [MetricsManager, nil]
-        def initialize(cram_path, chr_region, metrics_dir, metrics_manager)
+        # @param job_manager [JobManager, nil]
+        def initialize(cram_path, chr_region, metrics_dir, job_manager)
           @cram_path = cram_path
           @chr_region = chr_region
           @out_dir = metrics_dir / 'picard-collectWgsMetrics'
           @picard_collect_wgs_metrics_path =
             @out_dir / "#{@cram_path.basename}.#{chr_region.id}.wgs_metrics"
-          super(metrics_manager, targets: @picard_collect_wgs_metrics_path, deps: @cram_path)
+          super(job_manager, targets: @picard_collect_wgs_metrics_path, deps: @cram_path)
         end
 
         private

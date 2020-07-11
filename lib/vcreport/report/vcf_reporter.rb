@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'vcreport/metrics_manager'
+require 'vcreport/job_manager'
 require 'vcreport/report/reporter'
 require 'vcreport/chr_region'
 require 'pathname'
@@ -13,15 +13,15 @@ module VCReport
       # @param vcf_path        [Pathname]
       # @param chr_region      [ChrRegion]
       # @param metrics_dir     [Pathname]
-      # @param metrics_manager [MetricsManager, nil]
+      # @param job_manager [JobManager, nil]
       # @return                [Vcf, nil]
-      def initialize(vcf_path, chr_region, metrics_dir, metrics_manager)
+      def initialize(vcf_path, chr_region, metrics_dir, job_manager)
         @vcf_path = vcf_path
         @chr_region = chr_region
         @metrics_dir = metrics_dir
         @bcftools_stats_path =
           @metrics_dir / 'bcftools-stats' / "#{@vcf_path.basename}.bcftools-stats"
-        super(metrics_manager, targets: @bcftools_stats_path, deps: @vcf_path)
+        super(job_manager, targets: @bcftools_stats_path, deps: @vcf_path)
       end
 
       # @return [Vcf]
@@ -60,7 +60,7 @@ module VCReport
           > #{tmp_path}
           2> #{@bcftools_stats_path}.log
         COMMAND
-        is_success = MetricsManager.shell(cmd)
+        is_success = JobManager.shell(cmd)
         FileUtils.mv(tmp_path, @bcftools_stats_path) if is_success
         is_success
       end

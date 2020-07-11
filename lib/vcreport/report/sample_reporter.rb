@@ -8,7 +8,7 @@ require 'vcreport/report/vcf_reporter'
 require 'vcreport/report/vcf_collection'
 require 'vcreport/report/cram'
 require 'vcreport/report/cram_reporter'
-require 'vcreport/metrics_manager'
+require 'vcreport/job_manager'
 require 'pathname'
 
 module VCReport
@@ -16,14 +16,14 @@ module VCReport
     class SampleReporter < Reporter
       # @param sample_dir      [Pathname]
       # @param config          [Config]
-      # @param metrics_manager [MetricsManager, nil]
-      def initialize(sample_dir, config, metrics_manager)
+      # @param job_manager [JobManager, nil]
+      def initialize(sample_dir, config, job_manager)
         @sample_dir = sample_dir
         @config = config
         @finish_path = @sample_dir / 'finish'
         @name = @sample_dir.basename.to_s
-        @metrics_manager = metrics_manager
-        super(@metrics_manager, targets: [], deps: @finish_path)
+        @job_manager = job_manager
+        super(@job_manager, targets: [], deps: @finish_path)
       end
 
       # @return [Sample]
@@ -35,12 +35,12 @@ module VCReport
           # VCF is supposed to be gzipped
           vcf_path = @sample_dir / "#{@name}.#{chr_region.id}.g.vcf.gz"
           VcfReporter.new(
-            vcf_path, chr_region, metrics_dir, @metrics_manager
+            vcf_path, chr_region, metrics_dir, @job_manager
           ).try_parse
         end
         cram_path = @sample_dir / "#{@name}.dedup.cram"
         cram = CramReporter.new(
-          cram_path, chr_regions, metrics_dir, @metrics_manager
+          cram_path, chr_regions, metrics_dir, @job_manager
         ).try_parse
         Sample.new(@name, end_time, VcfCollection.new(vcfs), cram)
       end

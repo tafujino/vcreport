@@ -2,7 +2,7 @@
 
 require 'pathname'
 require 'vcreport/report/table'
-require 'vcreport/metrics_manager'
+require 'vcreport/job_manager'
 
 module VCReport
   module Report
