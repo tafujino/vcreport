@@ -7,7 +7,20 @@ require 'stringio'
 module VCReport
   module Report
     class Table
-      # type is either :string, :varbatim, :integer, :float or :numeric
+      class FloatFormatter
+        # @param fmt [String]
+        def initialize(fmt)
+          @fmt = fmt
+        end
+
+        # @param num [Float]
+        # @return    [String]
+        def run(num)
+          format("%#{@fmt}f", num)
+        end
+      end
+
+      # type is either :string, :varbatim, :integer, :float (FloatFormatter) or :numeric
 
       # @param header [Array<String>]
       # @param rows   [Array<Array>>]
@@ -54,7 +67,7 @@ module VCReport
           case t
           when :string, :verbatim, nil
             ':---'
-          when :integer, :float, :numeric
+          when :integer, :float, FloatFormatter, :numeric
             '---:'
           else
             warn "Unknown type: #{t}"
@@ -74,6 +87,8 @@ module VCReport
           case t
           when :string, :float, :numeric, nil
             e.to_s
+          when FloatFormatter
+            t.run(e)
           when :verbatim
             # this does not work perfectly when the string contains backtick
             "`#{e}`"

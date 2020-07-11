@@ -118,23 +118,19 @@ module VCReport
         def percent_excluded_table
           desc = %w[mapQ dupe unpaired baseQ overlap capped total]
           excluded = desc.map do |k|
-            percent = @percent_excluded.send(k.downcase) * 100
-            format('%.4<percent>f', percent: percent)
+            @percent_excluded.send(k.downcase) * 100
           end
           header = ['filter type', 'excluded (%)']
           rows = [desc, excluded].transpose
-          type = %i[string float]
+          type = [:string, Table::FloatFormatter.new('.4')]
           Table.new(header, rows, type)
         end
 
         # @return [Table]
         def percent_coverage_table
           header = ['coverage', 'fraction (%)']
-          rows = @percent_coverage.map do |coverage, percent|
-            percent = format('%.4<percent>f', percent: percent * 100)
-            [coverage, percent]
-          end
-          type = %i[integer float]
+          rows = @percent_coverage.transform_values { |percent| percent * 100 }
+          type = [:integer, Table::FloatFormatter.new('.4')]
           Table.new(header, rows, type)
         end
 
