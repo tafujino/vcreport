@@ -1,10 +1,10 @@
-BootStrap: library
-From: ubuntu:16.04
+BootStrap: docker
+From: rubylang/ruby:2.7.0-bionic
 
 %post
     apt -y update
     apt -y upgrade
-    apt -y install python python3-pip ruby ruby-dev git build-essential zlib1g zlib1g-dev
+    apt -y install python python3-pip git build-essential zlib1g zlib1g-dev
     pip3 install --upgrade pip
     pip3 install cwlref-runner
     git clone https://github.com/tafujino/vcreport.git
