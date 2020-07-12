@@ -3,6 +3,7 @@
 require 'active_support'
 require 'active_support/core_ext/hash/indifferent_access'
 require 'vcreport/job_manager'
+require 'vcreport/settings'
 
 module VCReport
   module CWL
@@ -24,7 +25,7 @@ module VCReport
         job_path = out_dir / 'job.yaml'
         store_job_file(job_path, job_definition)
         JobManager.shell <<~COMMAND.squish
-          cwltool
+          #{CWLTOOL_PATH}
           --singularity
           --outdir #{out_dir}
           #{script_path}

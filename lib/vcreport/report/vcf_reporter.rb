@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'vcreport/settings'
 require 'vcreport/job_manager'
 require 'vcreport/report/reporter'
 require 'vcreport/chr_region'
@@ -52,7 +53,7 @@ module VCReport
         FileUtils.mkpath out_dir unless File.exist?(out_dir)
         tmp_path = "#{@bcftools_stats_path}.tmp"
         cmd = <<~COMMAND.squish
-          singularity exec
+          #{SINGULARITY_PATH} exec
           --bind #{vcf_path.dirname}:#{container_data_dir}
           #{BCFTOOLS_IMAGE_URI}
           bcftools stats
