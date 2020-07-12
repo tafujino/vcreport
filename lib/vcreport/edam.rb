@@ -1,6 +1,7 @@
 module VCReport
   module Edam
-    BAM = 2572
     FASTA = 1929
+    BAM = 2572
+    CRAM = 3462
   end
 end

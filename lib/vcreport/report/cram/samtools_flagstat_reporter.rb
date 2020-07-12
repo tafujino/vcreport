@@ -2,6 +2,7 @@
 
 require 'pathname'
 require 'csv'
+require 'vcreport/report/edam'
 require 'vcreport/report/reporter'
 require 'vcreport/report/cram/samtools_flagstat'
 require 'vcreport/job_manager'
@@ -11,10 +12,10 @@ module VCReport
   module Report
     class Cram
       class SamtoolsFlagstatReporter < Reporter
-        # @param cram_path       [Pathname]
-        # @param metrics_dir     [Pathname]
+        # @param cram_path   [Pathname]
+        # @param metrics_dir [Pathname]
         # @param job_manager [JobManager, nil]
-        # @return                [SamtoolsFlagstat, nil]
+        # @return            [SamtoolsFlagstat, nil]
         def initialize(cram_path, metrics_dir, job_manager)
           @cram_path = cram_path
           @out_dir = metrics_dir / 'samtools-flagstat'
@@ -50,12 +51,7 @@ module VCReport
           job_definition =
             {
               nthreads: 1,
-              in_bam:
-                {
-                  class: 'File',
-                  format: 'http://edamontology.org/format_2572', # actuall BAM
-                  path: @cram_path.expand_path.to_s
-                }
+              in_bam: cwl_file_field(@cram_path, edam: Edam::BAM)
             }
           script_path = "#{HUMAN_RESEQ_DIR}/Tools/samtools-flagstat.cwl"
           run_cwl(script_path, job_definition, @out_dir)
@@ -65,7 +61,8 @@ module VCReport
         # @param trailing [String]
         # @return         [NumReads, nil]
         def extract_pass_and_fail(line, trailing)
-          return nil unless line =~ /^(\d+) \+ (\d+) #{Regexp.escape(trailing)}(\s|$)/
+          regexp = /^(\d+) \+ (\d+) #{Regexp.escape(trailing)}(\s|$)/
+          return nil unless line =~ regexp
 
           SamtoolsFlagstat::NumReads.new($1.to_i, $2.to_i)
         end

@@ -2,6 +2,7 @@
 
 require 'pathname'
 require 'csv'
+require 'vcreport/report/edam'
 require 'vcreport/report/reporter'
 require 'vcreport/report/cram/samtools_idxstats'
 require 'vcreport/job_manager'
@@ -40,15 +41,7 @@ module VCReport
         # @return [Boolean]
         def run_metrics
           FileUtils.mkpath @out_dir
-          job_definition =
-            {
-              in_cram:
-                {
-                  class: 'File',
-                  format: 'http://edamontology.org/format_3462',
-                  path: @cram_path.expand_path.to_s
-                }
-            }
+          job_definition = { in_cram: cwl_file_field(@cram_path, edam: Edam::CRAM) }
           script_path = "#{HUMAN_RESEQ_DIR}/Tools/samtools-idxstats.cwl"
           run_cwl(script_path, job_definition, @out_dir)
         end
