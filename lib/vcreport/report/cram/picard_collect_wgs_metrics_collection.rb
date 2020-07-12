@@ -20,6 +20,11 @@ module VCReport
           @picard_collect_wgs_metrics = picard_collect_wgs_metrics
         end
 
+        # @return [Boolean]
+        def empty?
+          @picard_collect_wgs_metrics.empty?
+        end
+
         # @return [Table]
         def program_table
           program_name = CWL.script_docker_path(

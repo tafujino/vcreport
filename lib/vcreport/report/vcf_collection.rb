@@ -24,8 +24,15 @@ module VCReport
         Table.program_table(@program_name)
       end
 
-      # @return [Table]
+      # @return [Boolean]
+      def empty?
+        @vcfs.empty?
+      end
+
+      # @return [Table, nil]
       def bcftools_stats_table
+        return nil if @vcfs.empty?
+
         header = ['chr. region', '# of SNPs', '# of indels', 'ts/tv']
         type = %i[string integer integer float]
         rows = @vcfs.map do |vcf|
@@ -47,11 +54,14 @@ module VCReport
       private
 
       # @param caption [String]
-      # @return [Table]
+      # @return        [Table, nil]
       def path_table(caption)
+        return nil if @vcfs.empty?
+
         header = ['chr. region', caption]
         type = %i[string verbatim]
-        rows = @vcfs.map do |vcf|
+        rows =
+          @vcfs.map do |vcf|
           [vcf.chr_region.desc, (yield vcf).expand_path]
         end
         Table.new(header, rows, type)
