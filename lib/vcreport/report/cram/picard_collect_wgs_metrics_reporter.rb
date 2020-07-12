@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'vcreport/chr_region'
+require 'vcreport/edam'
 require 'vcreport/report/cram/picard_collect_wgs_metrics'
 require 'csv'
 
@@ -71,24 +72,10 @@ module VCReport
           FileUtils.mkpath @out_dir
           job_definition =
             {
-              in_bam:
-                {
-                  class: 'File',
-                  format: 'http://edamontology.org/format_2572',
-                  path: @cram_path.expand_path.to_s
-                },
-              reference:
-                {
-                  class: 'File',
-                  format: 'http://edamontology.org/format_1929',
-                  path: @ref_path.expand_path.to_s
-                },
+              in_bam: cwl_file_field(@cram_path, edam: Edam::BAM),
+              reference: cwl_file_field(@reference, edam: Edam::FASTA),
               reference_interval_name: @chr_region.interval_list_path.id.to_s,
-              reference_interval_list:
-                {
-                  class: 'File',
-                  path: @chr_region.interval_list_path.expand_path.to_s
-                }
+              reference_interval_list: cwl_file_field(@chr_region.interval_list_path)
             }
           script_path = "#{HUMAN_RESEQ_DIR}/Tools/samtools-idxstats.cwl"
           run_cwl(script_path, job_definition, @out_dir)
@@ -151,7 +138,7 @@ module VCReport
         end
 
         # @param section [Seciton]
-        # @return        [Hash{Integer => Integer] coverage -> count
+        # @return        [Hash{ Integer => Integer }] coverage -> count
         def parse_histogram_section(section)
           parse_tsv(section.content).map.to_h do |row|
             %i[coverage high_quality_coverage_count].map { |k| row[k] }

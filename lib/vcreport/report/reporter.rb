@@ -10,6 +10,8 @@ module VCReport
   module Report
     # @abstract
     class Reporter
+      EDAM_DOMAIN = 'http://edamontology.org'
+
       # @param job_manager [JobManager, nil]
       # @param targets         [Array<Pathname>]
       # @param deps            [Array<Pathname>]
@@ -43,6 +45,18 @@ module VCReport
 
       def store_job_file(job_path, job_definition)
         File.write(job_path, YAML.dump(job_definition.deep_stringify_keys))
+      end
+
+      # @param path     [String, Pathmame]
+      # @param absolute [Boolean]
+      # @param edam     [Integer]
+      # @return         [Hash{ Symbol => String }]
+      def cwl_file_field(path, absolute: true, edam: nil)
+        field = { class: 'File' }
+        path = File.expand_path(path) if absolute
+        field[:path] = path.to_s
+        field[:format] = "#{EDAM_DOMAIN}/format_#{edam}" if edam
+        field
       end
 
       # @return [Boolean]
