@@ -22,6 +22,7 @@ module VCReport
         # @param overwrite         [Boolean]
         # @param render_toc        [Boolean]
         # @param toc_nesting_level [Integer, nil]
+        # @return                  [Pathname] HTML path
         def run(
               prefix,
               out_dir,
@@ -85,6 +86,7 @@ module VCReport
         # @param context   [Binding, nil]
         # @param paging    [Paging, nil]
         # @param overwrite [Boolean]
+        # @return          [Pathname]
         def render_markdown(prefix, out_dir, context = nil, paging: nil, overwrite: true)
           markdown_path = out_dir / "#{prefix}#{paging&.digits}.md"
           return if skip?(markdown_path, overwrite)
@@ -98,6 +100,7 @@ module VCReport
           end
           template_path = "#{TEMPLATE_DIR}/#{prefix}.md.erb"
           render_erb(template_path, markdown_path, context)
+          markdown_path
         end
 
         # @param prefix            [String]
@@ -107,6 +110,7 @@ module VCReport
         # @param overwrite         [Boolean]
         # @param render_toc        [Boolean]
         # @param toc_nesting_level [Integer, nil]
+        # @return                  [Pathname]
         def render_html(
               prefix,
               out_dir,
@@ -130,6 +134,7 @@ module VCReport
             context.local_variable_set(:toc_body, toc_body)
           end
           render_erb(template_path, html_path, context)
+          return html_path
         end
 
         # @param markdown_text [String]

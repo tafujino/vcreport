@@ -36,6 +36,7 @@ module VCReport
       end
 
       # @param report_dir [String]
+      # @return           [Pathname] HTML path
       def render(report_dir)
         report_dir = Pathname.new(report_dir)
         out_dir = report_dir / @name

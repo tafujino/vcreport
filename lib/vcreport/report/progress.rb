@@ -19,21 +19,23 @@ module VCReport
       # @return [Array<Sample>]
       attr_reader :samples
 
-      # @param results_dir [Pathname]
-      # @param samples     [Array<Sample>]
-      def initialize(results_dir, samples)
+      # @param results_dir          [Pathname]
+      # @param num_samples_per_page [Integer]
+      # @param samples              [Array<Sample>]
+      def initialize(results_dir, samples, num_samples_per_page)
         @results_dir = results_dir
         @samples = samples.sort_by(&:end_time).reverse
-        max_pages = (MAX_SAMPLES.to_f / DEFAULT_NUM_SAMPLES_PER_PAGE).ceil
+        @num_samples_per_page = num_samples_per_page
+        max_pages = (MAX_SAMPLES.to_f / @num_samples_per_page).ceil
         @num_digits = max_pages.digits.length
       end
 
       # @param report_dir           [Pathname]
-      # @param num_samples_per_page [Integer]
-      def render(report_dir, num_samples_per_page = DEFAULT_NUM_SAMPLES_PER_PAGE)
+      # @return                     [Array<Pathname>] HTML paths
+      def render(report_dir)
         FileUtils.mkpath report_dir unless File.exist?(report_dir)
-        slices = @samples.each_slice(num_samples_per_page).to_a
-        slices.each.with_index(1) do |slice, page_num|
+        slices = @samples.each_slice(@num_samples_per_page).to_a
+        slices.map.with_index(1) do |slice, page_num|
           paging = Paging.new(page_num, slices.length, @num_digits)
           table = sample_slice_to_table(slice)
           Render.run(PREFIX, report_dir, binding, paging: paging)

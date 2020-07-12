@@ -13,11 +13,16 @@ module VCReport
     # @return [Array<ChrRegion>]
     attr_reader :chr_regions
 
-    # @param ref_path    [String, Pathname]
-    # @param chr_regions [Array<ChrRegion>]
-    def initialize(ref_path, chr_regions)
+    # @return [Integer]
+    attr_reader :num_samples_per_page
+
+    # @param ref_path             [String, Pathname]
+    # @param chr_regions          [Array<ChrRegion>]
+    # @param num_samples_per_page [Integer]
+    def initialize(ref_path, chr_regions, num_samples_per_page)
       @ref_path = ref_path
       @chr_regions = chr_regions
+      @num_samples_per_page = num_samples_per_page
     end
 
     class << self
@@ -35,7 +40,10 @@ module VCReport
           desc = val['desc'] || id.to_s
           ChrRegion.new(id.to_sym, desc, val['interval_list'])
         end
-        Config.new(ref_path, chr_regions)
+        num_samples_per_page = config['num_samples_per_page'] ||
+                               Report::DEFAULT_NUM_SAMPLES_PER_PAGE
+        num_samples_per_page = num_samples_per_page.to_i
+        Config.new(ref_path, chr_regions, num_samples_per_page)
       end
     end
   end

@@ -2,6 +2,7 @@
 
 require 'vcreport/settings'
 require 'vcreport/config'
+require 'vcreport/report/index'
 require 'vcreport/report/progress'
 require 'vcreport/report/sample'
 require 'vcreport/report/sample_reporter'
@@ -11,14 +12,13 @@ require 'pathname'
 module VCReport
   module Report
     class << self
-      # @param project_dir          [String]
-      # @param job_manager      [JobManager, nil]
-      # @param num_samples_per_page [Integer]
-      # @param render               [Boolean]
+      # @param project_dir [String]
+      # @param config      [Config]
+      # @param job_manager [JobManager, nil]
+      # @param render      [Boolean]
       def run(project_dir,
               config,
               job_manager = nil,
-              num_samples_per_page: DEFAULT_NUM_SAMPLES_PER_PAGE,
               render: true)
         project_dir = Pathname.new(project_dir)
         report_dir = project_dir / REPORT_DIR
@@ -30,9 +30,11 @@ module VCReport
         end
         return unless render
 
-        Progress
-          .new(project_dir, samples)
-          .render(report_dir, num_samples_per_page)
+        progress_html_paths =
+          Progress.new(project_dir, samples, config.num_samples_per_page)
+                  .render(report_dir)
+        Index.new(project_dir, progress_html_paths.first)
+             .render(report_dir)
       end
 
       private

@@ -34,9 +34,9 @@
 
 ### picard CollectWgsMetrics
 
-[Metrics Definitions (Broad Institute)](https://broadinstitute.github.io/picard/picard-metric-definitions.html#CollectWgsMetrics.WgsMetrics)
-
 <%= @cram.picard_collect_wgs_metrics_collection.program_table.markdown_text %>
+
+[Metrics Definitions (Broad Institute)](https://broadinstitute.github.io/picard/picard-metric-definitions.html#CollectWgsMetrics.WgsMetrics)
 
 <% @cram.picard_collect_wgs_metrics_collection.picard_collect_wgs_metrics.each do |e| -%>
 #### <%= e.chr_region.desc %>
