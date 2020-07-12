@@ -72,13 +72,13 @@ module VCReport
           FileUtils.mkpath @out_dir
           job_definition =
             {
-              in_bam: cwl_file_field(@cram_path, edam: Edam::BAM),
-              reference: cwl_file_field(@reference, edam: Edam::FASTA),
+              in_bam: CWL.file_field(@cram_path, edam: Edam::BAM),
+              reference: CWL.file_field(@reference, edam: Edam::FASTA),
               reference_interval_name: @chr_region.interval_list_path.id.to_s,
-              reference_interval_list: cwl_file_field(@chr_region.interval_list_path)
+              reference_interval_list: CWL.file_field(@chr_region.interval_list_path)
             }
           script_path = "#{HUMAN_RESEQ_DIR}/Tools/samtools-idxstats.cwl"
-          run_cwl(script_path, job_definition, @out_dir)
+          CWL.run(script_path, job_definition, @out_dir)
         end
 
         # @param lines [Array<String>] lines from picard-CollectWgsMetrics output

@@ -2,7 +2,7 @@
 
 require 'pathname'
 require 'csv'
-require 'vcreport/report/edam'
+require 'vcreport/edam'
 require 'vcreport/report/reporter'
 require 'vcreport/report/cram/samtools_flagstat'
 require 'vcreport/job_manager'
@@ -51,10 +51,10 @@ module VCReport
           job_definition =
             {
               nthreads: 1,
-              in_bam: cwl_file_field(@cram_path, edam: Edam::BAM)
+              in_bam: CWL.file_field(@cram_path, edam: Edam::BAM)
             }
           script_path = "#{HUMAN_RESEQ_DIR}/Tools/samtools-flagstat.cwl"
-          run_cwl(script_path, job_definition, @out_dir)
+          CWL.run(script_path, job_definition, @out_dir)
         end
 
         # @param line     [String]
