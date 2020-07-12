@@ -12,6 +12,8 @@ module VCReport
   module Report
     class Cram
       class SamtoolsFlagstatReporter < Reporter
+        CWL_SCRIPT_PATH = "#{HUMAN_RESEQ_DIR}/Tools/samtools-flagstat.cwl"
+
         # @param cram_path   [Pathname]
         # @param metrics_dir [Pathname]
         # @param job_manager [JobManager, nil]
@@ -42,7 +44,8 @@ module VCReport
               exit 1
             end
           end
-          SamtoolsFlagstat.new(@samtools_flagstat_path, **params)
+          program_name = CWL.script_docker_path(CWL_SCRIPT_PATH)
+          SamtoolsFlagstat.new(@samtools_flagstat_path, program_name, **params)
         end
 
         # @return [Boolean]
@@ -53,8 +56,7 @@ module VCReport
               nthreads: 1,
               in_bam: CWL.file_field(@cram_path, edam: Edam::BAM)
             }
-          script_path = "#{HUMAN_RESEQ_DIR}/Tools/samtools-flagstat.cwl"
-          CWL.run(script_path, job_definition, @out_dir)
+          CWL.run(CWL_SCRIPT_PATH, job_definition, @out_dir)
         end
 
         # @param line     [String]

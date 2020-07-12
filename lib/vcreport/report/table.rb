@@ -48,12 +48,23 @@ module VCReport
       end
 
       class << self
-        # @param  [String, Pathname]
+        # @param paths   [String, Pathname, Array<String, Pathname>]
+        # @param caption [String]
         # @return [Table]
-        def single_file_table(path)
-          header = %w[file]
+        def file_table(paths, caption = 'file')
+          header = [caption]
           type = %i[verbatim]
-          rows = [[File.expand_path(path)]]
+          paths = paths.is_a?(Array) ? paths : [paths]
+          rows = paths.map { |path| [File.expand_path(path)] }
+          Table.new(header, rows, type)
+        end
+
+        # @param  [String]
+        # @return [Table]
+        def program_table(program)
+          header = %w[program]
+          type = %i[verbatim]
+          rows = [[program]]
           Table.new(header, rows, type)
         end
       end

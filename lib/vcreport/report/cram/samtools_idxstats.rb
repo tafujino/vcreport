@@ -37,18 +37,27 @@ module VCReport
         # @return [Pathname]
         attr_reader :path
 
+        # @return [String]
+        attr_reader :program_name
+
         # @return [Chromosome]
         attr_reader :chromosomes
 
         # @param chromosomes [Array<Chromosome>]
-        def initialize(path, chromosomes)
+        def initialize(path, program_name, chromosomes)
           @path = path
+          @program_name = program_name
           @chromosomes = chromosomes
         end
 
         # @return [Table]
         def path_table
-          Table.single_file_table(@path)
+          Table.file_table(@path, 'metrics file')
+        end
+
+        # @return [Table]
+        def program_table
+          Table.program_table(@program_name)
         end
 
         # @return [Table]

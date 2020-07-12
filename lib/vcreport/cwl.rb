@@ -34,6 +34,17 @@ module VCReport
         COMMAND
       end
 
+      # @param  [Pathname]
+      # @return [String]
+      def script_docker_path(script_path)
+        cwl_script = YAML.load_file(script_path)
+        docker_requirement = cwl_script['hints'].find do |h|
+          h['class'] == 'DockerRequirement'
+        end
+        docker_path = docker_requirement['dockerPull']
+        "docker://#{docker_path}"
+      end
+
       private
 
       def store_job_file(job_path, job_definition)

@@ -2,6 +2,7 @@
 
 require 'vcreport/chr_region'
 require 'vcreport/edam'
+require 'vcreport/report/reporter'
 require 'vcreport/report/cram/picard_collect_wgs_metrics'
 require 'csv'
 
@@ -9,7 +10,7 @@ module VCReport
   module Report
     class Cram
       class PicardCollectWgsMetricsReporter < Reporter
-        DEFAULT_MIN_BASE_QUALITY = 20
+        CWL_SCRIPT_PATH = "#{HUMAN_RESEQ_DIR}/Tools/samtools-idxstats.cwl"
 
         # @param cram_path   [Pathname]
         # @param chr_region  [ChrRegion]
@@ -77,8 +78,7 @@ module VCReport
               reference_interval_name: @chr_region.interval_list_path.id.to_s,
               reference_interval_list: CWL.file_field(@chr_region.interval_list_path)
             }
-          script_path = "#{HUMAN_RESEQ_DIR}/Tools/samtools-idxstats.cwl"
-          CWL.run(script_path, job_definition, @out_dir)
+          CWL.run(CWL_SCRIPT_PATH, job_definition, @out_dir)
         end
 
         # @param lines [Array<String>] lines from picard-CollectWgsMetrics output

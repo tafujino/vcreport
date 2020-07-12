@@ -44,19 +44,29 @@ module VCReport
         # @return [Pathname]
         attr_reader :path
 
+        # @return [String]
+        attr_reader :program_name
+
         # @return [NumReads]
         attr_reader(*FIELDS.keys)
 
-        # @param path   [Pathname]
-        # @param params [Hash{ Symbol => Object }]
-        def initialize(path, **params)
+        # @param path         [Pathname]
+        # @param program_name [String]
+        # @param params       [Hash{ Symbol => Object }]
+        def initialize(path, program_name, **params)
           @path = path
+          @program_name = program_name
           params.each { |k, v| instance_variable_set("@#{k}", v) }
         end
 
         # @return [Table]
+        def program_table
+          Table.program_table(@program_name)
+        end
+
+        # @return [Table]
         def path_table
-          Table.single_file_table(@path)
+          Table.file_table(@path, 'metrics file')
         end
 
         # @return [Table]

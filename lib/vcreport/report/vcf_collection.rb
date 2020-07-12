@@ -6,13 +6,22 @@ require 'vcreport/report/vcf'
 
 module VCReport
   module Report
+    # @return [String]
+    attr_reader :program_name
+
     # @return [Array<Vcf>]
     attr_reader :vcfs
 
     class VcfCollection
       # @param vcfs [Array<Vcf>]
-      def initialize(vcfs)
+      def initialize(program_name, vcfs)
+        @program_name = program_name
         @vcfs = vcfs
+      end
+
+      # @return [Table]
+      def program_table
+        Table.program_table(@program_name)
       end
 
       # @return [Table]
@@ -27,19 +36,20 @@ module VCReport
 
       # @return [Table]
       def vcf_path_table
-        path_table(&:vcf_path)
+        path_table('input file', &:vcf_path)
       end
 
       # @return [Table]
       def bcftools_stats_path_table
-        path_table(&:bcftools_stats_path)
+        path_table('metrics file', &:bcftools_stats_path)
       end
 
       private
 
+      # @param caption [String]
       # @return [Table]
-      def path_table
-        header = ['chr. region', 'file']
+      def path_table(caption)
+        header = ['chr. region', caption]
         type = %i[string verbatim]
         rows = @vcfs.map do |vcf|
           [vcf.chr_region.desc, (yield vcf).expand_path]

@@ -8,6 +8,7 @@ require 'vcreport/report/cram/samtools_idxstats_reporter'
 require 'vcreport/report/cram/samtools_flagstat'
 require 'vcreport/report/cram/samtools_flagstat_reporter'
 require 'vcreport/report/cram/picard_collect_wgs_metrics'
+require 'vcreport/report/cram/picard_collect_wgs_metrics_collection'
 require 'vcreport/report/cram/picard_collect_wgs_metrics_reporter'
 
 module VCReport
@@ -36,16 +37,18 @@ module VCReport
         samtools_flagstat = Cram::SamtoolsFlagstatReporter.new(
           @cram_path, @metrics_dir, @job_manager
         ).try_parse
-        picard_collect_wgs_metrics = @chr_regions.map do |chr_region|
+        picard_collect_wgs_metrics = @chr_regions.filter_map do |chr_region|
           Cram::PicardCollectWgsMetricsReporter.new(
             @cram_path, chr_region, @ref_path, @metrics_dir, @job_manager
           ).try_parse
-        end.compact
+        end
+        picard_collect_wgs_metrics_collection =
+          Cram::PicardCollectWgsMetricsCollection.new(picard_collect_wgs_metrics)
         Cram.new(
           @cram_path,
           samtools_idxstats,
           samtools_flagstat,
-          picard_collect_wgs_metrics
+          picard_collect_wgs_metrics_collection
         )
       end
     end

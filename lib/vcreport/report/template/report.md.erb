@@ -6,7 +6,7 @@
 
 ### bcftools stats
 
-program: `<%= VCReport::Report::VcfReporter::BCFTOOLS_IMAGE_URI %>`
+<%= @vcf_collection.program_table.markdown_text %>
 
 <%= @vcf_collection.bcftools_stats_path_table.markdown_text %>
 
@@ -18,11 +18,15 @@ program: `<%= VCReport::Report::VcfReporter::BCFTOOLS_IMAGE_URI %>`
 
 ### samtools idxstats
 
+<%= @cram.samtools_idxstats&.program_table&.markdown_text -%>
+
 <%= @cram.samtools_idxstats&.path_table&.markdown_text -%>
 
 <%= @cram.samtools_idxstats&.num_reads_table&.markdown_text -%>
 
 ### samtools flagstat
+
+<%= @cram.samtools_flagstat&.program_table&.markdown_text -%>
 
 <%= @cram.samtools_flagstat&.path_table&.markdown_text -%>
 
@@ -32,7 +36,9 @@ program: `<%= VCReport::Report::VcfReporter::BCFTOOLS_IMAGE_URI %>`
 
 [Metrics Definitions (Broad Institute)](https://broadinstitute.github.io/picard/picard-metric-definitions.html#CollectWgsMetrics.WgsMetrics)
 
-<% @cram.picard_collect_wgs_metrics.each do |e| -%>
+<%= @cram.picard_collect_wgs_metrics_collection.program_table.markdown_text %>
+
+<% @cram.picard_collect_wgs_metrics_collection.picard_collect_wgs_metrics.each do |e| -%>
 #### <%= e.chr_region.desc %>
 
 <%= e.path_table.markdown_text %>

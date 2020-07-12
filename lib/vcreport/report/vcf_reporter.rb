@@ -11,11 +11,11 @@ module VCReport
     class VcfReporter < Reporter
       BCFTOOLS_IMAGE_URI = 'docker://biocontainers/bcftools:v1.9-1-deb_cv1'
 
-      # @param vcf_path        [Pathname]
-      # @param chr_region      [ChrRegion]
-      # @param metrics_dir     [Pathname]
+      # @param vcf_path    [Pathname]
+      # @param chr_region  [ChrRegion]
+      # @param metrics_dir [Pathname]
       # @param job_manager [JobManager, nil]
-      # @return                [Vcf, nil]
+      # @return            [Vcf, nil]
       def initialize(vcf_path, chr_region, metrics_dir, job_manager)
         @vcf_path = vcf_path
         @chr_region = chr_region

@@ -93,7 +93,7 @@ module VCReport
 
         # @return [Table]
         def path_table
-          Table.single_file_table(@path)
+          Table.file_table(@path, 'metrics file')
         end
 
         # @return [Table]
