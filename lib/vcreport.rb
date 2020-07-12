@@ -13,12 +13,8 @@ require 'active_support/core_ext/numeric/conversions'
 
 module VCReport
   module CLI
-    class Main < Thor
-      def self.exit_on_failure?
-        true
-      end
-
-      desc 'start [DIRECTORY]', 'Start a daemon'
+    class Monitor < Thor
+      desc 'start [DIRECTORY]', 'Start a monitoring daemon'
       option 'threads',
              aliases: 't',
              type: :numeric,
@@ -35,7 +31,7 @@ module VCReport
         Daemon.start(dir, config, job_manager, options['interval'])
       end
 
-      desc 'stop [DIRECTORY]', 'Stop a daemon'
+      desc 'stop [DIRECTORY]', 'Stop a monitoring daemon'
       def stop(dir)
         case Daemon.stop(dir)
         when :success
@@ -52,7 +48,7 @@ module VCReport
         end
       end
 
-      desc 'status [DIRECTORY]', 'Show daemon status'
+      desc 'status [DIRECTORY]', 'Show the status of monitoring daemon'
       def status(dir)
         psinfo = Daemon.status(dir)
         if psinfo
@@ -62,6 +58,21 @@ module VCReport
           say_status 'not running', dir, :green
         end
       end
+    end
+
+    class Http < Thor
+    end
+
+    class Main < Thor
+      def self.exit_on_failure?
+        true
+      end
+
+      desc 'monitor [COMMAND]', 'Manage a monitoring daemon'
+      subcommand :monitor, Monitor
+
+      desc 'http [COMMAND]', 'Manage a web server'
+      subcommand :http, Http
 
       desc 'render [DIRECTORY]', 'Generate reports'
       def render(dir)
