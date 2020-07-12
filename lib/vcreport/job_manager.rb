@@ -23,50 +23,56 @@ module VCReport
     def initialize(num_threads)
       @num_threads = num_threads
       @pool = Concurrent::FixedThreadPool.new(num_threads)
-      # Hash{ String => Symbol }
-      # The value may be :success, :fail, :unfinished
-      @job_status = {}
+      @job_status = {} # Hash{ String => Concurrent::Promises::Future }
     end
 
     # @param result_path [String, Pathname]
     def post(result_path)
       result_path = result_path.to_s
-      if File.exist?(result_path)
-        say_status 'skip', result_path, :yellow
-        return
-      end
-      case @job_status[result_path]
-      when :success
-        warn <<~MESSAGE.squish
-          File does not exist but job status is 'success'.
-          Something went wrong: #{result_path}
-        MESSAGE
-        say_status 'start', result_path, :blue
-      when :unfinished
-        # the job is already in queue
-        say_status 'queued', result_path, :yellow
-        return
-      when :fail
-        say_status 'restart', result_path, :blue
-      else
-        say_status 'start', result_path, :blue
-      end
-      @job_status[result_path] = :unfinished
-      @job_status[result_path] = @pool.post do
+      return unless should_run(result_path)
+
+      @job_status[result_path] = Concurrent::Promises.future_on(@pool) do
         is_success = yield
         if is_success
           say_status 'create', result_path, :green
-          :success
         else
           say_status 'fail', result_path, :red
-          :fail
         end
+        is_success
       end
     end
 
     def wait
       @pool.shutdown
       @pool.wait_for_termination
+    end
+
+    private
+
+    # @param result_path [String]
+    # @return            [Boolean]
+    def should_run(result_path)
+      if File.exist?(result_path)
+        say_status 'skip', result_path, :yellow
+        return false
+      end
+      return true unless @job_status.key?(result_path)
+
+      future = @job_status[result_path]
+      unless future.resolved?
+        say_status 'working', result_path, :yellow
+        return false
+      end
+      if @job_status.value
+        warn <<~MESSAGE.squish
+          File does not exist but job status is 'success'.
+          Something went wrong: #{result_path}
+        MESSAGE
+        say_status 'start', result_path, :blue
+      else
+        say_status 'restart', result_path, :blue
+      end
+      true
     end
 
     class << self
