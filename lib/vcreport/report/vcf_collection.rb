@@ -20,7 +20,7 @@ module VCReport
       end
 
       # @return [Table]
-      def program_table
+      def bcftools_stats_program_table
         Table.program_table(@program_name)
       end
 

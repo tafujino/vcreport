@@ -6,7 +6,7 @@
 
 ### bcftools stats
 
-<%= @vcf_collection.program_table.markdown_text unless @vcf_collection.empty? %>
+<%= @vcf_collection.bcftools_stats_program_table.markdown_text unless @vcf_collection.empty? %>
 
 <%= @vcf_collection.bcftools_stats_path_table&.markdown_text %>
 
