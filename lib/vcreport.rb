@@ -3,7 +3,7 @@
 require 'vcreport/version'
 require 'vcreport/settings'
 require 'vcreport/report'
-require 'vcreport/daemon'
+require 'vcreport/monitor'
 require 'vcreport/process_info'
 require 'vcreport/job_manager'
 require 'thor'
@@ -18,7 +18,7 @@ module VCReport
   end
 
   module CLI
-    class Monitor < Thor
+    class MonitorCommand < Thor
       desc 'start [DIRECTORY]', 'Start a monitoring daemon'
       option 'threads',
              aliases: 't',
@@ -29,19 +29,21 @@ module VCReport
              aliases: 'i',
              type: :numeric,
              desc: 'Monitoring interval (seconds)',
-             default: Daemon::DEFAULT_INTERVAL
+             default: VCReport::Monitor::DEFAULT_INTERVAL
       def start(dir)
+        dir = Pathname.new(dir).expand_path
         VCReport.prepare_system_dir(dir)
         config = Config.load(dir)
         num_threads = options['threads']
-        logger = Logger.new(METRICS_LOG_FILENAME)
+        logger = Logger.new(dir / METRICS_LOG_FILENAME)
         job_manager = JobManager.new(num_threads, logger)
-        Daemon.start(dir, config, job_manager, options['interval'])
+        Monitor.start(dir, config, job_manager, options['interval'])
       end
 
       desc 'stop [DIRECTORY]', 'Stop a monitoring daemon'
       def stop(dir)
-        case Daemon.stop(dir)
+        dir = Pathname.new(dir).expand_path
+        case Monitor.stop(dir)
         when :success
           say_status 'stop', dir, :green
         when :not_running
@@ -58,8 +60,8 @@ module VCReport
 
       desc 'status [DIRECTORY]', 'Show the status of monitoring daemon'
       def status(dir)
-        prepare_system_dir(dir)
-        psinfo = Daemon.status(dir)
+        dir = Pathname.new(dir).expand_path
+        psinfo = Monitor.status(dir)
         if psinfo
           pid_message = "pid = #{psinfo.pid}, pgid = #{psinfo.pgid}"
           say_status 'running', "#{dir} (#{pid_message})", :green
@@ -69,7 +71,7 @@ module VCReport
       end
     end
 
-    class Http < Thor
+    class HttpCommand < Thor
     end
 
     class Main < Thor
@@ -78,13 +80,14 @@ module VCReport
       end
 
       desc 'monitor [COMMAND]', 'Manage a monitoring daemon'
-      subcommand :monitor, Monitor
+      subcommand :monitor, MonitorCommand
 
       desc 'http [COMMAND]', 'Manage a web server'
-      subcommand :http, Http
+      subcommand :http, HttpCommand
 
       desc 'render [DIRECTORY]', 'Generate reports'
       def render(dir)
+        dir = Pathname.new(dir).expand_path
         config = Config.load(dir)
         Report.run(dir, config)
       end
@@ -96,7 +99,7 @@ module VCReport
              desc: 'Number of threads for metrics calculation',
              default: JOB_DEAULT_NUM_THREADS
       def metrics(dir)
-        dir = Pathname.new(dir)
+        dir = Pathname.new(dir).expand_path
         VCReport.prepare_system_dir(dir)
         config = Config.load(dir)
         num_threads = options['threads']

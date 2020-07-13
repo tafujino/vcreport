@@ -13,7 +13,7 @@ module VCReport
   CWLTOOL_PATH = 'cwltool'
   SINGULARITY_PATH = 'singularity'
 
-  module Daemon
+  module Monitor
     DEFAULT_INTERVAL = 3_600 # in seconds
   end
 
