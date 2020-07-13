@@ -28,7 +28,8 @@ module VCReport
       result_path = result_path.to_s
       return unless should_run(result_path)
 
-      @job_status[result_path] = Concurrent::Promises.future_on(@pool) do
+      @job_status[result_path] =
+        Concurrent::Promises.future_on(@pool, result_path) do |result_path|
         is_success = yield
         if is_success
           say_status 'create', result_path, :green
