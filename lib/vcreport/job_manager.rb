@@ -32,7 +32,11 @@ module VCReport
       @job_status[main_result_path] =
         Concurrent::Promises.future_on(@pool, main_result_path) do |path|
         say_status 'start', path, :blue
-        is_success = yield
+        begin
+          is_success = yield
+        rescue => e
+          warn e
+        end
         if is_success
           say_status 'create', path, :green
         else
@@ -66,7 +70,7 @@ module VCReport
         say_status 'working', main_result_path, :yellow
         return false
       end
-      if @job_status.value
+      if @job_status.value!
         warn <<~MESSAGE.squish
           File does not exist but job status is 'success'.
           Something went wrong: #{result_path}
