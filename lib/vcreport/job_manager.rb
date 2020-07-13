@@ -38,16 +38,7 @@ module VCReport
         rescue => e
           warn e
         end
-        if is_success
-          nonexistent_paths = result_paths.reject { |path| File.exist?(path) }
-          unless nonexistent_paths.empty?
-            warn 'Job successfully completed, but the following file(s) not found:'
-            nonexistent_paths.each do |nonexistent_path|
-              warn nonexistent_path
-            end
-          end
-          is_success = false
-        end
+        is_success = false if is_success && not_exist_results(result_paths)
         if is_success
           say_status 'create', main_result_path, :green
         else
@@ -63,6 +54,19 @@ module VCReport
     end
 
     private
+
+    # @param result_paths [String]
+    # @return             [Boolean]
+    def not_exist_results(result_paths)
+      nonexistent_paths = result_paths.reject { |path| File.exist?(path) }
+      return false if nonexistent_paths.empty?
+
+      warn 'Job successfully completed, but the following file(s) not found:'
+      nonexistent_paths.each do |nonexistent_path|
+        warn nonexistent_path
+      end
+      false
+    end
 
     # @param result_paths [Array<String>]
     # @return             [Boolean]
