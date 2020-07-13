@@ -25,22 +25,33 @@ module VCReport
 
     # @param result_paths [Array<String, Pathname>]
     def post(*result_paths)
-      result_paths = result_paths.map(&:to_s)
+      result_paths.map! { |path| File.expand_path(path).to_s }
       return unless should_run(result_paths)
 
       main_result_path = result_paths.first
       @job_status[main_result_path] =
-        Concurrent::Promises.future_on(@pool, main_result_path) do |path|
-        say_status 'start', path, :blue
+        Concurrent::Promises.future_on(@pool, result_paths) do |result_paths|
+        main_result_path = result_paths.first
+        say_status 'start', main_result_path, :blue
         begin
           is_success = yield
         rescue => e
           warn e
         end
         if is_success
-          say_status 'create', path, :green
+          nonexistent_paths = result_paths.reject { |path| File.exist?(path) }
+          unless nonexistent_paths.empty?
+            warn 'Job successfully completed, but the following file(s) not found:'
+            nonexistent_paths.each do |nonexistent_path|
+              warn nonexistent_path
+            end
+          end
+          is_success = false
+        end
+        if is_success
+          say_status 'create', main_result_path, :green
         else
-          say_status 'fail', path, :red
+          say_status 'fail', main_result_path, :red
         end
         is_success
       end
