@@ -24,7 +24,6 @@ module VCReport
       @pool = Concurrent::FixedThreadPool.new(num_threads)
       @job_status = {} # Hash{ String => Concurrent::Promises::Future }
       @logger = logger
-      @logger&.info('start')
     end
 
     # @param result_paths [Array<String, Pathname>]
