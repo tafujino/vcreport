@@ -65,7 +65,7 @@ module VCReport
       nonexistent_paths.each do |nonexistent_path|
         warn nonexistent_path
       end
-      false
+      true
     end
 
     # @param result_paths [Array<String>]
