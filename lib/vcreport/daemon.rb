@@ -13,7 +13,7 @@ module VCReport
 
     class << self
       # @param dir              [String]
-      # @param job_manager  [JobManager]
+      # @param job_manager      [JobManager]
       # @param metrics_interval [Integer] in seconds
       def start(dir, config, job_manager, interval = DEFAULT_INTERVAL)
         if ProcessInfo.load(dir)

@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 module VCReport
+  SYSTEM_DIR = 'vcreport'
+  METRICS_LOG_FILENAME = "#{SYSTEM_DIR}/metrics.log"
   RESULTS_DIR = 'results'
   REPORT_DIR = 'reports'
   CONFIG_FILENAME = 'vcreport.yaml'

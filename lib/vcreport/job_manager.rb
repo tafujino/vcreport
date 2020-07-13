@@ -8,6 +8,7 @@ require 'pathname'
 require 'posix/spawn'
 require 'thor'
 require 'English'
+require 'logger'
 
 module VCReport
   class JobManager
@@ -17,10 +18,13 @@ module VCReport
     attr_reader :num_threads
 
     # @param num_threads [Integer]
-    def initialize(num_threads)
+    # @param logger      [Logger, nil]
+    def initialize(num_threads, logger)
       @num_threads = num_threads
       @pool = Concurrent::FixedThreadPool.new(num_threads)
       @job_status = {} # Hash{ String => Concurrent::Promises::Future }
+      @logger = logger
+      @logger&.info('start')
     end
 
     # @param result_paths [Array<String, Pathname>]
@@ -43,14 +47,20 @@ module VCReport
           say_status 'create', main_result_path, :green
         else
           say_status 'fail', main_result_path, :red
+          @logger&.error("failed to create #{main_result_path}")
         end
         is_success
       end
     end
 
-    def wait
+    def terminate
       @pool.shutdown
       @pool.wait_for_termination
+      end_log
+    end
+
+    def end_log
+      @logger&.info('end')
     end
 
     private

@@ -8,10 +8,15 @@ require 'vcreport/process_info'
 require 'vcreport/job_manager'
 require 'thor'
 
-require 'active_support'
-require 'active_support/core_ext/numeric/conversions'
-
 module VCReport
+  class << self
+    def prepare_system_dir(dir)
+      dir = Pathname.new(dir)
+      system_dir = dir / SYSTEM_DIR
+      FileUtils.mkpath system_dir unless File.exist?(system_dir)
+    end
+  end
+
   module CLI
     class Monitor < Thor
       desc 'start [DIRECTORY]', 'Start a monitoring daemon'
@@ -26,8 +31,11 @@ module VCReport
              desc: 'Monitoring interval (seconds)',
              default: Daemon::DEFAULT_INTERVAL
       def start(dir)
+        VCReport.prepare_system_dir(dir)
         config = Config.load(dir)
-        job_manager = JobManager.new(options['threads'])
+        num_threads = options['threads']
+        logger = Logger.new(METRICS_LOG_FILENAME)
+        job_manager = JobManager.new(num_threads, logger)
         Daemon.start(dir, config, job_manager, options['interval'])
       end
 
@@ -50,6 +58,7 @@ module VCReport
 
       desc 'status [DIRECTORY]', 'Show the status of monitoring daemon'
       def status(dir)
+        prepare_system_dir(dir)
         psinfo = Daemon.status(dir)
         if psinfo
           pid_message = "pid = #{psinfo.pid}, pgid = #{psinfo.pgid}"
@@ -87,10 +96,14 @@ module VCReport
              desc: 'Number of threads for metrics calculation',
              default: JOB_DEAULT_NUM_THREADS
       def metrics(dir)
+        dir = Pathname.new(dir)
+        VCReport.prepare_system_dir(dir)
         config = Config.load(dir)
-        job_manager = JobManager.new(options['threads'])
+        num_threads = options['threads']
+        logger = Logger.new(dir / METRICS_LOG_FILENAME)
+        job_manager = JobManager.new(num_threads, logger)
         Report.run(dir, config, job_manager, render: false)
-        job_manager.wait
+        job_manager.terminate
       end
     end
   end
