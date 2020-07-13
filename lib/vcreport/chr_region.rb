@@ -13,9 +13,9 @@ module VCReport
     # @return [Pathname]
     attr_reader :interval_list_path
 
-    # @param id           [String, Symbol]
-    # @param desc         [String]
-    # @interval_list_path [String, Pathname]
+    # @param id                 [String, Symbol]
+    # @param desc               [String]
+    # @param interval_list_path [String, Pathname]
     def initialize(id, desc, interval_list_path)
       @id = id.to_sym
       @desc = desc

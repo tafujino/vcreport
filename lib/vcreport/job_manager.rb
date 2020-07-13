@@ -73,7 +73,7 @@ module VCReport
         return false
       end
       unless @job_status.key?(main_result_path)
-        say_status 'enqueue', main_result_path, :green
+        say_status 'queue', main_result_path, :green
         return true
       end
       future = @job_status[main_result_path]
@@ -86,7 +86,7 @@ module VCReport
           File does not exist but job status is 'success'.
           Something went wrong: #{result_path}
         MESSAGE
-        say_status 'enqueue', main_result_path, :green
+        say_status 'queue', main_result_path, :green
       else
         say_status 'requeue', main_result_path, :yellow
       end

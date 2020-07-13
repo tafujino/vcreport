@@ -10,7 +10,7 @@ module VCReport
   module Report
     class Cram
       class PicardCollectWgsMetricsReporter < Reporter
-        CWL_SCRIPT_PATH = "#{HUMAN_RESEQ_DIR}/Tools/samtools-idxstats.cwl"
+        CWL_SCRIPT_PATH = "#{HUMAN_RESEQ_DIR}/Tools/picard-CollectWgsMetrics.cwl"
 
         # @param cram_path   [Pathname]
         # @param chr_region  [ChrRegion]
@@ -74,8 +74,8 @@ module VCReport
           job_definition =
             {
               in_bam: CWL.file_field(@cram_path, edam: Edam::BAM),
-              reference: CWL.file_field(@reference, edam: Edam::FASTA),
-              reference_interval_name: @chr_region.interval_list_path.id.to_s,
+              reference: CWL.file_field(@ref_path, edam: Edam::FASTA),
+              reference_interval_name: @chr_region.id.to_s,
               reference_interval_list: CWL.file_field(@chr_region.interval_list_path)
             }
           CWL.run(CWL_SCRIPT_PATH, job_definition, @out_dir)
