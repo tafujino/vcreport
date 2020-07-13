@@ -44,7 +44,6 @@ module VCReport
         end
         picard_collect_wgs_metrics_collection =
           Cram::PicardCollectWgsMetricsCollection.new(picard_collect_wgs_metrics)
-            .try_parse
         Cram.new(
           @cram_path,
           samtools_idxstats,
