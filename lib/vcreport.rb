@@ -10,10 +10,13 @@ require 'thor'
 
 module VCReport
   class << self
-    def prepare_system_dir(dir)
-      dir = Pathname.new(dir)
+    # @param dir [String, Pathname]
+    # @return    [Pathname]
+    def initialize_dir(dir)
+      dir = Pathname.new(dir).expand_path
       system_dir = dir / SYSTEM_DIR
       FileUtils.mkpath system_dir unless File.exist?(system_dir)
+      dir
     end
   end
 
@@ -31,8 +34,7 @@ module VCReport
              desc: 'Monitoring interval (seconds)',
              default: VCReport::Monitor::DEFAULT_INTERVAL
       def start(dir)
-        dir = Pathname.new(dir).expand_path
-        VCReport.prepare_system_dir(dir)
+        dir = VCReport.initialize_dir(dir)
         config = Config.load(dir)
         num_threads = options['threads']
         logger = Logger.new(dir / METRICS_LOG_FILENAME)
@@ -42,7 +44,7 @@ module VCReport
 
       desc 'stop [DIRECTORY]', 'Stop a monitoring daemon'
       def stop(dir)
-        dir = Pathname.new(dir).expand_path
+        dir = VCReport.initialize_dir(dir)
         case Monitor.stop(dir)
         when :success
           say_status 'stop', dir, :green
@@ -60,7 +62,7 @@ module VCReport
 
       desc 'status [DIRECTORY]', 'Show the status of monitoring daemon'
       def status(dir)
-        dir = Pathname.new(dir).expand_path
+        dir = VCReport.initialize_dir(dir)
         psinfo = Monitor.status(dir)
         if psinfo
           pid_message = "pid = #{psinfo.pid}, pgid = #{psinfo.pgid}"
@@ -87,7 +89,7 @@ module VCReport
 
       desc 'render [DIRECTORY]', 'Generate reports'
       def render(dir)
-        dir = Pathname.new(dir).expand_path
+        dir = VCReport.initialize_dir(dir)
         config = Config.load(dir)
         Report.run(dir, config)
       end
@@ -99,8 +101,7 @@ module VCReport
              desc: 'Number of threads for metrics calculation',
              default: JOB_DEAULT_NUM_THREADS
       def metrics(dir)
-        dir = Pathname.new(dir).expand_path
-        VCReport.prepare_system_dir(dir)
+        dir = VCReport.initialize_dir(dir)
         config = Config.load(dir)
         num_threads = options['threads']
         logger = Logger.new(dir / METRICS_LOG_FILENAME)
