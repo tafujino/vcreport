@@ -36,8 +36,10 @@ module VCReport
         @rows << row
       end
 
-      # @return [String]
+      # @return [String, nil]
       def markdown_text
+        return nil if @rows.empty?
+
         sio = StringIO.new
         sio.puts row_text(@header, is_header: true)
         sio.puts separator_text(@type)

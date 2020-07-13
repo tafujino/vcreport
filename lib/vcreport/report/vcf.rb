@@ -2,6 +2,7 @@
 
 require 'fileutils'
 require 'vcreport/chr_region'
+require 'vcreport/report/vcf/bcftools_stats'
 
 module VCReport
   module Report
@@ -9,35 +10,16 @@ module VCReport
       # @return [Pathname]
       attr_reader :vcf_path
 
-      # @return [Pathname]
-      attr_reader :bcftools_stats_path
-
       # @return [ChrRegion]
       attr_reader :chr_region
 
-      # @return [Integer]
-      attr_reader :num_snps
+      # @return [BcftoolsStats, nil]
+      attr_reader :bcftools_stats
 
-      # @return [Integer]
-      attr_reader :num_indels
-
-      # @return [Float]
-      attr_reader :ts_tv_ratio
-
-      def initialize(
-            vcf_path,
-            bcftools_stats_path,
-            chr_region,
-            num_snps,
-            num_indels,
-            ts_tv_ratio
-          )
+      def initialize(vcf_path, chr_region, bcftools_stats)
         @vcf_path = vcf_path
-        @bcftools_stats_path = bcftools_stats_path
         @chr_region = chr_region
-        @num_snps = num_snps
-        @num_indels = num_indels
-        @ts_tv_ratio = ts_tv_ratio
+        @bcftools_stats = bcftools_stats
       end
     end
   end

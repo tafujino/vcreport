@@ -6,7 +6,7 @@
 
 ### bcftools stats
 
-<%= @vcf_collection.bcftools_stats_program_table.markdown_text unless @vcf_collection.empty? %>
+<%= @vcf_collection.bcftools_stats_program_table&.markdown_text %>
 
 <%= @vcf_collection.bcftools_stats_path_table&.markdown_text %>
 
@@ -34,7 +34,7 @@
 
 ### picard CollectWgsMetrics
 
-<%= @cram.picard_collect_wgs_metrics_collection.program_table.markdown_text unless @cram.picard_collect_wgs_metrics_collection.empty? %>
+<%= @cram.picard_collect_wgs_metrics_collection.program_table&.markdown_text %>
 
 [Metrics Definitions (Broad Institute)](https://broadinstitute.github.io/picard/picard-metric-definitions.html#CollectWgsMetrics.WgsMetrics)
 

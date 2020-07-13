@@ -19,24 +19,19 @@ module VCReport
         @vcfs = vcfs
       end
 
-      # @return [Table]
+      # @return [Table, nil]
       def bcftools_stats_program_table
-        Table.program_table(@program_name)
-      end
+        return nil if @vcfs.map(&:bcftools_stats).compact.empty?
 
-      # @return [Boolean]
-      def empty?
-        @vcfs.empty?
+        Table.program_table(@program_name)
       end
 
       # @return [Table, nil]
       def bcftools_stats_table
-        return nil if @vcfs.empty?
-
         header = ['chr. region', '# of SNPs', '# of indels', 'ts/tv']
         type = %i[string integer integer float]
-        rows = @vcfs.map do |vcf|
-          [vcf.chr_region.desc, vcf.num_snps, vcf.num_indels, vcf.ts_tv_ratio]
+        rows = @vcfs.filter_map(&:bcftools_stats).map do |e|
+          [e.chr_region.desc, e.num_snps, e.num_indels, e.ts_tv_ratio]
         end
         Table.new(header, rows, type)
       end
@@ -48,7 +43,9 @@ module VCReport
 
       # @return [Table]
       def bcftools_stats_path_table
-        path_table('metrics file', &:bcftools_stats_path)
+        path_table('metrics file') do |vcf|
+          vcf.bcftools_stats&.path
+        end
       end
 
       private
@@ -61,8 +58,11 @@ module VCReport
         header = ['chr. region', caption]
         type = %i[string verbatim]
         rows =
-          @vcfs.map do |vcf|
-          [vcf.chr_region.desc, (yield vcf).expand_path]
+          @vcfs.filter_map do |vcf|
+          path = yield vcf
+          next unless path
+
+          [vcf.chr_region.desc, File.expand_path(path)]
         end
         Table.new(header, rows, type)
       end

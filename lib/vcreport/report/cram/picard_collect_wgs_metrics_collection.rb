@@ -25,8 +25,10 @@ module VCReport
           @picard_collect_wgs_metrics.empty?
         end
 
-        # @return [Table]
+        # @return [Table, nil]
         def program_table
+          return nil if empty?
+
           program_name = CWL.script_docker_path(
             PicardCollectWgsMetricsReporter::CWL_SCRIPT_PATH
           )

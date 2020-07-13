@@ -14,9 +14,9 @@ require 'pathname'
 module VCReport
   module Report
     class SampleReporter < Reporter
-      # @param sample_dir      [Pathname]
-      # @param config          [Config]
-      # @param job_manager     [JobManager, nil]
+      # @param sample_dir  [Pathname]
+      # @param config      [Config]
+      # @param job_manager [JobManager, nil]
       def initialize(sample_dir, config, job_manager)
         @sample_dir = sample_dir
         @config = config
@@ -34,11 +34,10 @@ module VCReport
         vcfs = chr_regions.filter_map do |chr_region|
           # VCF is supposed to be gzipped
           vcf_path = @sample_dir / "#{@name}.#{chr_region.id}.g.vcf.gz"
-          VcfReporter.new(
-            vcf_path, chr_region, metrics_dir, @job_manager
-          ).try_parse
+          VcfReporter.new(vcf_path, chr_region, metrics_dir, @job_manager)
+            .try_parse
         end
-        vcf_collection = VcfCollection.new(VcfReporter::BCFTOOLS_IMAGE_URI, vcfs)
+        vcf_collection = VcfCollection.new(Vcf::BcftoolsStatsReporter::BCFTOOLS_IMAGE_URI, vcfs)
         cram_path = @sample_dir / "#{@name}.dedup.cram"
         cram = CramReporter.new(
           cram_path, chr_regions, @config.ref_path, metrics_dir, @job_manager
