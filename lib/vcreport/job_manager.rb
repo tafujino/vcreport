@@ -56,8 +56,10 @@ module VCReport
         say_status 'skip', main_result_path, :yellow
         return false
       end
-      return true unless @job_status.key?(main_result_path)
-
+      unless @job_status.key?(main_result_path)
+        say_status 'start', main_result_path, :blue
+        return true
+      end
       future = @job_status[main_result_path]
       unless future.resolved?
         say_status 'working', main_result_path, :yellow
