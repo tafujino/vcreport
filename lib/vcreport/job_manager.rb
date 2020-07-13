@@ -23,18 +23,19 @@ module VCReport
       @job_status = {} # Hash{ String => Concurrent::Promises::Future }
     end
 
-    # @param result_path [String, Pathname]
-    def post(result_path)
-      result_path = result_path.to_s
-      return unless should_run(result_path)
+    # @param result_paths [Array<String, Pathname>]
+    def post(*result_paths)
+      result_paths = result_paths.map(&:to_s)
+      return unless should_run(result_paths)
 
-      @job_status[result_path] =
-        Concurrent::Promises.future_on(@pool, result_path) do |result_path|
+      main_result_path = result_paths.first
+      @job_status[main_result_path] =
+        Concurrent::Promises.future_on(@pool, main_result_path) do |path|
         is_success = yield
         if is_success
-          say_status 'create', result_path, :green
+          say_status 'create', path, :green
         else
-          say_status 'fail', result_path, :red
+          say_status 'fail', path, :red
         end
         is_success
       end
@@ -47,18 +48,19 @@ module VCReport
 
     private
 
-    # @param result_path [String]
-    # @return            [Boolean]
-    def should_run(result_path)
-      if File.exist?(result_path)
-        say_status 'skip', result_path, :yellow
+    # @param result_paths [Array<String>]
+    # @return             [Boolean]
+    def should_run(result_paths)
+      main_result_path = result_paths.first
+      if result_paths.all? { |path| File.exist?(path) }
+        say_status 'skip', main_result_path, :yellow
         return false
       end
-      return true unless @job_status.key?(result_path)
+      return true unless @job_status.key?(main_result_path)
 
-      future = @job_status[result_path]
+      future = @job_status[main_result_path]
       unless future.resolved?
-        say_status 'working', result_path, :yellow
+        say_status 'working', main_result_path, :yellow
         return false
       end
       if @job_status.value
@@ -66,9 +68,9 @@ module VCReport
           File does not exist but job status is 'success'.
           Something went wrong: #{result_path}
         MESSAGE
-        say_status 'start', result_path, :blue
+        say_status 'start', main_result_path, :blue
       else
-        say_status 'restart', result_path, :blue
+        say_status 'restart', main_result_path, :blue
       end
       true
     end
