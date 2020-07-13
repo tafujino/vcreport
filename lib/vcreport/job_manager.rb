@@ -55,11 +55,6 @@ module VCReport
     def terminate
       @pool.shutdown
       @pool.wait_for_termination
-      end_log
-    end
-
-    def end_log
-      @logger&.info('end')
     end
 
     private
