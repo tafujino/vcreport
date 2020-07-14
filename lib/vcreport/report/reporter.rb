@@ -11,8 +11,8 @@ module VCReport
       EDAM_DOMAIN = 'http://edamontology.org'
 
       # @param job_manager [JobManager, nil]
-      # @param targets         [Array<Pathname>]
-      # @param deps            [Array<Pathname>]
+      # @param targets     [Array<Pathname>]
+      # @param deps        [Array<Pathname>]
       def initialize(job_manager, targets: [], deps: [])
         @job_manager = job_manager
         @target_paths, @dep_paths = [targets, deps].map do |e|

@@ -6,6 +6,7 @@ require 'vcreport/report/index'
 require 'vcreport/report/progress'
 require 'vcreport/report/sample'
 require 'vcreport/report/sample_reporter'
+require 'vcreport/report/dashboard'
 require 'vcreport/job_manager'
 require 'pathname'
 
@@ -32,8 +33,9 @@ module VCReport
 
         progress_html_paths =
           Progress.new(project_dir, samples, config.num_samples_per_page)
-                  .render(report_dir)
-        Index.new(project_dir, progress_html_paths.first)
+            .render(report_dir)
+        dashboard_html_path = Dashboard.new(samples).render(report_dir)
+        Index.new(project_dir, progress_html_paths.first, dashboard_html_path)
              .render(report_dir)
       end
 

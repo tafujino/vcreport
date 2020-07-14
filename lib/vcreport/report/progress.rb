@@ -30,8 +30,8 @@ module VCReport
         @num_digits = max_pages.digits.length
       end
 
-      # @param report_dir           [Pathname]
-      # @return                     [Array<Pathname>] HTML paths
+      # @param report_dir [Pathname]
+      # @return           [Array<Pathname>] HTML paths
       def render(report_dir)
         FileUtils.mkpath report_dir unless File.exist?(report_dir)
         slices = @samples.each_slice(@num_samples_per_page).to_a
