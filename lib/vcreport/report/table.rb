@@ -41,10 +41,10 @@ module VCReport
         return nil if @rows.empty?
 
         sio = StringIO.new
-        sio.puts row_text(@header, is_header: true)
-        sio.puts separator_text(@type)
+        sio.puts markdown_row_text(@header, is_header: true)
+        sio.puts markdown_separator_text(@type)
         @rows.each do |row|
-          sio.puts row_text(row, type: @type)
+          sio.puts markdown_row_text(row, type: @type)
         end
         sio.string
       end
@@ -75,7 +75,7 @@ module VCReport
 
       # @param type [Array<Symbol>]
       # @return     [String]
-      def separator_text(type)
+      def markdown_separator_text(type)
         type.map do |t|
           case t
           when :string, :verbatim, nil
@@ -86,14 +86,14 @@ module VCReport
             warn "Unknown type: #{t}"
             exit 1
           end
-        end.then { |fields| render_fields(fields) }
+        end.then { |fields| markdown_render_fields(fields) }
       end
 
       # @param row       [Array]
       # @param type      [Array<Symbol>]
       # @param is_header [Boolean]
       # @return          [String]
-      def row_text(row, type: [], is_header: false)
+      def markdown_row_text(row, type: [], is_header: false)
         fields = row.zip(type).map do |e, t|
           next e.to_s if is_header
 
@@ -112,12 +112,12 @@ module VCReport
             exit 1
           end
         end
-        render_fields(fields)
+        markdown_render_fields(fields)
       end
 
       # @param fields [Array<String>]
       # @return       [String]
-      def render_fields(fields)
+      def markdown_render_fields(fields)
         ['| ', fields.join(' | '), ' |'].join
       end
     end
