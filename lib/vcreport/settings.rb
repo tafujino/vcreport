@@ -4,6 +4,7 @@ module VCReport
   SYSTEM_DIR = 'vcreport'
   METRICS_LOG_FILENAME = "#{SYSTEM_DIR}/metrics.log"
   MONITOR_LOG_FILENAME = "#{SYSTEM_DIR}/monitor.log"
+  MONITOR_PROCESS_INFO_PATH = "#{SYSTEM_DIR}/.psinfo.yaml"
   RESULTS_DIR = 'results'
   REPORT_DIR = 'reports'
   CONFIG_FILENAME = 'vcreport.yaml'

@@ -2,6 +2,7 @@
 
 require 'yaml'
 require 'fileutils'
+require 'vcreport/settings'
 
 module VCReport
   class ProcessInfo
@@ -80,7 +81,7 @@ module VCReport
       # @param dir [String, Pathname]
       # @return    [Pathname]
       def pid_path(dir)
-        Pathname.new(dir) / 'vcreport.process'
+        Pathname.new(dir) / MONITOR_PROCESS_INFO_PATH
       end
     end
   end
