@@ -41,8 +41,7 @@ module VCReport
         report_dir = Pathname.new(report_dir)
         out_dir = report_dir / @name
         FileUtils.mkpath out_dir unless File.exist?(out_dir)
-        render_params = { render_toc: true, toc_nesting_level: TOC_NESTING_LEVEL }
-        Render.run(PREFIX, out_dir, binding, **render_params)
+        Render.run(PREFIX, out_dir, binding, toc_nesting_level: TOC_NESTING_LEVEL)
       end
     end
   end
