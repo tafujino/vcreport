@@ -10,11 +10,11 @@ module VCReport
   module Report
     class Dashboard
       PREFIX = 'dashboard'
+      COVERAGE_STATS_TYPES = %i[mean sd median mad].freeze
 
       # @param samples [Array<Sample>]
       def initialize(samples)
         @samples = samples
-        pp coverage_stats
       end
 
       # @param report_dir [String]
@@ -47,19 +47,15 @@ module VCReport
             .cram
             .picard_collect_wgs_metrics_collection
             .picard_collect_wgs_metrics.map do |e|
-            {
-              sample_name: sample.name,
-              chr_region: e.chr_region,
-              mean: e.coverage_stats.mean,
-              sd: e.coverage_stats.sd,
-              median: e.coverage_stats.median,
-              mad: e.coverage_stats.mad
-            }
+            h = COVERAGE_STATS_TYPES.map.to_h do |type|
+              [type, e.coverage_stats.send(type)]
+            end
+            h.merge(sample_name: sample.name, chr_region: e.chr_region)
           end
         end.flatten(1)
           .group_by { |h| h[:chr_region] }
           .transform_values do |a|
-          %i[mean sd median mad].map.to_h do |type|
+          COVERAGE_STATS_TYPES.map.to_h do |type|
             coverage_stats_array = a.map do |h|
               CoverageStats.new(h[:sample_name], h[type])
             end
