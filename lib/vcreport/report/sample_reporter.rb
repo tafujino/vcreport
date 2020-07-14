@@ -3,11 +3,11 @@
 require 'vcreport/config'
 require 'vcreport/report/reporter'
 require 'vcreport/report/sample'
-require 'vcreport/report/vcf'
-require 'vcreport/report/vcf_reporter'
-require 'vcreport/report/vcf_collection'
-require 'vcreport/report/cram'
-require 'vcreport/report/cram_reporter'
+require 'vcreport/report/sample/vcf'
+require 'vcreport/report/sample/vcf_reporter'
+require 'vcreport/report/sample/vcf_collection'
+require 'vcreport/report/sample/cram'
+require 'vcreport/report/sample/cram_reporter'
 require 'vcreport/job_manager'
 require 'pathname'
 
@@ -34,12 +34,14 @@ module VCReport
         vcfs = chr_regions.filter_map do |chr_region|
           # VCF is supposed to be gzipped
           vcf_path = @sample_dir / "#{@name}.#{chr_region.id}.g.vcf.gz"
-          VcfReporter.new(vcf_path, chr_region, metrics_dir, @job_manager)
+          Sample::VcfReporter.new(vcf_path, chr_region, metrics_dir, @job_manager)
             .try_parse
         end
-        vcf_collection = VcfCollection.new(Vcf::BcftoolsStatsReporter::BCFTOOLS_IMAGE_URI, vcfs)
+        vcf_collection = Sample::VcfCollection.new(
+          Sample::Vcf::BcftoolsStatsReporter::BCFTOOLS_IMAGE_URI, vcfs
+        )
         cram_path = @sample_dir / "#{@name}.dedup.cram"
-        cram = CramReporter.new(
+        cram = Sample::CramReporter.new(
           cram_path, chr_regions, @config.ref_path, metrics_dir, @job_manager
         ).try_parse
         Sample.new(@name, end_time, vcf_collection, cram)

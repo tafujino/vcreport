@@ -16,7 +16,7 @@ module VCReport
         field = { class: 'File' }
         path = File.expand_path(path) if absolute
         field[:path] = path.to_s
-        field[:format] = "#{Edam::EDAM_DOMAIN}/format_#{edam}" if edam
+        field[:format] = "#{Edam::DOMAIN}/format_#{edam}" if edam
         field
       end
 

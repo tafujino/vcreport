@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'vcreport/report/vcf_collection'
-require 'vcreport/report/cram'
+require 'vcreport/report/sample/vcf_collection'
+require 'vcreport/report/sample/cram'
 require 'vcreport/report/render'
 require 'vcreport/report/table'
 require 'fileutils'
