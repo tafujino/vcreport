@@ -16,7 +16,7 @@ module VCReport
 
       # @param samples [Array<Sample>]
       def initialize(samples)
-        @samples = samples
+        @samples = samples.sort_by(&:end_time).reverse
       end
 
       # @param report_dir [String]
@@ -79,6 +79,25 @@ module VCReport
         <<~HTML.chomp
           <script type="#{type}" id="#{id}">#{data.chomp}</script>
         HTML
+      end
+
+      # @return [Hash{ ChrRegion => PlotData }]
+      def ts_tv_ratio
+        @samples.map do |sample|
+          sample.vcf_collection.vcfs.map do |vcf|
+            {
+              sample_name: sample.name,
+              chr_region: vcf.chr_region,
+              ts_tv_ratio: vcf.bcftools_stats&.ts_tv_ratio
+            }
+          end
+        end.flatten(1)
+          .group_by { |h| h[:chr_region] }
+          .transform_values do |a|
+          PlotData.new(
+            a.map { |h| PlotEntry.new(h[:sample_name], h[:ts_tv_ratio]) }
+          )
+        end
       end
 
       # @return [Hash{ ChrRegion => Hash{ Symbol => PlotData } }]

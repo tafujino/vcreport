@@ -22,10 +22,10 @@
   </head>
   <body>
     <script src="https://d3js.org/d3.v5.min.js"></script>
-    <%= data_embedding_html(coverage_stats.values.first[:mean].csv_text, 'text/csv', 'test') %>
+    <%= data_embedding_html(ts_tv_ratio.values.first.json_text, 'application/json', 'test') %>
     <script>
-      const csv_text = document.getElementById('test').innerHTML;
-      const data = d3.csvParse(csv_text)
+      const data = JSON.parse(document.getElementById('test').innerHTML);
+      console.log(data);
     </script>
     <svg width="960" height="500"></svg>
   </body>
