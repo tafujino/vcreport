@@ -7,6 +7,7 @@ require 'vcreport/monitor'
 require 'vcreport/process_info'
 require 'vcreport/job_manager'
 require 'thor'
+require 'mono_logger'
 
 module VCReport
   class << self
@@ -37,7 +38,7 @@ module VCReport
         dir = VCReport.initialize_dir(dir)
         config = Config.load(dir)
         num_threads = options['threads']
-        logger = Logger.new(dir / METRICS_LOG_FILENAME)
+        logger = MonoLogger.new(dir / METRICS_LOG_FILENAME)
         job_manager = JobManager.new(num_threads, logger)
         Monitor.start(dir, config, job_manager, options['interval'])
       end
@@ -104,7 +105,7 @@ module VCReport
         dir = VCReport.initialize_dir(dir)
         config = Config.load(dir)
         num_threads = options['threads']
-        logger = Logger.new(dir / METRICS_LOG_FILENAME)
+        logger = MonoLogger.new(dir / METRICS_LOG_FILENAME)
         job_manager = JobManager.new(num_threads, logger)
         Report.run(dir, config, job_manager, render: false)
         job_manager.terminate

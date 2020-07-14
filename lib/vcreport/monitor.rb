@@ -3,6 +3,7 @@
 require 'vcreport/settings'
 require 'vcreport/config'
 require 'vcreport/process_info'
+require 'vcreport/system'
 require 'pathname'
 require 'fileutils'
 require 'thor'
@@ -23,6 +24,10 @@ module VCReport
         say_status 'start', dir, :green
         Process.daemon(true)
         ProcessInfo.store_current_process(dir)
+        system = System.instance
+        system.dir = dir
+        system.monitor = true
+        system.monitor_logger.info 'Start monotoring.'
         loop do
           Report.run(dir, config, job_manager)
           sleep(interval)

@@ -8,7 +8,7 @@ require 'pathname'
 require 'posix/spawn'
 require 'thor'
 require 'English'
-require 'logger'
+require 'mono_logger'
 
 module VCReport
   class JobManager
@@ -18,7 +18,7 @@ module VCReport
     attr_reader :num_threads
 
     # @param num_threads [Integer]
-    # @param logger      [Logger, nil]
+    # @param logger      [MonoLogger, nil]
     def initialize(num_threads, logger)
       @num_threads = num_threads
       @pool = Concurrent::FixedThreadPool.new(num_threads)

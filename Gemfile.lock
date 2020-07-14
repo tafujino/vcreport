@@ -4,6 +4,7 @@ PATH
     vcreport (0.1.0)
       activesupport
       concurrent-ruby
+      mono_logger
       posix-spawn
       redcarpet
       thor
@@ -11,11 +12,12 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
-    activesupport (5.2.4.3)
+    activesupport (6.0.3.2)
       concurrent-ruby (~> 1.0, >= 1.0.2)
       i18n (>= 0.7, < 2)
       minitest (~> 5.1)
       tzinfo (~> 1.1)
+      zeitwerk (~> 2.2, >= 2.2.2)
     ast (2.4.1)
     backport (1.1.2)
     benchmark (0.1.0)
@@ -28,6 +30,7 @@ GEM
     maruku (0.7.3)
     mini_portile2 (2.4.0)
     minitest (5.14.1)
+    mono_logger (1.1.0)
     nokogiri (1.10.10)
       mini_portile2 (~> 2.4.0)
     parallel (1.19.2)
@@ -83,6 +86,7 @@ GEM
       thread_safe (~> 0.1)
     unicode-display_width (1.7.0)
     yard (0.9.25)
+    zeitwerk (2.3.1)
 
 PLATFORMS
   ruby
