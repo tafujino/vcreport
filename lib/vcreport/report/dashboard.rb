@@ -5,6 +5,7 @@ require 'vcreport/report/render'
 require 'vcreport/report/sample'
 require 'fileutils'
 require 'pathname'
+require 'json'
 
 module VCReport
   module Report
@@ -25,22 +26,39 @@ module VCReport
         Render.run(PREFIX, report_dir, binding)
       end
 
-      class CoverageStats
+      class PlotEntry
         # @return [String]
         attr_reader :sample_name
 
-        # @return [Float]
-        attr_reader :stats
+        # @return [Object]
+        attr_reader :value
 
         # @param sample_name [String]
-        # @param stats       [Float]
-        def initialize(sample_name, stats)
+        # @param value       [Object]
+        def initialize(sample_name, value)
           @sample_name = sample_name
-          @stats = stats
+          @value = value
         end
       end
 
-      # @return [Hash{ ChrRegion => Hash{ Symbol => Array<CoverageStats> } }]
+      class PlotData
+        # @return [Array<PlotEntry>]
+        attr_reader :entries
+
+        # @param [Array<PlotEntry>]
+        def initialize(entries)
+          @entries = entries
+        end
+
+        # @param [String]
+        def json_text
+          JSON.generate(
+            @entries.map { |e| { sample_name: e.sample_name, value: e.value } }
+          )
+        end
+      end
+
+      # @return [Hash{ ChrRegion => Hash{ Symbol => Array<PlotEntry> } }]
       def coverage_stats
         @samples.map do |sample|
           sample
@@ -56,10 +74,10 @@ module VCReport
           .group_by { |h| h[:chr_region] }
           .transform_values do |a|
           COVERAGE_STATS_TYPES.map.to_h do |type|
-            coverage_stats_array = a.map do |h|
-              CoverageStats.new(h[:sample_name], h[type])
+            plot_entries = a.map do |h|
+              PlotEntry.new(h[:sample_name], h[type])
             end
-            [type, coverage_stats_array]
+            [type, PlotData.new(plot_entries)]
           end
         end
       end
