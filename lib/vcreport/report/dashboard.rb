@@ -6,6 +6,7 @@ require 'vcreport/report/sample'
 require 'fileutils'
 require 'pathname'
 require 'json'
+require 'csv'
 
 module VCReport
   module Report
@@ -57,6 +58,16 @@ module VCReport
               { sample_name: e.sample_name, value: e.value }
             end
           )
+        end
+
+        # @param [String]
+        def csv_text
+          CSV.generate do |csv|
+            csv << %w[sample_name value]
+            @entries.each do |e|
+              csv << [e.sample_name, e.value]
+            end
+          end
         end
       end
 
