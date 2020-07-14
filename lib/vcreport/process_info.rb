@@ -34,7 +34,7 @@ module VCReport
 
     class << self
       # The status of the process (and its child processes) related to
-      # the directory. Fixes an inconsistency dectected.
+      # the directory. Fixes an inconsistency if it is detected.
       # @param dir [String, Pathname]
       # @return    [ProcessInfo, nil]
       def status(dir)

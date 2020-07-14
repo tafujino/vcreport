@@ -27,9 +27,11 @@ module VCReport
         system = System.instance
         system.dir = dir
         system.monitor = true
-        system.monitor_logger.info 'Start monotoring'
+        system.monitor_logger.info 'Start monitoring'
         loop do
+          system.monitor_logger.info 'Start periodical reporting'
           Report.run(dir, config, job_manager)
+          system.monitor_logger.info 'End periodical reporting'
           sleep(interval)
         end
       end
