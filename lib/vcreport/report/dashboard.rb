@@ -53,7 +53,9 @@ module VCReport
         # @param [String]
         def json_text
           JSON.generate(
-            @entries.map { |e| { sample_name: e.sample_name, value: e.value } }
+            @entries.map do |e|
+              { sample_name: e.sample_name, value: e.value }
+            end
           )
         end
       end
