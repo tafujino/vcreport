@@ -24,7 +24,7 @@ module VCReport
       def render(report_dir)
         report_dir = Pathname.new(report_dir)
         FileUtils.mkpath report_dir unless File.exist?(report_dir)
-        Render.run(PREFIX, report_dir, binding)
+        Render.run(PREFIX, report_dir, binding, use_markdown: false)
       end
 
       class PlotEntry
