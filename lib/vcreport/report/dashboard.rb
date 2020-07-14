@@ -60,7 +60,7 @@ module VCReport
         end
       end
 
-      # @return [Hash{ ChrRegion => Hash{ Symbol => Array<PlotEntry> } }]
+      # @return [Hash{ ChrRegion => Hash{ Symbol => PlotData } }]
       def coverage_stats
         @samples.map do |sample|
           sample
