@@ -39,14 +39,14 @@ module VCReport
         begin
           is_success = yield
         rescue => e
-          warn e
+          @logger&.error e.message
         end
         is_success = false if is_success && not_exist_results(result_paths)
         if is_success
           say_status 'create', main_result_path, :green
         else
           say_status 'fail', main_result_path, :red
-          @logger&.error("failed to create #{main_result_path}")
+          @logger&.error("Failed to create #{main_result_path}")
         end
         is_success
       end
@@ -65,9 +65,9 @@ module VCReport
       nonexistent_paths = result_paths.reject { |path| File.exist?(path) }
       return false if nonexistent_paths.empty?
 
-      warn 'Job successfully completed, but the following file(s) not found:'
+      @logger&.error 'Job successfully completed, but the following file(s) not found:'
       nonexistent_paths.each do |nonexistent_path|
-        warn nonexistent_path
+        @logger.error nonexistent_path
       end
       true
     end
@@ -90,7 +90,7 @@ module VCReport
         return false
       end
       if @job_status.value!
-        warn <<~MESSAGE.squish
+        @logger&.error <<~MESSAGE.squish
           File does not exist but job status is 'success'.
           Something went wrong: #{result_path}
         MESSAGE
