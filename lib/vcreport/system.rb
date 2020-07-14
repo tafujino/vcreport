@@ -35,10 +35,7 @@ module VCReport
 
     def initialize
       @monitor = false
-      trap(:TERM) do
-        @monitor_logger&.info 'End monitoring.'
-        exit 0
-      end
+      trap(:TERM) { Monitor.stop_self }
     end
   end
 end

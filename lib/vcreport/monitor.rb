@@ -27,7 +27,7 @@ module VCReport
         system = System.instance
         system.dir = dir
         system.monitor = true
-        system.monitor_logger.info 'Start monotoring.'
+        system.monitor_logger.info 'Start monotoring'
         loop do
           Report.run(dir, config, job_manager)
           sleep(interval)
@@ -38,6 +38,12 @@ module VCReport
       # @return    [ProcessInfo, nil]
       def status(dir)
         ProcessInfo.status(dir)
+      end
+
+      def stop_self
+        system = System.instance
+        System.instance.monitor_logger.info 'End monitoring' if system.monitor
+        exit 0
       end
 
       # @param dir [String, Pathname]
