@@ -71,6 +71,16 @@ module VCReport
         end
       end
 
+      # @param data [String]
+      # @param type [String]
+      # @param id   [String]
+      # @return     [String]
+      def data_embedding_html(data, type, id)
+        <<~HTML.chomp
+          <script type="#{type}" id="#{id}">#{data.chomp}</script>
+        HTML
+      end
+
       # @return [Hash{ ChrRegion => Hash{ Symbol => PlotData } }]
       def coverage_stats
         @samples.map do |sample|

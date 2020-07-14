@@ -22,8 +22,11 @@
   </head>
   <body>
     <script src="https://d3js.org/d3.v5.min.js"></script>
-    <script type="text/javascript" src="chart.js"></script>
-    temperatures = [62.7, 59.9, 59.1, 58.8, 58.7, 57, 56.7, 56.8, 56.7, 60.1, 61.1, 61.5, 64.3, 67.1, 64.6, 61.6, 61.1, 59.2, 58.9, 57.2]
+    <%= data_embedding_html(coverage_stats.values.first[:mean].csv_text, 'text/csv', 'test') %>
+    <script>
+      const csv_text = document.getElementById('test').innerHTML;
+      const data = d3.csvParse(csv_text)
+    </script>
     <svg width="960" height="500"></svg>
   </body>
 </html>
