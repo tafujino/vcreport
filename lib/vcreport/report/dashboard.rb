@@ -45,6 +45,7 @@ module VCReport
           sample.vcf_collection.vcfs.map do |vcf|
             {
               sample_name: sample.name,
+              end_time: sample.end_time,
               chr_region: vcf.chr_region,
               ts_tv_ratio: vcf.bcftools_stats&.ts_tv_ratio
             }
@@ -80,7 +81,9 @@ module VCReport
             h = COVERAGE_STATS_TYPES.map.to_h do |type|
               [type, e.coverage_stats.send(type)]
             end
-            h.merge(sample_name: sample.name, chr_region: e.chr_region)
+            h.merge(sample_name: sample.name,
+                    end_time: sample.end_time,
+                    chr_region: e.chr_region)
           end
         end.then { |a| C3js::Data.new(a) }
       end
