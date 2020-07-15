@@ -39,7 +39,7 @@ module VCReport
         FileUtils.mkpath report_dir unless File.exist?(report_dir)
         [C3_JS_PATH, C3_CSS_PATH].each do |src_path|
           dst_path = report_dir / File.basename(src_path)
-          FileUtils.cp C3_JS_PATH, dst_path
+          FileUtils.cp src_path, dst_path
           say_status 'create', dst_path, :green
         end
         Render.run(PREFIX, report_dir, binding, toc_nesting_level: TOC_NESTING_LEVEL)
