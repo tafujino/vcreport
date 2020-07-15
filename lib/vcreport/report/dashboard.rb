@@ -19,13 +19,13 @@ module VCReport
       # @param samples [Array<Sample>]
       def initialize(samples)
         @samples = samples.sort_by(&:end_time).reverse
-        data = coverage_stats
-        chr_regions = data.entries.map  { |e| e[:chr_region] }
+        data = ts_tv_ratio
+        chr_regions = data.entries.filter_map { |e| e[:chr_region] }.uniq
         chr_regions.map do |chr_region|
           data = data.select(chr_region: chr_region)
           sample_col = C3js::Column.new(:sample_name, 'sample name')
-          mean_col = C3js::Column.new(:mean, 'mean')
-          puts data.bar_chart_json(sample_col, mean_col)
+          tstv_col = C3js::Column.new(:ts_tv_ratio, 'ts/tv')
+          puts data.bar_chart_json(sample_col, tstv_col, bindto: 'chart')
         end
 #        c3js = ts_tv_ratio
 #        pp c3js
@@ -107,9 +107,11 @@ module VCReport
 
           # @param cols [Array<Column>]
           # @return     [String]
-          def bar_chart_json(*cols)
+          def bar_chart_json(*cols, bindto:)
             row_data = rows(*cols)
-            chart = { data: { rows: row_data, type: 'bar' } }
+            chart = {
+              bindto: "##{bindto}", data: { rows: row_data }, type: 'bar'
+            }
             chart.deep_stringify_keys!
             JSON.generate(chart)
           end
