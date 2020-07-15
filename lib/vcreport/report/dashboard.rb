@@ -22,6 +22,7 @@ module VCReport
         @samples = samples.sort_by(&:end_time).reverse
         @chr_regions = chr_regions
         @sample_col = C3js::Column.new(:sample_name, 'sample name')
+        @end_time_col = C3js::Column.new(:end_time, 'end time')
         @default_chart_params = {
           x: @sample_col,
           x_axis_label_height: X_AXIS_LABEL_HEIGHT
@@ -59,6 +60,7 @@ module VCReport
             json = data.select(chr_region: chr_region)
                      .bar_chart_json(
                        @sample_col,
+                       @end_time_col,
                        tstv_col,
                        bindto: chr_region.id,
                        **@default_chart_params
