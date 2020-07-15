@@ -51,7 +51,7 @@ module VCReport
         end.then { |a| C3js::Data.new(a) }
       end
 
-      # @return [Hash{ String => String }]
+      # @return [Hash{ ChrRegion => String }]
       def ts_tv_ratio_json
         ts_tv_ratio.then do |data|
           tstv_col = C3js::Column.new(:ts_tv_ratio, 'ts/tv')
@@ -63,7 +63,7 @@ module VCReport
                        bindto: chr_region.id,
                        **@default_chart_params
                      )
-            [chr_region.desc, json]
+            [chr_region, json]
           end
         end
       end
