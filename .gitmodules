@@ -4,3 +4,6 @@
 [submodule "lib/c3"]
 	path = lib/c3
 	url = https://github.com/c3js/c3.git
+[submodule "lib/d3"]
+	path = lib/d3
+	url = https://github.com/d3/d3.github.com

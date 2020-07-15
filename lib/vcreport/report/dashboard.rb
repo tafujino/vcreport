@@ -37,7 +37,7 @@ module VCReport
       def render(report_dir)
         report_dir = Pathname.new(report_dir)
         FileUtils.mkpath report_dir unless File.exist?(report_dir)
-        [C3_JS_PATH, C3_CSS_PATH].each do |src_path|
+        [D3_JS_PATH, C3_JS_PATH, C3_CSS_PATH].each do |src_path|
           dst_path = report_dir / File.basename(src_path)
           FileUtils.cp src_path, dst_path
           say_status 'create', dst_path, :green

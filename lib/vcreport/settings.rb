@@ -10,6 +10,7 @@ module VCReport
   CWLTOOL_PATH = 'cwltool'
   SINGULARITY_PATH = 'singularity'
   HUMAN_RESEQ_DIR = 'lib/human-reseq'
+  D3_JS_PATH = 'lib/d3/d3.v5.js'
   C3_JS_PATH = 'lib/c3/c3.js'
   C3_CSS_PATH = 'lib/c3/c3.css'
   CONFIG_FILENAME = 'vcreport.yaml'
