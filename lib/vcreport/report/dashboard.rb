@@ -5,10 +5,9 @@ require 'active_support/core_ext/hash/indifferent_access'
 require 'vcreport/chr_region'
 require 'vcreport/report/render'
 require 'vcreport/report/sample'
+require 'vcreport/report/c3js'
 require 'fileutils'
 require 'pathname'
-require 'json'
-require 'csv'
 
 module VCReport
   module Report
@@ -22,26 +21,11 @@ module VCReport
       def initialize(samples, chr_regions)
         @samples = samples.sort_by(&:end_time).reverse
         @chr_regions = chr_regions
-        @ts_tv_ratio_json = ts_tv_ratio.then do |data|
-          sample_col = C3js::Column.new(:sample_name, 'sample name')
-          tstv_col = C3js::Column.new(:ts_tv_ratio, 'ts/tv')
-          @chr_regions.map.to_h do |chr_region|
-            json = data.select(chr_region: chr_region)
-                       .bar_chart_json(
-                         sample_col,
-                         tstv_col,
-                         x: sample_col,
-                         bindto: chr_region.id
-                       )
-            [chr_region.desc, json]
-          end
-        end
-#        c3js = ts_tv_ratio
-#        pp c3js
-#        chr_region = c3js.entries.first[:chr_region]
-#        pp c3js.select(chr_region: chr_region)
-#        puts c3js.select(chr_region: chr_region).rows_text(
-#             sample_name: 'sample name', ts_tv_ratio: 'ts/tv')
+        @sample_col = C3js::Column.new(:sample_name, 'sample name')
+        @default_chart_params = {
+          x: @sample_col,
+          x_axis_label_height: X_AXIS_LABEL_HEIGHT
+        }
       end
 
       # @param report_dir [String]
@@ -52,75 +36,7 @@ module VCReport
         Render.run(PREFIX, report_dir, binding, use_markdown: false)
       end
 
-      module C3js
-        class Column
-          # @return [Symbol]
-          attr_reader :id
-
-          # @return [String]
-          attr_reader :label
-
-          # @return [Boolean]
-          attr_reader :is_categorical
-
-          # @param id             [Symbol]
-          # @param label          [String]
-          # @param is_categorical [Boolean]
-          def initialize(id, label, is_categorical = false)
-            @id = id
-            @label = label
-            @is_categorical = is_categorical
-          end
-        end
-
-        class Data
-          # @return [Array<Hash>]
-          attr_reader :entries
-
-          # @param entries [Array<Hash>]
-          def initialize(entries)
-            @entries = entries
-          end
-
-          # @param key_and_value [Hash{ Symbol => Object }]
-          # @return              [Data]
-          def select(**key_and_value)
-            entries = @entries.filter_map do |e|
-              next nil unless key_and_value.all? { |k, v| e[k] == v }
-
-              e
-            end
-            Data.new(entries)
-          end
-
-          # @param cols [Array<Column>]
-          # @return     [Array<Array>>]
-          def rows(*cols)
-            @entries.inject([cols.map(&:label)]) do |a, e|
-              a << e.values_at(*cols.map(&:id))
-            end
-          end
-
-          # @param cols   [Array<Column>]
-          # @param x      [C3js::Column]
-          # @param bindto [String]
-          # @return       [String]
-          def bar_chart_json(*cols, x:, bindto:)
-            row_data = rows(*cols)
-            chart = {
-              bindto: "##{bindto}",
-              data: { x: x.label, rows: row_data, type: 'bar' },
-              axis: { x: { type: 'category',
-                           tick: { rotate: 90, multiline: false },
-                           height: X_AXIS_LABEL_HEIGHT } },
-              zoom: { enabled: true },
-              legend: { show: false }
-            }
-            chart.deep_stringify_keys!
-            JSON.generate(chart)
-          end
-        end
-      end
+      private
 
       # @return [C3js::Data]
       def ts_tv_ratio
@@ -133,6 +49,23 @@ module VCReport
             }
           end
         end.then { |a| C3js::Data.new(a) }
+      end
+
+      # @return [Hash{ String => String }]
+      def ts_tv_ratio_json
+        ts_tv_ratio.then do |data|
+          tstv_col = C3js::Column.new(:ts_tv_ratio, 'ts/tv')
+          @chr_regions.map.to_h do |chr_region|
+            json = data.select(chr_region: chr_region)
+                     .bar_chart_json(
+                       @sample_col,
+                       tstv_col,
+                       bindto: chr_region.id,
+                       **@default_chart_params
+                     )
+            [chr_region.desc, json]
+          end
+        end
       end
 
       # @return [C3js::Data]

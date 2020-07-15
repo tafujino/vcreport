@@ -27,7 +27,7 @@
     <article class="markdown-body">
       <h1>Dashboard</h1>
       <h2>bcftools stats ts/tv</h2>
-      <% @ts_tv_ratio_json.each do |desc, json| -%>
+      <% ts_tv_ratio_json.each do |desc, json| -%>
       <h3><%= desc %></h3>
       <div id = "<%= desc %>"></div>
       <script>c3.generate(<%= json %>)</script>
