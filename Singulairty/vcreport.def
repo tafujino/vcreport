@@ -1,4 +1,4 @@
-BootStrap: docker
+Bootstrap: docker
 From: rubylang/ruby:2.7.0-bionic
 
 %post

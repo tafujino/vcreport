@@ -4,6 +4,7 @@ require 'vcreport/version'
 require 'vcreport/settings'
 require 'vcreport/report'
 require 'vcreport/monitor'
+require 'vcreport/web_server'
 require 'vcreport/process_info'
 require 'vcreport/job_manager'
 require 'thor'
@@ -74,9 +75,6 @@ module VCReport
       end
     end
 
-    class HttpCommand < Thor
-    end
-
     class Main < Thor
       def self.exit_on_failure?
         true
@@ -85,8 +83,17 @@ module VCReport
       desc 'monitor [COMMAND]', 'Manage a monitoring daemon'
       subcommand :monitor, MonitorCommand
 
-      desc 'http [COMMAND]', 'Manage a web server'
-      subcommand :http, HttpCommand
+      desc 'http [COMMAND]', 'Start a web server'
+      option 'port',
+             aliases: 'p',
+             type: :numeric,
+             desc: 'Port number',
+             default: WebServer::DEFAULT_PORT
+      def http(dir)
+        dir = VCReport.initialize_dir(dir)
+        port = options['port'].to_i
+        WebServer.start(dir, port)
+      end
 
       desc 'render [DIRECTORY]', 'Generate reports'
       def render(dir)
