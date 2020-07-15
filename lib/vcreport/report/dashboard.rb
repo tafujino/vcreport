@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'active_support'
+require 'active_support/core_ext/hash/indifferent_access'
 require 'vcreport/chr_region'
 require 'vcreport/report/render'
 require 'vcreport/report/sample'
@@ -17,6 +19,20 @@ module VCReport
       # @param samples [Array<Sample>]
       def initialize(samples)
         @samples = samples.sort_by(&:end_time).reverse
+        data = coverage_stats
+        chr_regions = data.entries.map  { |e| e[:chr_region] }
+        chr_regions.map do |chr_region|
+          data = data.select(chr_region: chr_region)
+          sample_col = C3js::Column.new(:sample_name, 'sample name')
+          mean_col = C3js::Column.new(:mean, 'mean')
+          puts data.bar_chart_json(sample_col, mean_col)
+        end
+#        c3js = ts_tv_ratio
+#        pp c3js
+#        chr_region = c3js.entries.first[:chr_region]
+#        pp c3js.select(chr_region: chr_region)
+#        puts c3js.select(chr_region: chr_region).rows_text(
+#             sample_name: 'sample name', ts_tv_ratio: 'ts/tv')
       end
 
       # @param report_dir [String]
@@ -27,63 +43,116 @@ module VCReport
         Render.run(PREFIX, report_dir, binding, use_markdown: false)
       end
 
-      class PlotEntry
-        # @return [String]
-        attr_reader :sample_name
+      module C3js
+        class Column
+          # @return [Symbol]
+          attr_reader :id
 
-        # @return [Object]
-        attr_reader :value
+          # @return [String]
+          attr_reader :label
 
-        # @param sample_name [String]
-        # @param value       [Object]
-        def initialize(sample_name, value)
-          @sample_name = sample_name
-          @value = value
-        end
-      end
+          # @return [Boolean]
+          attr_reader :is_categorical
 
-      class PlotData
-        # @return [Array<PlotEntry>]
-        attr_reader :entries
-
-        # @param [Array<PlotEntry>]
-        def initialize(entries)
-          @entries = entries
-        end
-
-        # @param [String]
-        def json_text
-          JSON.generate(
-            @entries.map do |e|
-              { sample_name: e.sample_name, value: e.value }
-            end
-          )
-        end
-
-        # @param [String]
-        def csv_text
-          CSV.generate do |csv|
-            csv << %w[sample_name value]
-            @entries.each do |e|
-              csv << [e.sample_name, e.value]
-            end
+          # @param id             [Symbol]
+          # @param label          [String]
+          # @param is_categorical [Boolean]
+          def initialize(id, label, is_categorical = false)
+            @id = id
+            @label = label
+            @is_categorical = is_categorical
           end
         end
+
+        class Data
+          # @return [Array<Hash>]
+          attr_reader :entries
+
+          # @param entries [Array<Hash>]
+          def initialize(entries)
+            @entries = entries
+          end
+
+#          # @param key_and_value [Hash{ Symbol => Object }]
+#          # @return              [Data]
+#          def select_and_shadow(**key_and_value)
+#            entries = @entries.filter_map do |e|
+#              next nil unless key_and_value.all? { |k, v| e[k] == v }
+#
+#              e1 = e.clone
+#              key_and_value.keys.each { |k| e1.delete(k) }
+#              e1
+#            end
+#            Data.new(entries)
+#          end
+
+          # @param key_and_value [Hash{ Symbol => Object }]
+          # @return              [Data]
+          def select(**key_and_value)
+            entries = @entries.filter_map do |e|
+              next nil unless key_and_value.all? { |k, v| e[k] == v }
+
+              e
+            end
+            Data.new(entries)
+          end
+
+          # @param cols [Array<Column>]
+          # @return     [Array<Array>>]
+          def rows(*cols)
+            @entries.inject([cols.map(&:label)]) do |a, e|
+              a << e.values_at(*cols.map(&:id))
+            end
+          end
+
+          # @param cols [Array<Column>]
+          # @return     [String]
+          def bar_chart_json(*cols)
+            row_data = rows(*cols)
+            chart = { data: { rows: row_data, type: 'bar' } }
+            chart.deep_stringify_keys!
+            JSON.generate(chart)
+          end
+
+#          # @param key_and_name [Hash{ Symbol => String }]
+#          # @return             [String]
+#          def rows_text(**key_and_name)
+#            a = [key_and_name.values]
+#            @entries.each do |e|
+#              a << e.values_at(*key_and_name.keys)
+#            end
+#            JSON.generate(a)
+#          end
+#
+
+#          # @param key
+#          def sort!(key)
+#            @entries.sort_by do |a, b|
+#              if block_given?
+#                yield a[key], a
+#              end
+#          end
+#
+#          # @param keys [Array<String>]
+#          def columns(*keys)
+#            keys.map do |key|
+#              @entries.map { |e| e[key] }.preprend(name)
+#            end
+#          end
+
+#          # @param key_and_name [Hash{ Symbol => String }]
+#          #                     column key -> human-readable name
+#          def columns(**key_and_name)
+#            key_and_name.map do |key, name|
+#              @entries.map { |e| e[key] }.preprend(name)
+#            end
+#          end
+        end
       end
 
-      # @param data [String]
-      # @param type [String]
-      # @param id   [String]
-      # @return     [String]
-      def data_embedding_html(data, type, id)
-        <<~HTML.chomp
-          <script type="#{type}" id="#{id}">#{data.chomp}</script>
-        HTML
-      end
-
-      # @return [Hash{ ChrRegion => PlotData }]
+      # @return [C3js::Data]
       def ts_tv_ratio
-        @samples.map do |sample|
+        @samples.flat_map do |sample|
           sample.vcf_collection.vcfs.map do |vcf|
             {
               sample_name: sample.name,
@@ -91,18 +160,12 @@ module VCReport
               ts_tv_ratio: vcf.bcftools_stats&.ts_tv_ratio
             }
           end
-        end.flatten(1)
-          .group_by { |h| h[:chr_region] }
-          .transform_values do |a|
-          PlotData.new(
-            a.map { |h| PlotEntry.new(h[:sample_name], h[:ts_tv_ratio]) }
-          )
-        end
+        end.then { |a| C3js::Data.new(a) }
       end
 
-      # @return [Hash{ ChrRegion => Hash{ Symbol => PlotData } }]
+      # @return [C3js::Data]
       def coverage_stats
-        @samples.map do |sample|
+        @samples.flat_map do |sample|
           sample
             .cram
             .picard_collect_wgs_metrics_collection
@@ -112,16 +175,7 @@ module VCReport
             end
             h.merge(sample_name: sample.name, chr_region: e.chr_region)
           end
-        end.flatten(1)
-          .group_by { |h| h[:chr_region] }
-          .transform_values do |a|
-          COVERAGE_STATS_TYPES.map.to_h do |type|
-            plot_entries = a.map do |h|
-              PlotEntry.new(h[:sample_name], h[type])
-            end
-            [type, PlotData.new(plot_entries)]
-          end
-        end
+        end.then { |a| C3js::Data.new(a) }
       end
     end
   end
