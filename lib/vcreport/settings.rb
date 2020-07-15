@@ -10,6 +10,8 @@ module VCReport
   CWLTOOL_PATH = 'cwltool'
   SINGULARITY_PATH = 'singularity'
   HUMAN_RESEQ_DIR = 'lib/human-reseq'
+  C3_JS_PATH = 'lib/c3/c3.js'
+  C3_CSS_PATH = 'lib/c3/c3.css'
   CONFIG_FILENAME = 'vcreport.yaml'
   MAX_SAMPLES = 100_000
   IGNORE_DEPS_INEXISTENCE = true # debug
