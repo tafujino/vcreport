@@ -22,7 +22,6 @@ module VCReport
         @samples = samples.sort_by(&:end_time).reverse
         @chr_regions = chr_regions
         @sample_col = C3js::Column.new(:sample_name, 'sample name')
-        @end_time_col = C3js::Column.new(:end_time, 'end time')
         @default_chart_params = {
           x: @sample_col,
           x_axis_label_height: X_AXIS_LABEL_HEIGHT
@@ -45,7 +44,6 @@ module VCReport
           sample.vcf_collection.vcfs.map do |vcf|
             {
               sample_name: sample.name,
-              end_time: sample.end_time,
               chr_region: vcf.chr_region,
               ts_tv_ratio: vcf.bcftools_stats&.ts_tv_ratio
             }
@@ -61,7 +59,6 @@ module VCReport
             json = data.select(chr_region: chr_region)
                      .bar_chart_json(
                        @sample_col,
-                       @end_time_col,
                        tstv_col,
                        bindto: chr_region.id,
                        **@default_chart_params
@@ -82,7 +79,6 @@ module VCReport
               [type, e.coverage_stats.send(type)]
             end
             h.merge(sample_name: sample.name,
-                    end_time: sample.end_time,
                     chr_region: e.chr_region)
           end
         end.then { |a| C3js::Data.new(a) }
