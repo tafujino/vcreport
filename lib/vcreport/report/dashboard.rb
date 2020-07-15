@@ -104,8 +104,7 @@ module VCReport
             row_data = rows(*cols)
             chart = {
               bindto: "##{bindto}",
-              data: { rows: row_data },
-              type: 'bar',
+              data: { rows: row_data, type: 'bar' },
               axis: { x: { type: 'category',
                            tick: { rotate: 90, multiline: false },
                            height: X_AXIS_LABEL_HEIGHT } },
