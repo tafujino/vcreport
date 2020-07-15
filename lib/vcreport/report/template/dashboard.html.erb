@@ -26,12 +26,8 @@
   <body>
     <article class="markdown-body">
       <h1>Dashboard</h1>
-      <h2>bcftools stats ts/tv</h2>
-      <% ts_tv_ratio_json.each do |chr_region, json| -%>
-      <h3><%= chr_region.desc %></h3>
-      <div id = "<%= chr_region.id %>"></div>
-      <script>c3.generate(<%= json %>)</script>
-      <% end -%>
+      <%= toc_body -%>
+      <%= content_body %>
     </article>
   </body>
 </html>

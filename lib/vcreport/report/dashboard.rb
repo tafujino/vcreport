@@ -2,6 +2,7 @@
 
 require 'active_support'
 require 'active_support/core_ext/hash/indifferent_access'
+require 'vcreport/settings'
 require 'vcreport/chr_region'
 require 'vcreport/report/render'
 require 'vcreport/report/sample'
@@ -33,7 +34,7 @@ module VCReport
       def render(report_dir)
         report_dir = Pathname.new(report_dir)
         FileUtils.mkpath report_dir unless File.exist?(report_dir)
-        Render.run(PREFIX, report_dir, binding, use_markdown: false)
+        Render.run(PREFIX, report_dir, binding, toc_nesting_level: TOC_NESTING_LEVEL)
       end
 
       private

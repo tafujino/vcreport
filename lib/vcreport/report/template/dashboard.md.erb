@@ -1,0 +1,7 @@
+## ts/tv (bcftools stats)
+
+<% ts_tv_ratio_json.each do |chr_region, json| -%>
+### <%= chr_region.desc %>
+<div id = "<%= chr_region.id %>"></div>
+<script>c3.generate(<%= json %>)</script>
+<% end -%>
