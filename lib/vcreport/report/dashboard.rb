@@ -15,17 +15,23 @@ module VCReport
     class Dashboard
       PREFIX = 'dashboard'
       COVERAGE_STATS_TYPES = %i[mean sd median mad].freeze
+      X_AXIS_LABEL_HEIGHT = 150
 
-      # @param samples [Array<Sample>]
-      def initialize(samples)
+      # @param samples     [Array<Sample>]
+      # @param chr_regions [Array<ChrRegion>]
+      def initialize(samples, chr_regions)
         @samples = samples.sort_by(&:end_time).reverse
-        data = ts_tv_ratio
-        chr_regions = data.entries.filter_map { |e| e[:chr_region] }.uniq
-        chr_regions.map do |chr_region|
-          data = data.select(chr_region: chr_region)
+        @chr_regions = chr_regions
+        @ts_tv_ratio_json = ts_tv_ratio.then do |data|
           sample_col = C3js::Column.new(:sample_name, 'sample name')
           tstv_col = C3js::Column.new(:ts_tv_ratio, 'ts/tv')
-          puts data.bar_chart_json(sample_col, tstv_col, bindto: 'chart')
+          @chr_regions.map.to_h do |chr_region|
+            json = data.select(chr_region: chr_region)
+                       .bar_chart_json(
+                         sample_col, tstv_col, bindto: chr_region.id
+                       )
+            [chr_region.desc, json]
+          end
         end
 #        c3js = ts_tv_ratio
 #        pp c3js
@@ -73,19 +79,6 @@ module VCReport
             @entries = entries
           end
 
-#          # @param key_and_value [Hash{ Symbol => Object }]
-#          # @return              [Data]
-#          def select_and_shadow(**key_and_value)
-#            entries = @entries.filter_map do |e|
-#              next nil unless key_and_value.all? { |k, v| e[k] == v }
-#
-#              e1 = e.clone
-#              key_and_value.keys.each { |k| e1.delete(k) }
-#              e1
-#            end
-#            Data.new(entries)
-#          end
-
           # @param key_and_value [Hash{ Symbol => Object }]
           # @return              [Data]
           def select(**key_and_value)
@@ -110,45 +103,18 @@ module VCReport
           def bar_chart_json(*cols, bindto:)
             row_data = rows(*cols)
             chart = {
-              bindto: "##{bindto}", data: { rows: row_data }, type: 'bar'
+              bindto: "##{bindto}",
+              data: { rows: row_data },
+              type: 'bar',
+              axis: { x: { type: 'category',
+                           tick: { rotate: 90, multiline: false },
+                           height: X_AXIS_LABEL_HEIGHT } },
+              zoom: { enabled: true },
+              legend: { show: false }
             }
             chart.deep_stringify_keys!
             JSON.generate(chart)
           end
-
-#          # @param key_and_name [Hash{ Symbol => String }]
-#          # @return             [String]
-#          def rows_text(**key_and_name)
-#            a = [key_and_name.values]
-#            @entries.each do |e|
-#              a << e.values_at(*key_and_name.keys)
-#            end
-#            JSON.generate(a)
-#          end
-#
-
-#          # @param key
-#          def sort!(key)
-#            @entries.sort_by do |a, b|
-#              if block_given?
-#                yield a[key], a
-#              end
-#          end
-#
-#          # @param keys [Array<String>]
-#          def columns(*keys)
-#            keys.map do |key|
-#              @entries.map { |e| e[key] }.preprend(name)
-#            end
-#          end
-
-#          # @param key_and_name [Hash{ Symbol => String }]
-#          #                     column key -> human-readable name
-#          def columns(**key_and_name)
-#            key_and_name.map do |key, name|
-#              @entries.map { |e| e[key] }.preprend(name)
-#            end
-#          end
         end
       end
 

@@ -34,7 +34,8 @@ module VCReport
         progress_html_paths =
           Progress.new(project_dir, samples, config.num_samples_per_page)
             .render(report_dir)
-        dashboard_html_path = Dashboard.new(samples).render(report_dir)
+        dashboard_html_path = Dashboard.new(samples, config.chr_regions)
+                                .render(report_dir)
         Index.new(project_dir, progress_html_paths.first, dashboard_html_path)
              .render(report_dir)
       end
