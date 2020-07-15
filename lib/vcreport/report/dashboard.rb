@@ -14,7 +14,7 @@ module VCReport
     class Dashboard
       PREFIX = 'dashboard'
       COVERAGE_STATS_TYPES = %i[mean sd median mad].freeze
-      X_AXIS_LABEL_HEIGHT = 150
+      X_AXIS_LABEL_HEIGHT = 100
 
       # @param samples     [Array<Sample>]
       # @param chr_regions [Array<ChrRegion>]
