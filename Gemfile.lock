@@ -36,7 +36,7 @@ GEM
     parallel (1.19.2)
     parser (2.7.1.4)
       ast (~> 2.4.1)
-    posix-spawn (0.3.14)
+    posix-spawn (0.3.15)
     rainbow (3.0.0)
     rake (12.3.3)
     redcarpet (3.5.0)
@@ -86,7 +86,7 @@ GEM
       thread_safe (~> 0.1)
     unicode-display_width (1.7.0)
     yard (0.9.25)
-    zeitwerk (2.3.1)
+    zeitwerk (2.4.0)
 
 PLATFORMS
   ruby

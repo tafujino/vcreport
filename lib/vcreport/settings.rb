@@ -27,8 +27,5 @@ module VCReport
 
   module WebServer
     DEFAULT_PORT = 10_000
-    NGINX_PATH = 'nginx'
-    NGINX_CONF_FILENAME = "#{SYSTEM_DIR}/nginx.conf"
-    ACCESS_LOG_FILENAME = "#{SYSTEM_DIR}/access.log"
   end
 end
