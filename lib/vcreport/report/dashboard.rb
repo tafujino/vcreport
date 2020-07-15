@@ -28,7 +28,10 @@ module VCReport
           @chr_regions.map.to_h do |chr_region|
             json = data.select(chr_region: chr_region)
                        .bar_chart_json(
-                         sample_col, tstv_col, bindto: chr_region.id
+                         sample_col,
+                         tstv_col,
+                         x: sample_col,
+                         bindto: chr_region.id
                        )
             [chr_region.desc, json]
           end
@@ -98,13 +101,15 @@ module VCReport
             end
           end
 
-          # @param cols [Array<Column>]
-          # @return     [String]
-          def bar_chart_json(*cols, bindto:)
+          # @param cols   [Array<Column>]
+          # @param x      [C3js::Column]
+          # @param bindto [String]
+          # @return       [String]
+          def bar_chart_json(*cols, x:, bindto:)
             row_data = rows(*cols)
             chart = {
               bindto: "##{bindto}",
-              data: { rows: row_data, type: 'bar' },
+              data: { x: x.label, rows: row_data, type: 'bar' },
               axis: { x: { type: 'category',
                            tick: { rotate: 90, multiline: false },
                            height: X_AXIS_LABEL_HEIGHT } },
