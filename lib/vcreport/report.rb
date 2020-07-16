@@ -32,9 +32,9 @@ module VCReport
         return unless render
 
         progress_html_paths =
-          Progress.new(project_dir, samples, config.num_samples_per_page)
+          Progress.new(project_dir, samples, config.report.num_samples_per_page)
             .render(report_dir)
-        dashboard_html_path = Dashboard.new(samples, config.chr_regions)
+        dashboard_html_path = Dashboard.new(samples, config.vcf.chr_regions)
                                 .render(report_dir)
         Index.new(project_dir, progress_html_paths.first, dashboard_html_path)
              .render(report_dir)
