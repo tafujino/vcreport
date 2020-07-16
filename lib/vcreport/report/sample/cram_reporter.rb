@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'vcreport/config'
 require 'vcreport/job_manager'
 require 'vcreport/report/reporter'
 require 'vcreport/report/sample/cram'
@@ -16,15 +17,13 @@ module VCReport
     class Sample
       class CramReporter < Reporter
         # @param cram_path   [Pathname]
-        # @param chr_regions [Array<ChrRegion>]
-        # @param ref_path    [Pathname]
+        # @param config      [Config]
         # @param metrics_dir [Pathname]
         # @param job_manager [JobManager, nil]
         # @return            [Cram]
-        def initialize(cram_path, chr_regions, ref_path, metrics_dir, job_manager)
+        def initialize(cram_path, config, metrics_dir, job_manager)
           @cram_path = cram_path
-          @chr_regions = chr_regions
-          @ref_path = ref_path
+          @config = config
           @metrics_dir = metrics_dir
           @job_manager = job_manager
           super(@job_manager)
@@ -38,9 +37,11 @@ module VCReport
           samtools_flagstat = Cram::SamtoolsFlagstatReporter.new(
             @cram_path, @metrics_dir, @job_manager
           ).try_parse
-          picard_collect_wgs_metrics = @chr_regions.filter_map do |chr_region|
+          intervals = @config.metrics.picard_collect_wgs_metrics.intervals
+          ref_path = @config.reference.path
+          picard_collect_wgs_metrics = intervals.filter_map do |chr_region|
             Cram::PicardCollectWgsMetricsReporter.new(
-              @cram_path, chr_region, @ref_path, @metrics_dir, @job_manager
+              @cram_path, chr_region, ref_path, @metrics_dir, @job_manager
             ).try_parse
           end
           picard_collect_wgs_metrics_collection =
