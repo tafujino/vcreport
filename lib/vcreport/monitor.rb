@@ -22,7 +22,7 @@ module VCReport
           exit 1
         end
         say_status 'start', dir, :green
-        Process.daemon(true)
+        Process.daemon(true, true)
         ProcessInfo.store_current_process(dir)
         system = System.instance
         system.dir = dir

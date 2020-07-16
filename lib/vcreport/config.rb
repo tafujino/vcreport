@@ -132,9 +132,10 @@ module VCReport
       # @param params [Hash, nil]
       # @return       [ReportConfig, nil]
       def parse_report_config(params)
-        return nil unless params.key?('report')
-
-        ReportConfig.new(params['report']['samples_per_page']&.to_i)
+        num_samples_per_page = params['report']&.then do |h|
+          h['samples_per_page']&.to_i
+        end
+        ReportConfig.new(num_samples_per_page)
       end
 
       # @param params [Hash, nil]
