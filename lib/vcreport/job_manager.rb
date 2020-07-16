@@ -103,8 +103,11 @@ module VCReport
 
     class << self
       # @param command [String]
+      # @param dry_run [Boolean]
       # @return        [Boolean] true iff the command succeeded
-      def shell(command)
+      def shell(command, dry_run: false)
+        return true if dry_run
+
         pid = POSIX::Spawn.spawn(command)
         Process.waitpid(pid)
         $CHILD_STATUS.success?
