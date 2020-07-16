@@ -34,6 +34,7 @@ module VCReport
       # @return           [Array<Pathname>] HTML paths
       def render(report_dir)
         FileUtils.mkpath report_dir unless File.exist?(report_dir)
+        Render.copy_file(GITHUB_MARKDOWN_CSS_PATH, report_dir)
         slices = @samples.each_slice(@num_samples_per_page).to_a
         slices.map.with_index(1) do |slice, page_num|
           paging = Paging.new(page_num, slices.length, @num_digits)

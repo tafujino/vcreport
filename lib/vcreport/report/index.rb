@@ -21,6 +21,7 @@ module VCReport
       # @return           [Array<Pathname>] HTML paths
       def render(report_dir)
         FileUtils.mkpath report_dir unless File.exist?(report_dir)
+        Render.copy_file(GITHUB_MARKDOWN_CSS_PATH, report_dir)
         Render.run(PREFIX, report_dir, binding)
       end
     end

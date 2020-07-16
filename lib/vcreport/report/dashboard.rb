@@ -7,15 +7,12 @@ require 'vcreport/chr_region'
 require 'vcreport/report/render'
 require 'vcreport/report/sample'
 require 'vcreport/report/c3js'
-require 'fileutils'
 require 'pathname'
-require 'thor'
+require 'fileutils'
 
 module VCReport
   module Report
     class Dashboard
-      include Thor::Shell
-
       PREFIX = 'dashboard'
       COVERAGE_STATS_TYPES = %i[mean sd median mad].freeze
       X_AXIS_LABEL_HEIGHT = 100
@@ -37,10 +34,13 @@ module VCReport
       def render(report_dir)
         report_dir = Pathname.new(report_dir)
         FileUtils.mkpath report_dir unless File.exist?(report_dir)
-        [D3_JS_PATH, C3_JS_PATH, C3_CSS_PATH].each do |src_path|
-          dst_path = report_dir / File.basename(src_path)
-          FileUtils.cp src_path, dst_path
-          say_status 'create', dst_path, :green
+        [
+          D3_JS_PATH,
+          C3_JS_PATH,
+          C3_CSS_PATH,
+          GITHUB_MARKDOWN_CSS_PATH
+        ].each do |src_path|
+          Render.copy_file(src_path, report_dir)
         end
         Render.run(PREFIX, report_dir, binding, toc_nesting_level: TOC_NESTING_LEVEL)
       end

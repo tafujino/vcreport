@@ -6,6 +6,7 @@ require 'pathname'
 require 'erb'
 require 'redcarpet'
 require 'thor'
+require 'fileutils'
 
 module VCReport
   module Report
@@ -55,6 +56,16 @@ module VCReport
           str.each_line(chomp: true).map do |line|
             wrap_line(line, wrap_length)
           end.join("\n")
+        end
+
+        # @param src_path   [Pathname]
+        # @param report_dir [Pathname]
+        def copy_file(src_path, report_dir)
+          dst_path = report_dir / File.basename(src_path)
+          return if File.exist?(dst_path)
+
+          FileUtils.cp src_path, dst_path
+          say_status 'create', dst_path, :green
         end
 
         private
