@@ -64,7 +64,6 @@ module VCReport
       @vcf = vcf
       @report = report
       @metrics = metrics
-      pp self
     end
 
     class << self
