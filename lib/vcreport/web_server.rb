@@ -14,8 +14,12 @@ module VCReport
       # @param dir  [Pathname]
       # @param port [Integer]
       def start(dir, port)
-        WEBrick::HTTPServer.new(DocumentRoot: dir / REPORT_DIR, Port: port)
-          .start
+        server = WEBrick::HTTPServer.new(
+          DocumentRoot: dir / REPORT_DIR,
+          Port: port
+        )
+        trap(:INT) { server.shutdown }
+        server.start
       end
     end
   end
