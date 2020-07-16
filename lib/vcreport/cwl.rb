@@ -20,8 +20,13 @@ module VCReport
         field
       end
 
-      # @return [Boolean]
-      def run(script_path, job_definition, out_dir)
+      # @param script_path    [Pathname]
+      # @param job_definition [Hash]
+      # @param out_dir        [Pathname]
+      # @param log_path       [Pathname]
+      # @return               [Boolean]
+      def run(script_path, job_definition, out_dir, log_path: nil)
+        log_path ||= out_dir / 'cwl.log'
         job_path = out_dir / 'job.yaml'
         store_job_file(job_path, job_definition)
         JobManager.shell <<~COMMAND.squish
@@ -30,7 +35,7 @@ module VCReport
           --outdir #{out_dir}
           #{script_path}
           #{job_path}
-          >& #{out_dir / 'cwl.log'}
+          >& #{log_path}
         COMMAND
       end
 
@@ -47,6 +52,8 @@ module VCReport
 
       private
 
+      # @param job_path [Pathname]
+      # @param job_definition [Hash]
       def store_job_file(job_path, job_definition)
         File.write(job_path, YAML.dump(job_definition.deep_stringify_keys))
       end

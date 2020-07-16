@@ -79,7 +79,8 @@ module VCReport
                 reference_interval_name: @chr_region.id.to_s,
                 reference_interval_list: CWL.file_field(@chr_region.interval_list_path)
               }
-            CWL.run(CWL_SCRIPT_PATH, job_definition, @out_dir)
+            CWL.run(CWL_SCRIPT_PATH, job_definition, @out_dir,
+                    log_path: @out_dir / "cwl_#{@chr_region.id}.log")
           end
 
           # @param lines [Array<String>] lines from picard-CollectWgsMetrics output
