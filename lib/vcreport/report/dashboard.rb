@@ -14,14 +14,16 @@ module VCReport
   module Report
     class Dashboard
       PREFIX = 'dashboard'
-      COVERAGE_STATS_TYPES = %i[mean sd median mad].freeze
+      COVERAGE_STATS_TYPES = {
+        mean: 'mean', sd: 'SD', median: 'median', mad: 'MAD'
+      }.freeze
       X_AXIS_LABEL_HEIGHT = 100
 
-      # @param samples     [Array<Sample>]
-      # @param chr_regions [Array<ChrRegion>]
-      def initialize(samples, chr_regions)
+      # @param samples [Array<Sample>]
+      # @param config  [Config]
+      def initialize(samples, config)
         @samples = samples.sort_by(&:end_time).reverse
-        @chr_regions = chr_regions
+        @config = config
         @sample_col = C3js::Column.new(:sample_name, 'sample name')
         @default_chart_params = {
           x: @sample_col,
@@ -42,7 +44,12 @@ module VCReport
         ].each do |src_path|
           Render.copy_file(src_path, report_dir)
         end
-        Render.run(PREFIX, report_dir, binding, toc_nesting_level: TOC_NESTING_LEVEL)
+        Render.run(
+          PREFIX,
+          report_dir,
+          binding,
+          toc_nesting_level: DASHBOARD_TOC_NESTING_LEVEL
+        )
       end
 
       private
@@ -62,14 +69,14 @@ module VCReport
 
       # @return [Hash{ ChrRegion => String }]
       def ts_tv_ratio_json
+        tstv_col = C3js::Column.new(:ts_tv_ratio, 'ts/tv')
         ts_tv_ratio.then do |data|
-          tstv_col = C3js::Column.new(:ts_tv_ratio, 'ts/tv')
-          @chr_regions.map.to_h do |chr_region|
+          @config.vcf.chr_regions.map.to_h do |chr_region|
             json = data.select(chr_region: chr_region)
                      .bar_chart_json(
                        @sample_col,
                        tstv_col,
-                       bindto: chr_region.id,
+                       bindto: "tstv_#{chr_region.id}",
                        **@default_chart_params
                      )
             [chr_region, json]
@@ -84,13 +91,38 @@ module VCReport
             .cram
             .picard_collect_wgs_metrics_collection
             .picard_collect_wgs_metrics.map do |e|
-            h = COVERAGE_STATS_TYPES.map.to_h do |type|
+            h = COVERAGE_STATS_TYPES.keys.map.to_h do |type|
               [type, e.coverage_stats.send(type)]
             end
             h.merge(sample_name: sample.name,
                     chr_region: e.chr_region)
           end
         end.then { |a| C3js::Data.new(a) }
+      end
+
+      # @return [Hash{ ChrRegion => Hash{ Symbol => String } }]
+      def coverage_stats_json
+        coverage_stats_cols = COVERAGE_STATS_TYPES.map do |id, label|
+          C3js::Column.new(id, label)
+        end
+        intervals = @config.metrics.picard_collect_wgs_metrics.intervals
+        coverage_stats.then do |data|
+          intervals.map.to_h do |chr_region|
+            coverage_stats_cols.map.to_h do |col|
+              bindto = "coverage_stats_#{chr_region.id}_#{col.id}"
+              json = data.select(chr_region: chr_region)
+                       .bar_chart_json(
+                         @sample_col,
+                         col,
+                         bindto: bindto,
+                         **@default_chart_params
+                       )
+              [col, json]
+            end.then do |jsons_of_chr_region|
+              [chr_region, jsons_of_chr_region]
+            end
+          end
+        end
       end
     end
   end

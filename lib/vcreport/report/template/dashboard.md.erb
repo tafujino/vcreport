@@ -2,6 +2,19 @@
 
 <% ts_tv_ratio_json.each do |chr_region, json| -%>
 ### <%= chr_region.desc %>
-<div id = "<%= chr_region.id %>"></div>
+<div id = "tstv_<%= chr_region.id %>"></div>
 <script>c3.generate(<%= json %>)</script>
+<% end -%>
+
+## coverage statistics (Picard CollectWgsMetrics)
+
+<% coverage_stats_json.each do |chr_region, jsons_of_chr_region| -%>
+### <%= chr_region.desc %>
+
+<% jsons_of_chr_region.each do |col, json| -%>
+
+#### <%= col.label %>
+<div id = "coverage_stats_<%= chr_region.id %>_<%= col.id %>"></div>
+<script>c3.generate(<%= json %>)</script>
+<% end -%>
 <% end -%>

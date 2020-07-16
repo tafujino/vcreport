@@ -42,7 +42,12 @@ module VCReport
         out_dir = report_dir / @name
         FileUtils.mkpath out_dir unless File.exist?(out_dir)
         Render.copy_file(GITHUB_MARKDOWN_CSS_PATH, report_dir)
-        Render.run(PREFIX, out_dir, binding, toc_nesting_level: TOC_NESTING_LEVEL)
+        Render.run(
+          PREFIX,
+          out_dir,
+          binding,
+          toc_nesting_level: SAMPLE_TOC_NESTING_LEVEL
+        )
       end
     end
   end
