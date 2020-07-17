@@ -36,6 +36,7 @@ module VCReport
         Concurrent::Promises.future_on(@pool, result_paths) do |result_paths|
         main_result_path = result_paths.first
         say_status 'start', main_result_path, :blue
+        @logger&.info("Started a job for #{main_result_path}")
         begin
           is_success = yield
         rescue => e
@@ -44,6 +45,7 @@ module VCReport
         is_success = false if is_success && not_exist_results(result_paths)
         if is_success
           say_status 'create', main_result_path, :green
+          @logger&.info("Created #{main_result_path}")
         else
           say_status 'fail', main_result_path, :red
           @logger&.error("Failed to create #{main_result_path}")
