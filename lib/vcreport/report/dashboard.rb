@@ -68,18 +68,18 @@ module VCReport
       end
 
       # @return [Hash{ ChrRegion => String }]
-      def ts_tv_ratio_json
+      def ts_tv_ratio_html
         tstv_col = C3js::Column.new(:ts_tv_ratio, 'ts/tv')
         ts_tv_ratio.then do |data|
           @config.vcf.chr_regions.map.to_h do |chr_region|
-            json = data.select(chr_region: chr_region)
-                     .bar_chart_json(
+            html = data.select(chr_region: chr_region)
+                     .bar_chart_html(
                        @sample_col,
                        tstv_col,
                        bindto: "tstv_#{chr_region.id}",
                        **@default_chart_params
                      )
-            [chr_region, json]
+            [chr_region, html]
           end
         end
       end
@@ -101,7 +101,7 @@ module VCReport
       end
 
       # @return [Hash{ ChrRegion => Hash{ Symbol => String } }]
-      def coverage_stats_json
+      def coverage_stats_html
         coverage_stats_cols = COVERAGE_STATS_TYPES.map do |id, label|
           C3js::Column.new(id, label)
         end
@@ -110,16 +110,16 @@ module VCReport
           intervals.map.to_h do |chr_region|
             coverage_stats_cols.map.to_h do |col|
               bindto = "coverage_stats_#{chr_region.id}_#{col.id}"
-              json = data.select(chr_region: chr_region)
-                       .bar_chart_json(
+              html = data.select(chr_region: chr_region)
+                       .bar_chart_html(
                          @sample_col,
                          col,
                          bindto: bindto,
                          **@default_chart_params
                        )
-              [col, json]
-            end.then do |jsons_of_chr_region|
-              [chr_region, jsons_of_chr_region]
+              [col, html]
+            end.then do |htmls_of_chr_region|
+              [chr_region, htmls_of_chr_region]
             end
           end
         end

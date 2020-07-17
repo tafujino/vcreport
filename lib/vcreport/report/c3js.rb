@@ -72,6 +72,21 @@ module VCReport
           chart.deep_stringify_keys!
           JSON.generate(chart)
         end
+
+        # @param cols                [Array<Column>]
+        # @param x                   [C3js::Column]
+        # @param bindto              [String]
+        # @param x_axis_label_height [Integer]
+        # @return                    [String]
+        def bar_chart_html(*cols, x:, bindto:, x_axis_label_height:)
+          json = bar_chart_json(
+            *cols, x: x, bindto: bindto, x_axis_label_height: x_axis_label_height
+          )
+          <<~HTML
+            <div id = "#{bindto}"></div>
+            <script>c3.generate(#{json})</script>
+          HTML
+        end
       end
     end
   end
