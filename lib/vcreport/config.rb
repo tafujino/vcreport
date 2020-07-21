@@ -160,9 +160,9 @@ module VCReport
           exit 1
         end
 
-        h = params[key]['interval_list']
+        h = params[key]['interval-list']
         if !h || h.empty?
-          warn "'metrics/#{key}/interval_list' field is missing: #{@config_path}"
+          warn "'metrics/#{key}/interval-list' field is missing: #{@config_path}"
           exit 1
         end
 

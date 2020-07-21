@@ -59,7 +59,7 @@ vcf:
       desc: chrY
 metrics:
   picard-CollectWgsMetrics:
-    interval_list:
+    interval-list:
       autosome:
         desc: autosome
         path: /path/to/autosome.interval_list
