@@ -8,8 +8,8 @@ From: rubylang/ruby:2.7.0-bionic
     pip3 install --upgrade pip
     pip3 install cwlref-runner
     git clone https://github.com/tafujino/vcreport.git
-    git submodule update
     cd vcreport
+    git submodule update
     gem install bundler
     bundle install
     rake build
