@@ -106,6 +106,12 @@ module VCReport
         return nil unless params.key?('reference')
 
         h = params['reference']
+        %w[desc path].each do |field|
+          unless h[field]
+            warn "'reference/#{field}' field is missing: #{@config_path}"
+            exit 1
+          end
+        end
         Reference.new(h['desc'], h['path'])
       end
 
@@ -160,9 +166,9 @@ module VCReport
           exit 1
         end
 
-        h = params[key]['interval-list']
+        h = params[key]['interval_list']
         if !h || h.empty?
-          warn "'metrics/#{key}/interval-list' field is missing: #{@config_path}"
+          warn "'metrics/#{key}/interval_list' field is missing: #{@config_path}"
           exit 1
         end
 
