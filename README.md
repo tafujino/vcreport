@@ -1,28 +1,27 @@
-# Vcreport
+# VCReport
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/vcreport`. To experiment with that code, run `bin/console` for an interactive prompt.
+VCReport is a tool for generating reports on files used in genomic variant call such as VCF and CRAM.
 
-TODO: Delete this and the text above, and describe your gem
+The tool is able to monitor a directory where the variant calling of multiple samples is in progress. The report on the progress is generated and updated periodically. For each sample, several metrics are calculated and the results are listed on a single page.
+
+The tool also provides a dashboard feature. The value of a metrics for monitoring (such as coverage) across samples is plotted in a chart to help detect an anormaly.
 
 ## Installation
 
-Add this line to your application's Gemfile:
+VCReport is provided as a Ruby gem. Since the gem is not registered in RubyGems currently, it should be built and installed locally.
 
-```ruby
-gem 'vcreport'
+```
+$ git clone https://github.com/tafujino/vcreport.git
+$ git submodule update
+$ cd vcreport
+$ bundle install
+$ rake build
+$ gem install --local pkg/*.gem
 ```
 
-And then execute:
-
-    $ bundle install
-
-Or install it yourself as:
-
-    $ gem install vcreport
+Singularity image is also defined (`Singlarity/vcreport.def`).
 
 ## Usage
-
-TODO: Write usage instructions here
 
 ## Development
 
