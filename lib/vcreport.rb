@@ -16,6 +16,14 @@ module VCReport
     # @return    [Pathname]
     def initialize_dir(dir)
       dir = Pathname.new(dir).expand_path
+      unless dir.exist?
+        warn "Directory not exist: #{dir}"
+        exit 1
+      end
+      unless dir.directory?
+        warn "Not a directory: #{dir}"
+        eixt 1
+      end
       system_dir = dir / SYSTEM_DIR
       FileUtils.mkpath system_dir unless File.exist?(system_dir)
       dir
