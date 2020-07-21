@@ -160,7 +160,7 @@ module VCReport
       # @param params [Hash, nil]
       # @return       [MetricsConfig::PicardCollectWgsMetricsConfig, nil]
       def parse_picard_collect_wgs_metrics_config(params)
-        key = 'picard-CollectWgsMetrics'
+        key = 'picard_CollectWgsMetrics'
         if !params[key] || params[key].empty?
           warn "'metrics/#{key}' field is missing: #{@config_path}"
           exit 1
