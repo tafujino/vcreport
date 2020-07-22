@@ -9,11 +9,12 @@ module VCReport
   REPORT_DIR = 'reports'
   CWLTOOL_PATH = 'cwltool'
   SINGULARITY_PATH = 'singularity'
-  HUMAN_RESEQ_DIR = 'lib/human-reseq'
-  D3_JS_PATH = 'lib/d3/d3.v5.js'
-  C3_JS_PATH = 'lib/c3/c3.js'
-  C3_CSS_PATH = 'lib/c3/c3.css'
-  GITHUB_MARKDOWN_CSS_PATH = 'lib/github-markdown-css/github-markdown.css'
+  LIB_DIR = File.expand_path("#{__dir__}/..")
+  HUMAN_RESEQ_DIR = "#{LIB_DIR}/human-reseq"
+  D3_JS_PATH = "#{LIB_DIR}/d3/d3.v5.js"
+  C3_JS_PATH = "#{LIB_DIR}/c3/c3.js"
+  C3_CSS_PATH = "#{LIB_DIR}/c3/c3.css"
+  GITHUB_MARKDOWN_CSS_PATH = "#{LIB_DIR}/github-markdown-css/github-markdown.css"
   CONFIG_FILENAME = 'vcreport.yaml'
   MAX_SAMPLES = 100_000
   IGNORE_DEPS_INEXISTENCE = true # debug
