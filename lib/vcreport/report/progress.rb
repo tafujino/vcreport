@@ -5,6 +5,7 @@ require 'vcreport/report/sample'
 require 'vcreport/report/render'
 require 'vcreport/report/paging'
 require 'vcreport/report/table'
+require 'vcreport/report/render'
 require 'pathname'
 require 'fileutils'
 
@@ -51,7 +52,7 @@ module VCReport
         header = ['name', 'end time']
         type = %i[string string]
         rows = slice.map do |sample|
-          name = markdown_link_text(sample.name, "#{sample.name}/report.html")
+          name = Render.markdown_link_text(sample.name, "#{sample.name}/report.html")
           [name, sample.end_time]
         end
         Table.new(header, rows, type)
@@ -64,18 +65,12 @@ module VCReport
         prev_text, next_text = %w[prev next].map do |nav|
           digits = paging.send(nav)&.digits
           if digits
-            markdown_link_text(nav, "#{prefix}#{digits}.html")
+            Render.markdown_link_text(nav, "#{prefix}#{digits}.html")
           else
             nav
           end
         end
         "\< #{prev_text} \| #{next_text} \>"
-      end
-
-      # @param text [String]
-      # @param path [String, Pathname]
-      def markdown_link_text(text, path)
-        "[#{text}](#{path})"
       end
     end
   end

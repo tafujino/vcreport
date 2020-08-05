@@ -68,6 +68,16 @@ module VCReport
           say_status 'create', dst_path, :green
         end
 
+        # @param text [String]
+        # @param path [String, Pathname, nil]
+        def markdown_link_text(text, path)
+          if path
+            "[#{text}](#{path})"
+          else
+            text
+          end
+        end
+
         private
 
         # @param line        [String]
