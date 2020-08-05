@@ -10,6 +10,11 @@ The tool is able to monitor a directory where the variant calling of multiple sa
 
 ## Installation
 
+As a prerequisite, the following should be installed.
+* Ruby (>= 2.7.0)
+* Singularity
+* [cwltool](https://github.com/common-workflow-language/cwltool)
+
 VCReport is provided as a Ruby gem. Since the gem is not registered in RubyGems currently, it should be built and installed locally.
 
 ```
