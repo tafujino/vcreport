@@ -10,9 +10,8 @@ From: rubylang/ruby:2.7.0-bionic
       wget https://dl.google.com/go/go$VERSION.$OS-$ARCH.tar.gz && \
       tar -C /usr/local -xzf go$VERSION.$OS-$ARCH.tar.gz && \
       rm go$VERSION.$OS-$ARCH.tar.gz
-    echo 'export GOPATH=${HOME}/go' >> ~/.bashrc && \
-      echo 'export PATH=/usr/local/go/bin:${PATH}:${GOPATH}/bin' >> ~/.bashrc && \
-      source ~/.bashrc
+    export GOPATH=${HOME}/go
+    export PATH=/usr/local/go/bin:${PATH}:${GOPATH}/bin
     export VERSION=3.6.0 && \
       wget https://github.com/sylabs/singularity/releases/download/v${VERSION}/singularity-${VERSION}.tar.gz && \
       tar -C /tmp -xzf singularity-${VERSION}.tar.gz && \
