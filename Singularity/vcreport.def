@@ -12,8 +12,8 @@ From: rubylang/ruby:2.7.0-bionic
       rm go$VERSION.$OS-$ARCH.tar.gz
     export VERSION=3.6.0 && \
       wget https://github.com/sylabs/singularity/releases/download/v${VERSION}/singularity-${VERSION}.tar.gz && \
-      tar -xzf singularity-${VERSION}.tar.gz && \
-      cd singularity
+      tar -C /tmp -xzf singularity-${VERSION}.tar.gz && \
+      cd /tmp/singularity
     ./mconfig && \
       make -C ./builddir && \
       make -C ./builddir install
