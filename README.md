@@ -2,9 +2,11 @@
 
 VCReport is a tool for generating reports on files used in genomic variant call such as VCF and CRAM.
 
-The tool is able to monitor a directory where the variant calling of multiple samples is in progress. The report on the progress is generated and updated periodically. For each sample, several metrics are calculated and the results are listed on a single page.
+The tool is able to monitor a directory where the variant calling of multiple samples is in progress. It generates:
 
-The tool also provides a dashboard feature. The values of a metrics for monitoring (such as coverage) across samples are plotted in a chart to help detect an anormaly.
+* progress report
+* metrics report on each sample
+* dashboard (metrics across samples)
 
 ## Installation
 
@@ -39,7 +41,7 @@ In VCReport, variant call project is managed per directory. The project director
   +--- vcreport.yaml
 ```
 
-Each sample data is placed in `results` directory by the user. VCReport creates `reports` directory, where report HTML files are generated. It also creates `vcreport` directory used for management and logging. The user has to describe `vcreport.yaml` needed to run VCReport properly.
+Each sample data should placed in `results` directory by the user. VCReport creates `reports` directory, where report HTML files are generated. It also creates `vcreport` directory used for management and logging. The user has to describe `vcreport.yaml` needed to run VCReport properly.
 
 The name of a sample directory should be identical to the sample name. If the name of the sample is `AAA`, the name of the directory is also `AAA`. The CRAM file used for variant call is supposed to be `AAA.dedup.cram`. There may be multiple VCF files calculated on given genomic intervals. If the interval name is `BBB`, the name of VCF file is supposed to be `AAA.BBB.g.vcf.gz`. In order to tell VCReport that CRAM and VCFs are already created, `finish` file should be put in a sample directory.
 
