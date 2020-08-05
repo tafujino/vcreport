@@ -21,6 +21,7 @@ From: rubylang/ruby:2.7.0-bionic
       make -C ./builddir install
     pip3 install --upgrade pip
     pip3 install cwlref-runner
+    cd /tmp
     git clone https://github.com/tafujino/vcreport.git
     cd vcreport
     git submodule update --init
