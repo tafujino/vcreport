@@ -34,7 +34,4 @@ Gem::Specification.new do |spec|
   spec.add_dependency "posix-spawn"
   spec.add_dependency "mono_logger"
   spec.add_dependency "webrick"
-  spec.add_development_dependency "bundler"
-  spec.add_development_dependency "solargraph"
-  spec.add_development_dependency "rake"
 end

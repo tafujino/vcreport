@@ -94,7 +94,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  bundler
   rake (~> 12.0)
   rspec (~> 3.0)
   solargraph
