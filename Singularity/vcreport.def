@@ -16,7 +16,7 @@ From: rubylang/ruby:2.7.0-bionic
       wget https://github.com/sylabs/singularity/releases/download/v${VERSION}/singularity-${VERSION}.tar.gz && \
       tar -C /tmp -xzf singularity-${VERSION}.tar.gz && \
       cd /tmp/singularity
-    ./mconfig && \
+    ./mconfig --without-suid && \
       make -C ./builddir && \
       make -C ./builddir install
     pip3 install --upgrade pip
