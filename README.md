@@ -26,8 +26,6 @@ $ rake build
 $ gem install --local pkg/*.gem
 ```
 
-Singularity image is also defined (`Singularity/vcreport.def`).
-
 ## Usage
 
 ### Directory structure and settings
