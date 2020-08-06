@@ -19,7 +19,7 @@ VCReport is provided as a Ruby gem. Since the gem is not registered in RubyGems 
 
 ```
 $ git clone https://github.com/tafujino/vcreport.git
-$ git submodule update
+$ git submodule update --init
 $ cd vcreport
 $ bundle install
 $ rake build
