@@ -42,7 +42,7 @@ module VCReport
         vcf_collection = Sample::VcfCollection.new(
           Sample::Vcf::BcftoolsStatsReporter::BCFTOOLS_IMAGE_URI, vcfs
         )
-        cram_path = @sample_dir / "#{@name}.dedup.cram"
+        cram_path = @sample_dir / "#{@name}.cram"
         cram = Sample::CramReporter.new(
           cram_path, @config, metrics_dir, @job_manager
         ).try_parse
