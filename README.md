@@ -98,7 +98,7 @@ The daemon is terminated by the following command.
 $ vcreport monitor stop <project dir>
 ```
 
-Instead of periodical monitoring, one-time report generation and metrics calculation is also possible. For report file rendering, run
+Instead of periodical monitoring, one-time report generation and metrics calculation are also possible. For report file rendering, run
 
 ```
 $ vcreport render <project dir>
