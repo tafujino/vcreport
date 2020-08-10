@@ -35,10 +35,10 @@ In VCReport, variant call project is managed per directory. The project director
 ```
 <project dir>
   +-- results/
-    +-- <sample0>/
-    +-- <sample1>/
-    +-- <sample2>/
-         ...
+  |  +-- <sample0>/
+  |  +-- <sample1>/
+  |  +-- <sample2>/
+  |      ...
   +--- reports/
   +--- vcreport/
   +--- vcreport.yaml
