@@ -64,6 +64,8 @@ vcf:
       desc: chrY
 metrics:
   picard_CollectWgsMetrics:
+    minimum_base_quality: 10
+    minimum_mapping_quality: 10
     interval_list:
       autosome:
         desc: autosome

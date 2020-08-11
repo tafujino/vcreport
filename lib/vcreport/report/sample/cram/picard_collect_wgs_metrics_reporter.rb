@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'vcreport/chr_region'
+require 'vcreport/config'
 require 'vcreport/edam'
 require 'vcreport/report/reporter'
 require 'vcreport/report/sample/cram/picard_collect_wgs_metrics'
@@ -16,12 +17,14 @@ module VCReport
           # @param cram_path   [Pathname]
           # @param chr_region  [ChrRegion]
           # @param ref_path    [Pathname]
+          # @param picard_collect_wgs_metrics_config [Config::MetricsConfig::PicardCollectWgsMetricsConfig]
           # @param metrics_dir [Pathname]
           # @param job_manager [JobManager, nil]
           def initialize(cram_path, chr_region, ref_path, metrics_dir, job_manager)
             @cram_path = cram_path
             @chr_region = chr_region
             @ref_path = ref_path
+            @config = picard_collect_wgs_metrics_config
             @out_dir = metrics_dir / 'picard-collectWgsMetrics'
             @picard_collect_wgs_metrics_path =
               @out_dir / "#{@cram_path.basename}.#{chr_region.id}.wgs_metrics"
@@ -77,8 +80,11 @@ module VCReport
                 in_bam: CWL.file_field(@cram_path, edam: Edam::Type::BAM),
                 reference: CWL.file_field(@ref_path, edam: Edam::Type::FASTA),
                 reference_interval_name: @chr_region.id.to_s,
-                reference_interval_list: CWL.file_field(@chr_region.interval_list_path)
+                reference_interval_list: CWL.file_field(@chr_region.interval_list_path),
+                minimum_base_quality: config.min_bq,
+                minimum_mapping_quality: config.min_mq
               }
+            job_definition.compact!
             CWL.run(CWL_SCRIPT_PATH, job_definition, @out_dir, postfix: @chr_region.id)
           end
 

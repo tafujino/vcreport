@@ -37,11 +37,18 @@ module VCReport
           samtools_flagstat = Cram::SamtoolsFlagstatReporter.new(
             @cram_path, @metrics_dir, @job_manager
           ).try_parse
-          intervals = @config.metrics.picard_collect_wgs_metrics.intervals
+          picard_collect_wgs_metrics_config =
+            @config.metrics.picard_collect_wgs_metrics
+          intervals = picard_collect_wgs_metrics_config.intervals
           ref_path = @config.reference.path
           picard_collect_wgs_metrics = intervals.filter_map do |chr_region|
             Cram::PicardCollectWgsMetricsReporter.new(
-              @cram_path, chr_region, ref_path, @metrics_dir, @job_manager
+              @cram_path,
+              chr_region,
+              ref_path,
+              picard_collect_wgs_metrics_config,
+              @metrics_dir,
+              @job_manager
             ).try_parse
           end
           picard_collect_wgs_metrics_collection =

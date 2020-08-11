@@ -34,8 +34,16 @@ module VCReport
         # @return [Array<ChrRegion>]
         attr_reader :intervals
 
-        def initialize(intervals)
+        # @return [Integer, nil]
+        attr_reader :min_bq
+
+        # @return [Integer, nil]
+        attr_reader :min_mq
+
+        def initialize(intervals, min_bq, min_mq)
           @intervals = intervals || []
+          @min_bq = min_bq
+          @min_mq = min_mq
         end
       end
 
@@ -166,6 +174,18 @@ module VCReport
           exit 1
         end
 
+        min_bq, min_mq =
+          %w[minimum_base_quality minimum_mapping_quality].map do |field|
+          next unless params[key].key?(field)
+
+          val = params[key][field]
+          unless val
+            warn "'metrics/#{key}/#{field}' is missing: #{@config_path}"
+            exit 1
+          end
+          val.to_i
+        end
+
         h = params[key]['interval_list']
         if !h || h.empty?
           warn "'metrics/#{key}/interval_list' field is missing: #{@config_path}"
@@ -179,7 +199,7 @@ module VCReport
           end
           ChrRegion.new(id, val['desc'], val['path'])
         end
-        MetricsConfig::PicardCollectWgsMetricsConfig.new(chr_regions)
+        MetricsConfig::PicardCollectWgsMetricsConfig.new(chr_regions, min_bq, min_mq)
       end
     end
   end
