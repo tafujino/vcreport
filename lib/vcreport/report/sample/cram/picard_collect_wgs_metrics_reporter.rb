@@ -20,7 +20,14 @@ module VCReport
           # @param picard_collect_wgs_metrics_config [Config::MetricsConfig::PicardCollectWgsMetricsConfig]
           # @param metrics_dir [Pathname]
           # @param job_manager [JobManager, nil]
-          def initialize(cram_path, chr_region, ref_path, metrics_dir, job_manager)
+          def initialize(
+                cram_path,
+                chr_region,
+                ref_path,
+                picard_collect_wgs_metrics_config,
+                metrics_dir,
+                job_manager
+              )
             @cram_path = cram_path
             @chr_region = chr_region
             @ref_path = ref_path
