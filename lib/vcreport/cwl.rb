@@ -23,11 +23,12 @@ module VCReport
       # @param script_path    [Pathname]
       # @param job_definition [Hash]
       # @param out_dir        [Pathname]
-      # @param postfix        [String]]
+      # @param postfix        [String, nil]
       # @return               [Boolean]
       def run(script_path, job_definition, out_dir, postfix: nil)
-        log_path = out_dir / "cwltool_#{postfix}.log"
-        job_path = out_dir / "job_#{postfix}.yaml"
+        postfix = postifix.to.s.emtpy? ? '' : "_#{postfix}"
+        log_path = out_dir / "cwltool#{postfix}.log"
+        job_path = out_dir / "job#{postfix}.yaml"
         store_job_file(job_path, job_definition)
         JobManager.shell <<~COMMAND.squish
           #{CWLTOOL_PATH}
