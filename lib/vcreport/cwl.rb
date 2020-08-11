@@ -26,7 +26,7 @@ module VCReport
       # @param postfix        [String, nil]
       # @return               [Boolean]
       def run(script_path, job_definition, out_dir, postfix: nil)
-        postfix = postfix.to.s.emtpy? ? '' : "_#{postfix}"
+        postfix = postfix.to_s.empty? ? '' : "_#{postfix}"
         log_path = out_dir / "cwltool#{postfix}.log"
         job_path = out_dir / "job#{postfix}.yaml"
         store_job_file(job_path, job_definition)
