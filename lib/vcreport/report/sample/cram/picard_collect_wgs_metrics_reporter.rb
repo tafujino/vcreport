@@ -88,8 +88,8 @@ module VCReport
                 reference: CWL.file_field(@ref_path, edam: Edam::Type::FASTA),
                 reference_interval_name: @chr_region.id.to_s,
                 reference_interval_list: CWL.file_field(@chr_region.interval_list_path),
-                minimum_base_quality: config.min_bq,
-                minimum_mapping_quality: config.min_mq
+                minimum_base_quality: @config.min_bq,
+                minimum_mapping_quality: @config.min_mq
               }
             job_definition.compact!
             CWL.run(CWL_SCRIPT_PATH, job_definition, @out_dir, postfix: @chr_region.id)
