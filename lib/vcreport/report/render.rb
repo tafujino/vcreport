@@ -127,7 +127,7 @@ module VCReport
           render_erb(template_path, markdown_path, context) do |text|
             text.scan(/(!\[([^\]]+)\]\([^\)]+\))/).map do |pattern, label, path|
               dst_path = out_dir / File.basename(path)
-              Render.copy_file(path, dst_path)
+              Render.copy_file(path, dst_path) unless dst_path.exist?
               [pattern, "![#{label}](#{dst_path})"]
             end.each do |before, after|
               text.gsub!(before, after)
