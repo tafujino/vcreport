@@ -37,7 +37,7 @@ module VCReport
       @job_status[main_result_path] =
         Concurrent::Promises.future_on(@pool, result_paths) do |result_paths|
         main_result_path = result_paths.first
-        say_status 'start', main_result_path, :blue
+        say_status 'start', main_result_path, :cyan
         @logger&.info("Started a job for #{main_result_path}")
         begin
           is_success = yield
