@@ -97,7 +97,7 @@ module VCReport
         return false
       end
       unless @job_status.key?(main_result_path)
-        say_status 'queue', main_result_path, :green
+        say_status 'queue', main_result_path, :blue
         return true
       end
       future = @job_status[main_result_path]
