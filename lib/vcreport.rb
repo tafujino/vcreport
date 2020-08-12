@@ -49,7 +49,6 @@ module VCReport
              default: false
       option 'slurm-partition',
              type: :string,
-             required: true,
              desc: 'Slurm partition (valid only when combined with --srun)'
       def start(dir)
         dir = VCReport.initialize_dir(dir)
@@ -134,7 +133,6 @@ module VCReport
              default: false
       option 'slurm-partition',
              type: :string,
-             required: true,
              desc: 'Slurm partition (valid only when combined with --srun)'
       def metrics(dir)
         dir = VCReport.initialize_dir(dir)
