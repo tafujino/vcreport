@@ -124,7 +124,16 @@ module VCReport
             )
           end
           template_path = "#{TEMPLATE_DIR}/#{prefix}.md.erb"
-          render_erb(template_path, markdown_path, context)
+          render_erb(template_path, markdown_path, context) do |text|
+            text.scan(/(!\[([^\]]+)\]\([^\)]+\))/).map do |pattern, label, path|
+              dst_path = out_dir / File.basename(path)
+              Render.copy_file(path, dst_path)
+              [pattern, "![#{label}](#{dst_path})"]
+            end.each do |before, after|
+              text.gsub!(before, after)
+            end
+            text
+          end
           markdown_path
         end
 
@@ -215,6 +224,7 @@ module VCReport
           erb = ERB.new(File.open(template_path).read, trim_mode: '-')
           context ||= binding
           text = erb.result(context)
+          text = yield text if block_given?
           File.write(out_path, text)
           say_status 'create', out_path, :green
         end
