@@ -58,7 +58,7 @@ module VCReport
                 nthreads: 1,
                 in_bam: CWL.file_field(@cram_path, edam: Edam::Type::BAM)
               }
-            CWL.run(CWL_SCRIPT_PATH, job_definition, @out_dir)
+            CWL.run(CWL_SCRIPT_PATH, job_definition, @job_manager, @out_dir)
           end
 
           # @param line     [String]

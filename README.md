@@ -33,7 +33,7 @@ $ gem install --local pkg/*.gem
 In VCReport, variant call project is managed per directory. The project directory is supposed to have the following structure.
 
 ```
-<project dir>
+<project dir>/
   +-- results/
   |  +-- <sample0>/
   |  +-- <sample1>/

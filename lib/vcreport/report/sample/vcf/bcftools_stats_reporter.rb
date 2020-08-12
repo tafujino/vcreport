@@ -63,7 +63,7 @@ module VCReport
               > #{tmp_path}
               2> #{@bcftools_stats_path}.log
             COMMAND
-            is_success = JobManager.shell(cmd)
+            is_success = @job_manager.shell(cmd)
             FileUtils.mv(tmp_path, @bcftools_stats_path) if is_success
             is_success
           end

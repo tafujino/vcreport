@@ -43,12 +43,17 @@ module VCReport
              type: :numeric,
              desc: 'Monitoring interval (seconds)',
              default: VCReport::Monitor::DEFAULT_INTERVAL
+      option 'srun',
+             type: :boolean,
+             desc: 'Use srun for command execution',
+             default: false
       def start(dir)
         dir = VCReport.initialize_dir(dir)
         config = Config.load(dir)
         num_threads = options['threads']
+        use_srun = options['srun']
         logger = MonoLogger.new(dir / METRICS_LOG_FILENAME)
-        job_manager = JobManager.new(num_threads, logger)
+        job_manager = JobManager.new(num_threads, logger, srun: use_srun)
         Monitor.start(dir, config, job_manager, options['interval'])
       end
 
@@ -116,12 +121,17 @@ module VCReport
              type: :numeric,
              desc: 'Number of threads for metrics calculation',
              default: JOB_DEAULT_NUM_THREADS
+      option 'srun',
+             type: :boolean,
+             desc: 'Use srun for command execution',
+             default: false
       def metrics(dir)
         dir = VCReport.initialize_dir(dir)
         config = Config.load(dir)
         num_threads = options['threads']
+        use_srun = options['srun']
         logger = MonoLogger.new(dir / METRICS_LOG_FILENAME)
-        job_manager = JobManager.new(num_threads, logger)
+        job_manager = JobManager.new(num_threads, logger, srun: use_srun)
         Report.run(dir, config, job_manager, render: false)
         job_manager.terminate
       end

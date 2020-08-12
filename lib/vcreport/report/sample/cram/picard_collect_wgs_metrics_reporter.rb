@@ -92,7 +92,7 @@ module VCReport
                 minimum_mapping_quality: @config.min_mq
               }
             job_definition.compact!
-            CWL.run(CWL_SCRIPT_PATH, job_definition, @out_dir, postfix: @chr_region.id)
+            CWL.run(CWL_SCRIPT_PATH, job_definition, @job_manager, @out_dir, postfix: @chr_region.id)
           end
 
           # @param lines [Array<String>] lines from picard-CollectWgsMetrics output

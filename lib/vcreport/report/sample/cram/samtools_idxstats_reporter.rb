@@ -46,7 +46,7 @@ module VCReport
           def run_metrics
             FileUtils.mkpath @out_dir
             job_definition = { in_cram: CWL.file_field(@cram_path, edam: Edam::Type::CRAM) }
-            CWL.run(CWL_SCRIPT_PATH, job_definition, @out_dir)
+            CWL.run(CWL_SCRIPT_PATH, job_definition, @job_manager, @out_dir)
           end
         end
       end
