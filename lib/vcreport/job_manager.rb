@@ -17,15 +17,17 @@ module VCReport
     # @return [Integer]
     attr_reader :num_threads
 
-    # @param num_threads [Integer]
-    # @param logger      [MonoLogger, nil]
-    # @param srun        [Boolean]
-    def initialize(num_threads, logger, srun: false)
+    # @param num_threads     [Integer]
+    # @param logger          [MonoLogger, nil]
+    # @param srun            [Boolean]
+    # @param slurm_partition [String, nil]
+    def initialize(num_threads, logger, srun: false, slurm_partition: nil)
       @num_threads = num_threads
       @pool = Concurrent::FixedThreadPool.new(num_threads)
       @job_status = {} # Hash{ String => Concurrent::Promises::Future }
       @logger = logger
       @use_srun = srun
+      @slurm_partition = slurm_partition
     end
 
     # @param result_paths [Array<String, Pathname>]
@@ -67,7 +69,11 @@ module VCReport
     def spawn(command, dry_run: false)
       return true if dry_run
 
-      command = "srun #{command}" if @use_srun
+      if @use_srun
+        srun_command = 'srun'
+        srun_command += " -p #{@slurm_partition}" if @slurm_partition
+        command = "#{srun_command} #{command}"
+      end
       pid = POSIX::Spawn.spawn(command)
       Process.waitpid(pid)
       $CHILD_STATUS.success?

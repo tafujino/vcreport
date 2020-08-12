@@ -47,13 +47,19 @@ module VCReport
              type: :boolean,
              desc: 'Use srun for command execution',
              default: false
+      option 'slurm-partition',
+             type: :string,
+             desc: 'Slurm partition (valid only when combined with --srun)'
       def start(dir)
         dir = VCReport.initialize_dir(dir)
         config = Config.load(dir)
         num_threads = options['threads']
         use_srun = options['srun']
+        slurm_partition = options['slurm partition']
         logger = MonoLogger.new(dir / METRICS_LOG_FILENAME)
-        job_manager = JobManager.new(num_threads, logger, srun: use_srun)
+        job_manager = JobManager.new(
+          num_threads, logger, srun: use_srun, slurm_partition: slurm_partition
+        )
         Monitor.start(dir, config, job_manager, options['interval'])
       end
 
@@ -125,13 +131,19 @@ module VCReport
              type: :boolean,
              desc: 'Use srun for command execution',
              default: false
+      option 'slurm-partition',
+             type: :string,
+             desc: 'Slurm partition (valid only when combined with --srun)'
       def metrics(dir)
         dir = VCReport.initialize_dir(dir)
         config = Config.load(dir)
         num_threads = options['threads']
         use_srun = options['srun']
+        slurm_partition = options['slurm partition']
         logger = MonoLogger.new(dir / METRICS_LOG_FILENAME)
-        job_manager = JobManager.new(num_threads, logger, srun: use_srun)
+        job_manager = JobManager.new(
+          num_threads, logger, srun: use_srun, slurm_partition: slurm_partition
+        )
         Report.run(dir, config, job_manager, render: false)
         job_manager.terminate
       end
