@@ -49,6 +49,7 @@ module VCReport
              default: false
       option 'slurm-partition',
              type: :string,
+             required: true,
              desc: 'Slurm partition (valid only when combined with --srun)'
       def start(dir)
         dir = VCReport.initialize_dir(dir)
@@ -102,7 +103,7 @@ module VCReport
       desc 'monitor [COMMAND]', 'Manage a monitoring daemon'
       subcommand :monitor, MonitorCommand
 
-      desc 'http [COMMAND]', 'Start a web server'
+      desc 'http [DIRECTORY]', 'Start a web server'
       option 'port',
              aliases: 'p',
              type: :numeric,
@@ -133,6 +134,7 @@ module VCReport
              default: false
       option 'slurm-partition',
              type: :string,
+             required: true,
              desc: 'Slurm partition (valid only when combined with --srun)'
       def metrics(dir)
         dir = VCReport.initialize_dir(dir)
