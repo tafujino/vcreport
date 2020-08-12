@@ -55,7 +55,7 @@ module VCReport
         config = Config.load(dir)
         num_threads = options['threads']
         use_srun = options['srun']
-        slurm_partition = options['slurm partition']
+        slurm_partition = options['slurm-partition']
         logger = MonoLogger.new(dir / METRICS_LOG_FILENAME)
         job_manager = JobManager.new(
           num_threads, logger, srun: use_srun, slurm_partition: slurm_partition
@@ -139,7 +139,7 @@ module VCReport
         config = Config.load(dir)
         num_threads = options['threads']
         use_srun = options['srun']
-        slurm_partition = options['slurm partition']
+        slurm_partition = options['slurm-partition']
         logger = MonoLogger.new(dir / METRICS_LOG_FILENAME)
         job_manager = JobManager.new(
           num_threads, logger, srun: use_srun, slurm_partition: slurm_partition
