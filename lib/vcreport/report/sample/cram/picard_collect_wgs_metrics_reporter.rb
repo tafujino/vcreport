@@ -32,7 +32,7 @@ module VCReport
             @chr_region = chr_region
             @ref_path = ref_path
             @config = picard_collect_wgs_metrics_config
-            @out_dir = metrics_dir / 'picard-collectWgsMetrics'
+            @out_dir = metrics_dir / 'picard-CollectWgsMetrics'
             @picard_collect_wgs_metrics_path =
               @out_dir / "#{@cram_path.basename}.#{chr_region.id}.wgs_metrics"
             super(job_manager, targets: @picard_collect_wgs_metrics_path, deps: @cram_path)

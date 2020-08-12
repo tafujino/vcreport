@@ -58,3 +58,9 @@
 <%= e.het_snp_table.markdown_text %>
 
 <% end -%>
+
+### picard CollectBaseDistributionByCycle
+
+<% if @cram.picard_collect_base_distribution_by_cycle -%>
+![](<%= @cram.picard_collect_base_distribution_by_cycle.chart_png_path %>)
+<% end -%>

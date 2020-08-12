@@ -11,6 +11,8 @@ require 'vcreport/report/sample/cram/samtools_flagstat_reporter'
 require 'vcreport/report/sample/cram/picard_collect_wgs_metrics'
 require 'vcreport/report/sample/cram/picard_collect_wgs_metrics_collection'
 require 'vcreport/report/sample/cram/picard_collect_wgs_metrics_reporter'
+require 'vcreport/report/sample/cram/picard_collect_base_distribution_by_cycle'
+require 'vcreport/report/sample/cram/picard_collect_base_distribution_by_cycle_reporter'
 
 module VCReport
   module Report
@@ -53,11 +55,16 @@ module VCReport
           end
           picard_collect_wgs_metrics_collection =
             Cram::PicardCollectWgsMetricsCollection.new(picard_collect_wgs_metrics)
+          picard_collect_base_distribution_by_cycle =
+            Cram::PicardCollectBaseDistributionByCycleReporter.new(
+              @cram_path, ref_path, @metrics_dir, @job_manager
+            ).try_parse
           Cram.new(
             @cram_path,
             samtools_idxstats,
             samtools_flagstat,
-            picard_collect_wgs_metrics_collection
+            picard_collect_wgs_metrics_collection,
+            picard_collect_base_distribution_by_cycle
           )
         end
       end
