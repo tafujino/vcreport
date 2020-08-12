@@ -31,7 +31,7 @@ module VCReport
         log_path = out_dir / "cwltool#{postfix}.log"
         job_path = out_dir / "job#{postfix}.yaml"
         store_job_file(job_path, job_definition)
-        job_manager.shell <<~COMMAND.squish
+        job_manager.spawn <<~COMMAND.squish
           #{CWLTOOL_PATH}
           --singularity
           --outdir #{out_dir}

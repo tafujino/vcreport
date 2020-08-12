@@ -108,7 +108,7 @@ module VCReport
     # @param command [String]
     # @param dry_run [Boolean]
     # @return        [Boolean] true iff the command succeeded
-    def shell(command, dry_run: false)
+    def spawn(command, dry_run: false)
       return true if dry_run
 
       command = "srun #{command}" if @use_srun
