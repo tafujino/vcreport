@@ -30,7 +30,11 @@ module VCReport
         system.monitor_logger.info 'Start monitoring'
         loop do
           system.monitor_logger.info 'Start periodical reporting'
-          Report.run(dir, config, job_manager)
+          begin
+            Report.run(dir, config, job_manager)
+          rescue => e
+            system.monitor_logger.error e.to_s
+          end
           system.monitor_logger.info 'End periodical reporting'
           sleep(interval)
         end
