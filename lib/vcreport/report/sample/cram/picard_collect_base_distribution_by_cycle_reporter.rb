@@ -30,7 +30,11 @@ module VCReport
             @chart_pdf_path, @chart_png_path = %w[pdf png].map do |ext|
               Pathname.new("#{@out_path}.chart.#{ext}")
             end
-            super(job_manager, targets: @out_path, deps: @cram_path)
+            super(
+              job_manager,
+              targets: [@out_path, @chart_pdf_path, @chart_png_path],
+              deps: @cram_path
+            )
           end
 
           private
