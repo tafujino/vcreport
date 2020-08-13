@@ -86,7 +86,7 @@ For directory monitoring `vcreport monitor` command is used.
 $ vcreport monitor start <project dir>
 ```
 
-When `vcreport monitor start` is run, a monotoring daemon is launched. The daemon periodically (by default, per hour) generates reports on samples. If files on new samples are added to the project directory, metrics calculations are automatically performed.
+When `vcreport monitor start` is run, a monitoring daemon is launched. The daemon periodically (by default, per hour) generates reports on samples. If files on new samples are added to the project directory, metrics calculations are automatically performed.
 
 To check the staus of the daemon, use `vcreport monitor status` command.
 
