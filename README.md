@@ -44,7 +44,7 @@ In VCReport, variant call project is managed per directory. The project director
   +--- vcreport.yaml
 ```
 
-Each sample data should placed in `results` directory by the user. VCReport creates `reports` directory, where report HTML files are generated. It also creates `vcreport` directory used for management and logging. The user has to describe `vcreport.yaml` needed to run VCReport properly.
+Each sample data should be placed in `results` directory by the user. VCReport creates `reports` directory, where report HTML files are generated. It also creates `vcreport` directory used for management and logging. The user has to describe `vcreport.yaml` needed to run VCReport properly.
 
 The name of a sample directory should be identical to the sample name. If the name of the sample is `AAA`, the name of the directory is also `AAA`. The CRAM file used for variant call is supposed to be `AAA.cram`. There may be multiple VCF files calculated on given genomic intervals. If the interval name is `BBB`, the name of VCF file is supposed to be `AAA.BBB.g.vcf.gz`. In order to tell VCReport that CRAM and VCFs are already created, `finish` file should be put in a sample directory.
 
@@ -86,7 +86,7 @@ For directory monitoring `vcreport monitor` command is used.
 $ vcreport monitor start <project dir>
 ```
 
-When `vcreport monitor start` is run, a monotoring daemon is launched. The daemon periodically (by default, per hour) generates reports on samples. If files on new samples are added to the project directory, metrics calculations are automatically performed.
+When `vcreport monitor start` is run, a monitoring daemon is launched. The daemon periodically (by default, per hour) generates reports on samples. If files on new samples are added to the project directory, metrics calculations are automatically performed.
 
 To check the staus of the daemon, use `vcreport monitor status` command.
 
@@ -106,7 +106,7 @@ Instead of periodical monitoring, one-time report generation and metrics calcula
 $ vcreport render <project dir>
 ```
 
-and for metrics calculation, run
+and for metrics calculation, run the following.
 
 ```
 $ vcreport metrics <project dir>
