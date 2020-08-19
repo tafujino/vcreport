@@ -21,13 +21,22 @@ module VCReport
     # @param logger          [MonoLogger, nil]
     # @param srun            [Boolean]
     # @param slurm_partition [String, nil]
-    def initialize(num_threads, logger, srun: false, slurm_partition: nil)
+    def initialize(
+          num_threads,
+          logger,
+          srun: false,
+          slurm_partition: nil,
+          slurm_cpus_per_task: nil,
+          slurm_mem_per_cpu: nil
+        )
       @num_threads = num_threads
       @pool = Concurrent::FixedThreadPool.new(num_threads)
       @job_status = {} # Hash{ String => Concurrent::Promises::Future }
       @logger = logger
       @use_srun = srun
       @slurm_partition = slurm_partition
+      @slurm_cpus_per_task = slurm_cpus_per_task
+      @slurm_mem_per_cpu = slurm_mem_per_cpu
     end
 
     # @param result_paths [Array<String, Pathname>]
@@ -72,6 +81,8 @@ module VCReport
       if @use_srun
         srun_command = 'srun'
         srun_command += " -p #{@slurm_partition}" if @slurm_partition
+        srun_command += " --cpus-per-task #{@slurm_cpus_per_task}" if @slurm_cpus_per_task
+        srun_command += " --mem-per-cpu #{@slurm_mem_per_cpu}" if @slurm_mem_per_cpu
         command = "#{srun_command} #{command}"
       end
       pid = POSIX::Spawn.spawn(command)

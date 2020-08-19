@@ -50,15 +50,28 @@ module VCReport
       option 'slurm-partition',
              type: :string,
              desc: 'Slurm partition (valid only when combined with --srun)'
+      option 'slurm-cpus-per-task',
+             type: :numeric,
+             desc: 'Number of CPUs per task (valid only when combined with --srun)'
+      option 'slurm-mem-per-cpu',
+             type: :numeric,
+             desc: 'Memory size per CPU (valid only when combined with --srun)'
       def start(dir)
         dir = VCReport.initialize_dir(dir)
         config = Config.load(dir)
         num_threads = options['threads']
         use_srun = options['srun']
         slurm_partition = options['slurm-partition']
+        slurm_cpus_per_task = options['slurm-cpus-per-task']
+        slurm_mem_per_cpu = options['slurm-mem-per-cpu']
         logger = MonoLogger.new(dir / METRICS_LOG_FILENAME)
         job_manager = JobManager.new(
-          num_threads, logger, srun: use_srun, slurm_partition: slurm_partition
+          num_threads,
+          logger,
+          srun: use_srun,
+          slurm_partition: slurm_partition,
+          slurm_cpus_per_task: slurm_cpus_per_task,
+          slurm_mem_per_cpu: slurm_mem_per_cpu
         )
         Monitor.start(dir, config, job_manager, options['interval'])
       end
@@ -134,15 +147,28 @@ module VCReport
       option 'slurm-partition',
              type: :string,
              desc: 'Slurm partition (valid only when combined with --srun)'
+      option 'slurm-cpus-per-task',
+             type: :numeric,
+             desc: 'Number of CPUs per task (valid only when combined with --srun)'
+      option 'slurm-mem-per-cpu',
+             type: :numeric,
+             desc: 'Memory size per CPU (valid only when combined with --srun)'
       def metrics(dir)
         dir = VCReport.initialize_dir(dir)
         config = Config.load(dir)
         num_threads = options['threads']
         use_srun = options['srun']
         slurm_partition = options['slurm-partition']
+        slurm_cpus_per_task = options['slurm-cpus-per-task']
+        slurm_mem_per_cpu = options['slurm-mem-per-cpu']
         logger = MonoLogger.new(dir / METRICS_LOG_FILENAME)
         job_manager = JobManager.new(
-          num_threads, logger, srun: use_srun, slurm_partition: slurm_partition
+          num_threads,
+          logger,
+          srun: use_srun,
+          slurm_partition: slurm_partition,
+          slurm_cpus_per_task: slurm_cpus_per_task,
+          slurm_mem_per_cpu: slurm_mem_per_cpu
         )
         Report.run(dir, config, job_manager, render: false)
         job_manager.terminate
