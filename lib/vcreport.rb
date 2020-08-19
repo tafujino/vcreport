@@ -54,7 +54,7 @@ module VCReport
              type: :numeric,
              desc: 'Number of CPUs per task (valid only when combined with --srun)'
       option 'slurm-mem-per-cpu',
-             type: :numeric,
+             type: :string,
              desc: 'Memory size per CPU (valid only when combined with --srun)'
       def start(dir)
         dir = VCReport.initialize_dir(dir)
@@ -151,7 +151,7 @@ module VCReport
              type: :numeric,
              desc: 'Number of CPUs per task (valid only when combined with --srun)'
       option 'slurm-mem-per-cpu',
-             type: :numeric,
+             type: :string,
              desc: 'Memory size per CPU (valid only when combined with --srun)'
       def metrics(dir)
         dir = VCReport.initialize_dir(dir)
