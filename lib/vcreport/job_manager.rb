@@ -122,7 +122,7 @@ module VCReport
         say_status 'working', main_result_path, :yellow
         return false
       end
-      if @job_status.value!
+      if @job_status[main_result_path].value!
         @logger&.error <<~MESSAGE.squish
           File does not exist but job status is 'success'.
           Something went wrong: #{result_path}
