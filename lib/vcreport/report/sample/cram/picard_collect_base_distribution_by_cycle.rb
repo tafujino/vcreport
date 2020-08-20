@@ -21,7 +21,7 @@ module VCReport
           # @param chart_png_path [Pathname]
           def initialize(path, chart_pdf_path, chart_png_path)
             @path = path
-            @chart_path = chart_pdf_path
+            @chart_pdf_path = chart_pdf_path
             @chart_png_path = chart_png_path
           end
         end

@@ -128,7 +128,7 @@ module VCReport
             text.scan(/(!\[([^\]]*)\]\(([^\)]+)\))/).map do |pattern, label, path|
               dst_path = out_dir / File.basename(path)
               Render.copy_file(path, out_dir) unless dst_path.exist?
-              [pattern, "![#{label}](#{dst_path})"]
+              [pattern, "![#{label}](#{dst_path.basename})"]
             end.each do |before, after|
               text.gsub!(before, after)
             end
