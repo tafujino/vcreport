@@ -18,7 +18,7 @@ As a prerequisite, the following should be installed.
 VCReport is provided as a Ruby gem. Since the gem is not registered in RubyGems currently, it should be built and installed locally.
 
 ```
-$ git clone https://github.com/tafujino/vcreport.git
+$ git clone <THIS REPOSITORY>
 $ cd vcreport
 $ git submodule update --init
 $ bundle install
