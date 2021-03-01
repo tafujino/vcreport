@@ -14,8 +14,11 @@ module VCReport
       # @return         [Hash{ Symbol => String }]
       def file_field(path, absolute: true, edam: nil)
         field = { class: 'File' }
-        path = File.readlink(path) if File.symlink?(path)
-        path = File.expand_path(path) if absolute
+        if File.symlink?(path)
+          path = File.expand_path(File.readlink(path), File.dirname(path))
+        elsif absolute
+          path = File.expand_path(path)
+        end
         field[:path] = path.to_s
         field[:format] = "#{Edam::DOMAIN}/format_#{edam}" if edam
         field
