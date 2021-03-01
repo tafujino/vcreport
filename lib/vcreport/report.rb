@@ -27,7 +27,7 @@ module VCReport
           SampleReporter
             .new(sample_dir, config, job_manager)
             .try_parse
-            .tap { |report| report.render(report_dir) if render }
+            &.tap { |sample| sample.render(report_dir) if render }
         end
         return unless render
 
