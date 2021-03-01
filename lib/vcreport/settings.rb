@@ -17,7 +17,7 @@ module VCReport
   GITHUB_MARKDOWN_CSS_PATH = "#{LIB_DIR}/github-markdown-css/github-markdown.css"
   CONFIG_FILENAME = 'vcreport.yaml'
   MAX_SAMPLES = 100_000
-  IGNORE_DEPS_INEXISTENCE = true # debug
+  IGNORE_DEPS_INEXISTENCE = false
   JOB_DEAULT_NUM_THREADS = 1
 
   module Monitor
